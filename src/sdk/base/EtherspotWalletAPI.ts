@@ -51,7 +51,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId].contracts.multipleOwnerECDSAValidator;
   }
 
-  async installModule(moduleTypeId: MODULE_TYPE, module: string, initData: string): Promise<string> {
+  async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {
     const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
     if (await accountContract.isModuleInstalled(moduleTypeId, module, initData)) {
       throw new Error('the module is already installed')

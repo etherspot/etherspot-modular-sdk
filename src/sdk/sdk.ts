@@ -292,7 +292,7 @@ export class PrimeSdk {
     return this.etherspotWallet._getAccountContract();
   }
 
-  async installModule(moduleTypeId: MODULE_TYPE, module: string, initData: string): Promise<string> {
+  async installModule(moduleTypeId: MODULE_TYPE, module: string, initData?: string): Promise<string> {
     return this.etherspotWallet.installModule(moduleTypeId, module, initData);
   }
 

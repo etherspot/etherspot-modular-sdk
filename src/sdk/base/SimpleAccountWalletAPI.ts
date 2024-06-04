@@ -118,7 +118,7 @@ export class SimpleAccountAPI extends BaseAccountAPI {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  installModule(moduleTypeId: MODULE_TYPE, module: string, initData: string): Promise<string> {
+  installModule(moduleTypeId: MODULE_TYPE, module: string, initData?: string): Promise<string> {
     throw new Error('Method not implemented.');
   }
 
