@@ -168,7 +168,7 @@ export const Networks: {
   },
   [10200]: {
     chainId: 10200,
-    bundler: 'https://testnet-rpc.etherspot.io/v2/10200',
+    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
@@ -224,7 +224,7 @@ export const Networks: {
   },
   [2357]: {
     chainId: 2357,
-    bundler: 'https://testnet-rpc.etherspot.io/v2/2357',
+    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
@@ -266,7 +266,7 @@ export const Networks: {
   },
   [20197]: {
     chainId: 20197,
-    bundler: 'https://testnet-rpc.etherspot.io/v2/20197',
+    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
@@ -364,7 +364,7 @@ export const Networks: {
   },
   [43113]: {
     chainId: 43113,
-    bundler: 'https://testnet-rpc.etherspot.io/v2/43113',
+    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
@@ -392,7 +392,7 @@ export const Networks: {
   },
   [59140]: {
     chainId: 59140,
-    bundler: 'https://testnet-rpc.etherspot.io/v2/59140',
+    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
@@ -490,7 +490,7 @@ export const Networks: {
   },
   [888888888]: {
     chainId: 888888888,
-    bundler: 'https://rpc.etherspot.io/v2/888888888',
+    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
@@ -518,7 +518,7 @@ export const Networks: {
   },
   [51]: {
     chainId: 51,
-    bundler: 'https://testnet-rpc.etherspot.io/v2/51',
+    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
