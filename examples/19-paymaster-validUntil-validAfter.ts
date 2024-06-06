@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { EtherspotBundler, PrimeSdk } from '../src';
+import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
@@ -16,29 +16,29 @@ const queryString = `?apiKey=${arkaApiKey}&chainId=${Number(process.env.CHAIN_ID
 
 async function main() {
     // initializing sdk...
-    const primeSdk = new PrimeSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
+    const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
         chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
     })
 
-    console.log('address: ', primeSdk.state.EOAAddress)
+    console.log('address: ', modularSdk.state.EOAAddress)
 
     // get address of EtherspotWallet...
-    const address: string = await primeSdk.getCounterFactualAddress();
+    const address: string = await modularSdk.getCounterFactualAddress();
     console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
     // get balance of the account address
-    let balance = await primeSdk.getNativeBalance();
+    let balance = await modularSdk.getNativeBalance();
     console.log('balances: ', balance);
 
     // clear the transaction batch
-    await primeSdk.clearUserOpsFromBatch();
+    await modularSdk.clearUserOpsFromBatch();
 
     // add transactions to the batch
-    const transactionBatch = await primeSdk.addUserOpsToBatch({ to: recipient, value: ethers.utils.parseEther(value) });
+    const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: ethers.utils.parseEther(value) });
     console.log('transactions: ', transactionBatch);
 
     // get balance of the account address
-    balance = await primeSdk.getNativeBalance();
+    balance = await modularSdk.getNativeBalance();
 
     console.log('balances: ', balance);
 
@@ -47,13 +47,13 @@ async function main() {
         For example purpose, the valid is fixed as expiring in 100 mins once the paymaster data is generated
         validUntil and validAfter is relevant only with sponsor transactions and not for token paymasters
     */
-    const op = await primeSdk.estimate({
+    const op = await modularSdk.estimate({
         paymasterDetails: { url: `${arkaUrl}${queryString}`, context: { mode: 'sponsor', validAfter: new Date().valueOf(), validUntil: new Date().valueOf() + 6000000 } }
     });
     console.log(`Estimate UserOp: ${await printOp(op)}`);
 
     // sign the UserOp and sending to the bundler...
-    const uoHash = await primeSdk.send(op);
+    const uoHash = await modularSdk.send(op);
     console.log(`UserOpHash: ${uoHash}`);
 
     // get transaction hash...
@@ -62,7 +62,7 @@ async function main() {
     const timeout = Date.now() + 60000; // 1 minute timeout
     while ((userOpsReceipt == null) && (Date.now() < timeout)) {
         await sleep(2);
-        userOpsReceipt = await primeSdk.getUserOpReceipt(uoHash);
+        userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
     }
     console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
 }

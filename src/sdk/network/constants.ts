@@ -88,12 +88,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [11155111]: {
@@ -102,12 +102,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [10]: {
@@ -116,12 +116,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [137]: {
@@ -130,12 +130,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [42161]: {
@@ -144,12 +144,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [1]: {
@@ -158,12 +158,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [10200]: {
@@ -172,12 +172,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [122]: {
@@ -186,12 +186,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [123]: {
@@ -200,12 +200,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [100]: {
@@ -214,12 +214,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [2357]: {
@@ -228,12 +228,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [30]: {
@@ -242,12 +242,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [31]: {
@@ -256,12 +256,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [20197]: {
@@ -270,12 +270,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [5000]: {
@@ -284,12 +284,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [5003]: {
@@ -298,12 +298,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [43114]: {
@@ -312,12 +312,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [8453]: {
@@ -326,12 +326,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [56]: {
@@ -340,12 +340,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [97]: {
@@ -354,12 +354,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [43113]: {
@@ -368,12 +368,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [59144]: {
@@ -382,12 +382,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [59140]: {
@@ -396,12 +396,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [114]: {
@@ -410,12 +410,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [14]: {
@@ -424,12 +424,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [534351]: {
@@ -438,12 +438,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [534352]: {
@@ -452,12 +452,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [11155420]: {
@@ -466,12 +466,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [28122024]: {
@@ -480,12 +480,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [888888888]: {
@@ -508,26 +508,26 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x059379cdb7Ee132De6a2281307bb4dC04a302064',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9',
     },
   },
   [51]: {
     chainId: 51,
-    bundler: '',
+    bundler: 'https://testnet-rpc.etherspot.io/v2/51',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: {
-        etherspot: '0x77E4288A4b15893F520F15C262a07dF9866904e4',
+        etherspot: '0x3aa509fd07B09d5a8b944c96ae6eE767fe75C465',
         zeroDev: '',
         simpleAccount: '',
       },
-      bootstrap: '0x4f695ad7694863c8280FCEBf2Cb220E361ce4eA0',
-      multipleOwnerECDSAValidator: '0x1E714c551Fe6234B6eE406899Ec3Be9234Ad2124',
+      bootstrap: '0xcaDBADcFeD5530A49762DFc9d1d712CcD6b09b25',
+      multipleOwnerECDSAValidator: '0x50af618E286713Fd2bda2113b7e56352BD357222',
     },
   }
 };
@@ -735,6 +735,8 @@ export const Safe: ISafeConstant = {
 
 export const KERNEL_IMPL_ADDRESS = "0xf048AD83CB2dfd6037A43902a2A5Be04e53cd2Eb";
 export const KERNEL_VALIDATOR_ADDRESS = "0xd9AB5096a832b9ce79914329DAEE236f8Eea0390";
+export const DEFAULT_BOOTSTRAP_ADDRESS = "0xd9AB5096a832b9ce79914329DAEE236f8Eea0390";
+export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = "0xd9AB5096a832b9ce79914329DAEE236f8Eea0390";
 
 export const CHAIN_ID_TO_NETWORK_NAME: { [key: number]: NetworkNames } = Object.entries(
   NETWORK_NAME_TO_CHAIN_ID,

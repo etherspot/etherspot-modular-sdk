@@ -7,8 +7,8 @@ export const errorMsg = {
     '-32503': 'validUntil and validAfter cannot be past timestamps', // UserOperation out of time-range
     '-32504': 'This paymaster is not whitelisted on current bundler, contact bundler team to whitelist', // transaction rejected because paymaster (or signature aggregator) is throttled/banned
     '-32505': 'Factory or Wallet or Paymaster not staked or unstake-delay is too low. Try with another entity', // transaction rejected because some entity (or signature aggregator) stake or unstake-delay is too low
-    '-32506': 'Please create an issue https://github.com/etherspot/etherspot-prime-sdk/issues or ticket on https://discord.etherspot.io', // transaction rejected because wallet specified unsupported signature aggregator
-    '-32507': 'Please create an issue https://github.com/etherspot/etherspot-prime-sdk/issues or ticket on https://discord.etherspot.io', // transaction rejected because of wallet signature check failed (or paymaster signature, if the paymaster uses its data as signature)
+    '-32506': 'Please create an issue https://github.com/etherspot/etherspot-modular-sdk/issues or ticket on https://discord.etherspot.io', // transaction rejected because wallet specified unsupported signature aggregator
+    '-32507': 'Please create an issue https://github.com/etherspot/etherspot-modular-sdk/issues or ticket on https://discord.etherspot.io', // transaction rejected because of wallet signature check failed (or paymaster signature, if the paymaster uses its data as signature)
     '1': 'Make sure the sdk fn called has valid parameters', // sdk Validation errors,
     '400': 'Either the bundler url is unreachable or the api key rate limit has reached. Please contact support for more info', // Bundler using ethers package returning SERVER_ERROR
     '404': 'The request sent has reached timeout. Check your internet access or the bundler url if using etherspot bundler, the rate limit might be reached Please contact support for more info', // ethers package 

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { EtherspotBundler, PrimeSdk } from '../src';
+import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
@@ -8,17 +8,17 @@ dotenv.config();
 
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
-  
+
   // initializating sdk...
-  const primeSdk = new PrimeSdk(
+  const modularSdk = new ModularSdk(
     { privateKey: process.env.WALLET_PRIVATE_KEY },
     { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
   );
 
-  console.log('address: ', primeSdk.state.EOAAddress);
+  console.log('address: ', modularSdk.state.EOAAddress);
 
   // get address of EtherspotWallet
-  const address: string = await primeSdk.getCounterFactualAddress();
+  const address: string = await modularSdk.getCounterFactualAddress();
 
   // update the addresses in this array with the guardian addresses you want to set
   const guardianAddresses: string[] = [
@@ -36,20 +36,20 @@ async function main() {
   const addGuardianData3 = addGuardianInterface.encodeFunctionData('addGuardian', [guardianAddresses[2]]);
 
   // clear the transaction batch
-  await primeSdk.clearUserOpsFromBatch();
+  await modularSdk.clearUserOpsFromBatch();
 
   // add transactions to the batch
-  let userOpsBatch = await primeSdk.addUserOpsToBatch({ to: address, data: addGuardianData1 });
-  userOpsBatch = await primeSdk.addUserOpsToBatch({ to: address, data: addGuardianData2 });
-  userOpsBatch = await primeSdk.addUserOpsToBatch({ to: address, data: addGuardianData3 });
+  let userOpsBatch = await modularSdk.addUserOpsToBatch({ to: address, data: addGuardianData1 });
+  userOpsBatch = await modularSdk.addUserOpsToBatch({ to: address, data: addGuardianData2 });
+  userOpsBatch = await modularSdk.addUserOpsToBatch({ to: address, data: addGuardianData3 });
   console.log('transactions: ', userOpsBatch);
 
   // sign transactions added to the batch
-  const op = await primeSdk.estimate();
+  const op = await modularSdk.estimate();
   console.log(`Estimated UserOp: ${await printOp(op)}`);
 
   // sign the userOps and sending to the bundler...
-  const uoHash = await primeSdk.send(op);
+  const uoHash = await modularSdk.send(op);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...
@@ -58,7 +58,7 @@ async function main() {
   const timeout = Date.now() + 60000; // 1 minute timeout
   while (userOpsReceipt == null && Date.now() < timeout) {
     await sleep(2);
-    userOpsReceipt = await primeSdk.getUserOpReceipt(uoHash);
+    userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
   }
   console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
 }

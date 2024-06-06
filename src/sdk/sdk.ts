@@ -22,11 +22,11 @@ import { EtherspotBundler } from './bundler';
 import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
 
 /**
- * Prime-Sdk
+ * Modular-Sdk
  *
- * @category Prime-Sdk
+ * @category Modular-Sdk
  */
-export class PrimeSdk {
+export class ModularSdk {
 
   private etherspotWallet: EtherspotWalletAPI | ZeroDevWalletAPI | SimpleAccountAPI;
   private bundler: HttpRpcClient;

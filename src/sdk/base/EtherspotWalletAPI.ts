@@ -4,7 +4,7 @@ import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { EtherspotWallet7579Factory__factory, EtherspotWallet7579__factory } from '../contracts/factories/src/ERC7579/wallet';
 import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts/src/ERC7579/wallet';
 import { BOOTSTRAP_ABI, BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
-import { Networks } from '../network/constants';
+import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
 
 /**
@@ -47,8 +47,8 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.factoryAddress = params.factoryAddress;
     this.index = params.index ?? 0;
     this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
-    this.bootstrapAddress = Networks[params.optionsLike.chainId].contracts.bootstrap;
-    this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId].contracts.multipleOwnerECDSAValidator;
+    this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
+    this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
   }
 
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {

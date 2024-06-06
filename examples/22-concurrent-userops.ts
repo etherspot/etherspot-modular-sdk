@@ -1,5 +1,5 @@
-import { ethers, providers } from 'ethers';
-import { EtherspotBundler, PrimeSdk } from '../src';
+import { BigNumber, ethers, providers } from 'ethers';
+import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
@@ -13,15 +13,15 @@ const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxM
 async function main() {
   const provider = new providers.JsonRpcProvider(process.env.RPC_PROVIDER_URL);
   // initializating sdk...
-  const primeSdk = new PrimeSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
+  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
     chainId: Number(process.env.CHAIN_ID),
     bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   })
 
-  console.log('address: ', primeSdk.state.EOAAddress)
+  console.log('address: ', modularSdk.state.EOAAddress)
 
   // get address of EtherspotWallet...
-  const address: string = await primeSdk.getCounterFactualAddress();
+  const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
   if ((await provider.getCode(address)).length <= 2) {
@@ -30,14 +30,14 @@ async function main() {
   }
 
   // clear the transaction batch
-  await primeSdk.clearUserOpsFromBatch();
+  await modularSdk.clearUserOpsFromBatch();
 
   // add transactions to the batch
-  const transactionBatch = await primeSdk.addUserOpsToBatch({to: recipient, value: ethers.utils.parseEther(value)});
+  const transactionBatch = await modularSdk.addUserOpsToBatch({to: recipient, value: ethers.utils.parseEther(value)});
   console.log('transactions: ', transactionBatch);
 
   // get balance of the account address
-  const balance = await primeSdk.getNativeBalance();
+  const balance = await modularSdk.getNativeBalance();
 
   console.log('balances: ', balance);
 
@@ -48,14 +48,14 @@ async function main() {
   const uoHashes = [];
 
   while (--concurrentUseropsCount >= 0) {
-    const op = await primeSdk.estimate({ key: concurrentUseropsCount });
+    const op = await modularSdk.estimate({ key: BigNumber.from(concurrentUseropsCount) });
     console.log(`Estimate UserOp: ${await printOp(op)}`);
     userops.push(op);
   }
 
   console.log("Sending userops...");
   for (const op of userops) {
-    const uoHash = await primeSdk.send(op);
+    const uoHash = await modularSdk.send(op);
     console.log(`UserOpHash: ${uoHash}`);
     uoHashes.push(uoHash);
   }
@@ -68,7 +68,7 @@ async function main() {
     for (let i = 0; i < uoHashes.length; ++i) {
       if (userOpsReceipts[i]) continue;
       const uoHash = uoHashes[i];
-      userOpsReceipts[i] = await primeSdk.getUserOpReceipt(uoHash);
+      userOpsReceipts[i] = await modularSdk.getUserOpReceipt(uoHash);
     }
   }
 

@@ -1,4 +1,4 @@
-import { EtherspotBundler, PrimeSdk } from '../src';
+import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -7,23 +7,23 @@ const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxM
 
 async function main() {
   // initializating sdk for index 0...
-  const primeSdk = new PrimeSdk(
+  const modularSdk = new ModularSdk(
     { privateKey: process.env.WALLET_PRIVATE_KEY },
     { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
   );
 
   // get EtherspotWallet address for index 0...
-  const address: string = await primeSdk.getCounterFactualAddress();
+  const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address for index 0: ${address}`);
 
   // initializating sdk for index 1...
-  const primeSdk1 = new PrimeSdk(
+  const modularSdk1 = new ModularSdk(
     { privateKey: process.env.WALLET_PRIVATE_KEY },
     { chainId: Number(process.env.CHAIN_ID), index: 1, bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
   );
 
   // get EtherspotWallet address for index 1...
-  const address1: string = await primeSdk1.getCounterFactualAddress();
+  const address1: string = await modularSdk1.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address for index 1: ${address1}`);
 }
 
