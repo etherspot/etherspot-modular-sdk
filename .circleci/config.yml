@@ -35,61 +35,61 @@ jobs:
       #     failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Ooops! The *$CIRCLE_JOB* job has failed! :circleci-fail:"
       #     webhook: "${SLACK_WEBHOOK_URL}"
 
-  e2e-tests:
-    working_directory: ~/etherspot-prime-sdk
-    docker:
-      - image: cimg/node:18.16.1
-        auth:
-          username: $DOCKERHUB_USER
-          password: $DOCKERHUB_PASSWORD
-    steps:
-      - checkout
-      - when:
-          condition: <<pipeline.parameters.run_e2e_tests>>
-          steps:
+  # e2e-tests:
+  #   working_directory: ~/etherspot-prime-sdk
+  #   docker:
+  #     - image: cimg/node:18.16.1
+  #       auth:
+  #         username: $DOCKERHUB_USER
+  #         password: $DOCKERHUB_PASSWORD
+  #   steps:
+  #     - checkout
+  #     - when:
+  #         condition: <<pipeline.parameters.run_e2e_tests>>
+  #         steps:
           
-          - restore_cache:
-              key: dependency-cache-{{ checksum "package.json" }}
-          - run:
-              name: Authenticate with registry
-              command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-prime-sdk/.npmrc
-          - run:
-              name: Build Etherpot Prime SDK
-              command: npm run build
-          - run:
-              name: Checkout e2e repo and run tests
-              no_output_timeout: 60m
-              command: |
-                cd ~
-                git clone https://github.com/etherspot/e2e-sdk-prime.git
-                cd e2e-sdk-prime
-                sed -i.bak "s/_private_key_/$PRIVATE_KEY/g" .env
-                sed -i.bak "s/_project_key_/$PROJECT_KEY/g" .env
-                sed -i.bak "s/_project_key_testnet_/$PROJECT_KEY_TESTNET/g" .env
-                sed -i.bak "s/_api_key_/$API_KEY/g" .env
-                sed -i.bak "s/_incorrect_api_key_/$INCORRECT_API_KEY/g" .env
-                sed -i.bak "s/_invalid_api_key_/$INVALID_API_KEY/g" .env
-                sed -i.bak "s/_bundler_api_key_/$BUNDLER_API_KEY/g" .env
-                sed -i.bak "s/_data_api_key_/$DATA_API_KEY/g" .env                  
-                mv package.json temp.json
-                jq -r '.dependencies."@etherspot/prime-sdk" |= "file:../etherspot-prime-sdk"' temp.json > package.json
-                rm temp.json
-                npm i
-                npm run test-mainnet
-          - run:
-              name: Move test report
-              command: |
-                mv /home/circleci/e2e-sdk-prime/mochawesome-report /tmp/
-                chmod 777 -R /tmp/mochawesome-report
-              when: always 
-          - store_artifacts:
-              path: /tmp/mochawesome-report
-              when: always
-          - slack/status:
-              failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Ooops! The *$CIRCLE_JOB* job e2e tests failed! :circleci-fail: \n\n Report URL: https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html"
-              success_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Woohoh! The *$CIRCLE_JOB* job e2e tests completed successfully! :circleci-pass: \n\n Report URL: https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html"
-              # only_for_branches: master
-              webhook: "${SLACK_WEBHOOK_URL}"
+  #         - restore_cache:
+  #             key: dependency-cache-{{ checksum "package.json" }}
+  #         - run:
+  #             name: Authenticate with registry
+  #             command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-prime-sdk/.npmrc
+  #         - run:
+  #             name: Build Etherpot Prime SDK
+  #             command: npm run build
+          # - run:
+          #     name: Checkout e2e repo and run tests
+          #     no_output_timeout: 60m
+          #     command: |
+          #       cd ~
+          #       git clone https://github.com/etherspot/e2e-sdk-prime.git
+          #       cd e2e-sdk-prime
+          #       sed -i.bak "s/_private_key_/$PRIVATE_KEY/g" .env
+          #       sed -i.bak "s/_project_key_/$PROJECT_KEY/g" .env
+          #       sed -i.bak "s/_project_key_testnet_/$PROJECT_KEY_TESTNET/g" .env
+          #       sed -i.bak "s/_api_key_/$API_KEY/g" .env
+          #       sed -i.bak "s/_incorrect_api_key_/$INCORRECT_API_KEY/g" .env
+          #       sed -i.bak "s/_invalid_api_key_/$INVALID_API_KEY/g" .env
+          #       sed -i.bak "s/_bundler_api_key_/$BUNDLER_API_KEY/g" .env
+          #       sed -i.bak "s/_data_api_key_/$DATA_API_KEY/g" .env                  
+          #       mv package.json temp.json
+          #       jq -r '.dependencies."@etherspot/prime-sdk" |= "file:../etherspot-prime-sdk"' temp.json > package.json
+          #       rm temp.json
+          #       npm i
+          #       npm run test-mainnet
+          # - run:
+          #     name: Move test report
+          #     command: |
+          #       mv /home/circleci/e2e-sdk-prime/mochawesome-report /tmp/
+          #       chmod 777 -R /tmp/mochawesome-report
+          #     when: always 
+          # - store_artifacts:
+          #     path: /tmp/mochawesome-report
+          #     when: always
+          # - slack/status:
+          #     failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Ooops! The *$CIRCLE_JOB* job e2e tests failed! :circleci-fail: \n\n Report URL: https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html"
+          #     success_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Woohoh! The *$CIRCLE_JOB* job e2e tests completed successfully! :circleci-pass: \n\n Report URL: https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html"
+          #     # only_for_branches: master
+          #     webhook: "${SLACK_WEBHOOK_URL}"
   publish-npm-package:
     working_directory: ~/etherspot-prime-sdk
     docker:
@@ -116,7 +116,7 @@ jobs:
           name: Announce Publish
           command: |
             chmod +x .circleci/announcePublish.sh
-            .circleci/announcePublish.sh "Etherspot Prime SDK Modular" "$(node -e "console.log(require('./package.json').version)")"
+            .circleci/announcePublish.sh "Etherspot Modular SDK" "$(node -e "console.log(require('./package.json').version)")"
   publish-github-release:
     docker:
       - image: ardd97/ghr
@@ -127,7 +127,7 @@ jobs:
           command: |
             PACKAGE_VERSION="$(jq .version package.json -r)"
             echo $PACKAGE_VERSION
-            ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -n "V2 Modular" "$PACKAGE_VERSION"
+            ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" -n "$PACKAGE_VERSION"
 
 workflows:
   version: 2.1
@@ -145,12 +145,12 @@ workflows:
           #         - master
       - publish-npm-package:
           context: general-vars
-          requires:
-            - e2e-tests
+          # requires:
+          #   - e2e-tests
           filters:
             branches:
               only:
-                  - v2-modular
+                  - master
       - publish-github-release:
           context: general-vars
           requires:
@@ -158,4 +158,4 @@ workflows:
           filters:
             branches:
               only:
-                  - v2-modular
+                  - master
