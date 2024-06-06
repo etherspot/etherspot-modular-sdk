@@ -1,7 +1,7 @@
 {
   "name": "@etherspot/modular-sdk",
-  "version": "2.0.0",
-  "description": "Etherspot Modular SDK",
+  "version": "1.0.0",
+  "description": "Etherspot Modular SDK - build with ERC-7579 smart accounts modules",
   "keywords": [
     "ether",
     "ethereum",
@@ -10,10 +10,13 @@
     "blockchain",
     "account abstraction",
     "4337",
-    "etherspot"
+    "etherspot",
+    "ERC-4337",
+    "ERC-7579",
+    "smart modules"
   ],
   "license": "MIT",
-  "homepage": "https://etherspot.dev",
+  "homepage": "https://etherspot.io",
   "main": "./dist/node.js",
   "browser": {
     "./dist/browser.js": "./dist/browser.js",
