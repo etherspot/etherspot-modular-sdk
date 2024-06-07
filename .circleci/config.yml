@@ -145,8 +145,8 @@ workflows:
           #         - master
       - publish-npm-package:
           context: general-vars
-          # requires:
-          #   - e2e-tests
+          requires:
+            - install
           filters:
             branches:
               only:
