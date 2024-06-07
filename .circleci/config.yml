@@ -8,7 +8,7 @@ orbs:
 
 jobs:
   install:
-    working_directory: ~/etherspot-prime-sdk
+    working_directory: ~/etherspot-modular-sdk
     docker:
       - image: cimg/node:18.16.1
         auth:
@@ -18,7 +18,7 @@ jobs:
       - checkout
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-prime-sdk/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
@@ -36,7 +36,7 @@ jobs:
       #     webhook: "${SLACK_WEBHOOK_URL}"
 
   # e2e-tests:
-  #   working_directory: ~/etherspot-prime-sdk
+  #   working_directory: ~/etherspot-modular-sdk
   #   docker:
   #     - image: cimg/node:18.16.1
   #       auth:
@@ -52,7 +52,7 @@ jobs:
   #             key: dependency-cache-{{ checksum "package.json" }}
   #         - run:
   #             name: Authenticate with registry
-  #             command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-prime-sdk/.npmrc
+  #             command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
   #         - run:
   #             name: Build Etherpot Prime SDK
   #             command: npm run build
@@ -72,7 +72,7 @@ jobs:
           #       sed -i.bak "s/_bundler_api_key_/$BUNDLER_API_KEY/g" .env
           #       sed -i.bak "s/_data_api_key_/$DATA_API_KEY/g" .env                  
           #       mv package.json temp.json
-          #       jq -r '.dependencies."@etherspot/prime-sdk" |= "file:../etherspot-prime-sdk"' temp.json > package.json
+          #       jq -r '.dependencies."@etherspot/prime-sdk" |= "file:../etherspot-modular-sdk"' temp.json > package.json
           #       rm temp.json
           #       npm i
           #       npm run test-mainnet
@@ -91,7 +91,7 @@ jobs:
           #     # only_for_branches: master
           #     webhook: "${SLACK_WEBHOOK_URL}"
   publish-npm-package:
-    working_directory: ~/etherspot-prime-sdk
+    working_directory: ~/etherspot-modular-sdk
     docker:
       - image: cimg/node:18.16.1
         auth:
@@ -103,15 +103,15 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-prime-sdk/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
       - run:
           name: Build Etherpot Prime SDK
           command: npm run build
       - run:
           name: Publish package to npm
           command: |
-            cd ~/etherspot-prime-sdk
-            npm publish --tag v2-modular
+            cd ~/etherspot-modular-sdk
+            npm publish --access public
       - run:
           name: Announce Publish
           command: |
