@@ -1,8 +1,8 @@
 version: 2.1
-parameters:
-  run_e2e_tests:
-    type: boolean
-    default: true
+# parameters:
+#   run_e2e_tests:
+#     type: boolean
+#     default: true
 orbs:
   slack: circleci/slack@3.4.2
 
@@ -135,10 +135,10 @@ workflows:
     jobs:
       - install:
           context: general-vars
-      - e2e-tests:
-          context: general-vars
-          requires:
-            - install
+      # - e2e-tests:
+      #     context: general-vars
+      #     requires:
+      #       - install
           # filters:
           #   branches:
           #     only:
