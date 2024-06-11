@@ -19,6 +19,9 @@ jobs:
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
+      - run:
+          name: Install dependencies
+          command: npm install
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
