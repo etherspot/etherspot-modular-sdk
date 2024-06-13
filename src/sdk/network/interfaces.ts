@@ -10,11 +10,7 @@ export interface NetworkConfig {
   bundler: string;
   contracts: {
     entryPoint: string;
-    walletFactory: {
-      etherspot: string;
-      zeroDev: string;
-      simpleAccount: string;
-    };
+    walletFactory: string;
     bootstrap: string;
     multipleOwnerECDSAValidator: string;
   };

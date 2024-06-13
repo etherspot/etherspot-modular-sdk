@@ -15,8 +15,6 @@ import { Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
 import { OnRamperDto, SignMessageDto, validateDto } from './dto';
-import { ZeroDevWalletAPI } from './base/ZeroDevWalletAPI';
-import { SimpleAccountAPI } from './base/SimpleAccountWalletAPI';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
@@ -28,7 +26,7 @@ import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
  */
 export class ModularSdk {
 
-  private etherspotWallet: EtherspotWalletAPI | ZeroDevWalletAPI | SimpleAccountAPI;
+  private etherspotWallet: EtherspotWalletAPI;
   private bundler: HttpRpcClient;
   private chainId: number;
   private factoryUsed: Factory;
@@ -70,8 +68,8 @@ export class ModularSdk {
     let entryPointAddress = '', walletFactoryAddress = '';
     if (Networks[chainId]) {
       entryPointAddress = Networks[chainId].contracts.entryPoint;
-      if (Networks[chainId].contracts.walletFactory[this.factoryUsed] == '') throw new Exception('The selected factory is not deployed in the selected chain_id')
-      walletFactoryAddress = Networks[chainId].contracts.walletFactory[this.factoryUsed];
+      if (Networks[chainId].contracts.walletFactory == '') throw new Exception('The selected factory is not deployed in the selected chain_id')
+      walletFactoryAddress = Networks[chainId].contracts.walletFactory;
     }
 
     if (optionsLike.entryPointAddress) entryPointAddress = optionsLike.entryPointAddress;
@@ -80,38 +78,16 @@ export class ModularSdk {
     if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
     if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
 
-    if (this.factoryUsed === Factory.ZERO_DEV) {
-      this.etherspotWallet = new ZeroDevWalletAPI({
-        provider,
-        walletProvider: walletConnectProvider ?? walletProvider,
-        optionsLike,
-        entryPointAddress,
-        factoryAddress: walletFactoryAddress,
-        index: this.index,
-      })
-    } else if (this.factoryUsed === Factory.SIMPLE_ACCOUNT) {
-      this.etherspotWallet = new SimpleAccountAPI({
-        provider,
-        walletProvider: walletConnectProvider ?? walletProvider,
-        optionsLike,
-        entryPointAddress,
-        factoryAddress: walletFactoryAddress,
-        index: this.index,
-      })
-    }
-    else {
-      this.etherspotWallet = new EtherspotWalletAPI({
-        provider,
-        walletProvider: walletConnectProvider ?? walletProvider,
-        optionsLike,
-        entryPointAddress,
-        factoryAddress: walletFactoryAddress,
-        predefinedAccountAddress: accountAddress,
-        index: this.index,
-      })
-    }
+    this.etherspotWallet = new EtherspotWalletAPI({
+      provider,
+      walletProvider: walletConnectProvider ?? walletProvider,
+      optionsLike,
+      entryPointAddress,
+      factoryAddress: walletFactoryAddress,
+      predefinedAccountAddress: accountAddress,
+      index: this.index,
+    })
     this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId);
-
   }
 
 
@@ -163,14 +139,7 @@ export class ModularSdk {
     key?: BigNumber
   } = {}) {
     const { paymasterDetails, gasDetails, callGasLimit, key } = params;
-    let dummySignature = "0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
-
-    /**
-     * Dummy signature used only in the case of zeroDev factory contract
-     */
-    if (this.factoryUsed === Factory.ZERO_DEV) {
-      dummySignature = "0x00000000870fe151d548a1c527c3804866fab30abf28ed17b79d5fc5149f19ca0819fefc3c57f3da4fdf9b10fab3f2f3dca536467ae44943b9dbb8433efe7760ddd72aaa1c"
-    }
+    const dummySignature = "0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
 
     if (this.userOpsBatch.to.length < 1) {
       throw new ErrorHandler('cannot sign empty transaction batch', 1);
@@ -275,7 +244,6 @@ export class ModularSdk {
     tx: UserOpsRequest,
   ): Promise<BatchUserOpsRequest> {
     if (!tx.data && !tx.value) throw new ErrorHandler('Data and Value both cannot be empty', 1);
-    if (tx.value && this.factoryUsed === Factory.SIMPLE_ACCOUNT && tx.value.toString() !== '0' && this.userOpsBatch.value.length > 0) throw new ErrorHandler('SimpleAccount: native transfers cant be part of batch', 1);
     this.userOpsBatch.to.push(tx.to);
     this.userOpsBatch.value.push(tx.value ?? BigNumber.from(0));
     this.userOpsBatch.data.push(tx.data ?? '0x');
@@ -293,11 +261,33 @@ export class ModularSdk {
   }
 
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData?: string): Promise<string> {
-    return this.etherspotWallet.installModule(moduleTypeId, module, initData);
+    const installData = await this.etherspotWallet.installModule(moduleTypeId, module, initData);
+
+    this.clearUserOpsFromBatch();
+
+    await this.addUserOpsToBatch({
+      to: this.etherspotWallet.accountAddress ?? await this.getCounterFactualAddress(),
+      data: installData
+    });
+
+    const op = await this.estimate();
+    const uoHash = await this.send(op);
+    return uoHash;
   }
 
   async uninstallModule(moduleTypeId: MODULE_TYPE, module: string, deinitData: string): Promise<string> {
-    return this.etherspotWallet.uninstallModule(moduleTypeId, module, deinitData);
+    const uninstallData = await this.etherspotWallet.uninstallModule(moduleTypeId, module, deinitData);
+
+    this.clearUserOpsFromBatch();
+
+    await this.addUserOpsToBatch({
+      to: this.etherspotWallet.accountAddress ?? await this.getCounterFactualAddress(),
+      data: uninstallData
+    });
+
+    const op = await this.estimate();
+    const uoHash = await this.send(op);
+    return uoHash;
   }
 
   async totalGasEstimated(userOp: UserOperation): Promise<BigNumber> {
