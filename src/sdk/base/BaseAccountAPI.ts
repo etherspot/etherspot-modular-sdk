@@ -267,10 +267,10 @@ export abstract class BaseAccountAPI {
     }
     const senderAddressCode = await this.provider.getCode(this.getAccountAddress());
     if (senderAddressCode.length > 2) {
-      // console.log(`SimpleAccount Contract already deployed at ${this.senderAddress}`)
+      // console.log(`Contract already deployed at ${this.senderAddress}`)
       this.isPhantom = false;
     } else {
-      // console.log(`SimpleAccount Contract is NOT YET deployed at ${this.senderAddress} - working in "phantom account" mode.`)
+      // console.log(`Contract is NOT YET deployed at ${this.senderAddress} - working in "phantom account" mode.`)
     }
     return this.isPhantom;
   }
@@ -342,8 +342,6 @@ export abstract class BaseAccountAPI {
         throw new Error('must have target address if data is single value');
       }
       callData = await this.encodeExecute(target, value, data);
-    } else if (this.factoryUsed === Factory.SIMPLE_ACCOUNT && target.length === 1){
-      callData = await this.encodeExecute(target[0], detailsForUserOp.values[0], data[0]);
     } else {
       if (typeof target === 'string') {
         target = Array(data.length).fill(target);

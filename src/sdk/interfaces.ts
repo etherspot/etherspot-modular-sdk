@@ -7,9 +7,7 @@ export interface PaymasterApi {
 }
 
 export enum Factory {
-  ZERO_DEV = 'zeroDev',
   ETHERSPOT = 'etherspot',
-  SIMPLE_ACCOUNT = 'simpleAccount'
 }
 
 export interface SdkOptions {
