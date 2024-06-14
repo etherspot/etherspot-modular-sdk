@@ -377,6 +377,16 @@ export const Networks: {
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
     },
+  },
+  [421614]: {
+    chainId: 421614,
+    bundler: 'https://testnet-rpc.etherspot.io/v2/421614',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+    },
   }
 };
 
