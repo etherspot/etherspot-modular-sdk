@@ -16,7 +16,6 @@ export enum NetworkNames {
   OptimismSepolia = 'optimismSepolia',
   Rootstock = 'rootstock',
   RootstockTestnet = 'rootstockTestnet',
-  VerseTestnet = 'verseTestnet',
   Mantle = 'Mantle',
   MantleSepolia = 'MantleSepolia',
   Avalanche = 'avalanche',
@@ -36,7 +35,7 @@ export enum NetworkNames {
 }
 
 export const SupportedNetworks =
-  [1, 10, 14, 30, 31, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 20197, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
+  [1, 10, 14, 30, 31, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
   [key: string]: number;
@@ -56,7 +55,6 @@ export const NETWORK_NAME_TO_CHAIN_ID: {
   [NetworkNames.OptimismSepolia]: 11155420,
   [NetworkNames.Rootstock]: 30,
   [NetworkNames.RootstockTestnet]: 31,
-  [NetworkNames.VerseTestnet]: 20197,
   [NetworkNames.Mantle]: 5000,
   [NetworkNames.MantleSepolia]: 5003,
   [NetworkNames.Avalanche]: 43114,
@@ -203,16 +201,6 @@ export const Networks: {
   [31]: {
     chainId: 31,
     bundler: 'https://testnet-rpc.etherspot.io/v2/31',
-    contracts: {
-      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
-      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
-      multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
-    },
-  },
-  [20197]: {
-    chainId: 20197,
-    bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
