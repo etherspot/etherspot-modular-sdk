@@ -1,4 +1,8 @@
 # Changelog
+## [1.0.2] - 2024-06-17
+### New
+- Added support for XDC Testnet.
+
 ## [1.0.1] - 2024-06-13
 ### New
 - The addresses of the contracts have been updated on all chains.

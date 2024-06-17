@@ -32,10 +32,11 @@ export enum NetworkNames {
   Ancient8Testnet = 'ancient8Testnet',
   Ancient8 = 'ancient8',
   Amoy = 'amoy',
+  XDCTestnet = 'xdcTestnet',
 }
 
 export const SupportedNetworks =
-  [1, 10, 14, 30, 31, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
+  [1, 10, 14, 30, 31, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
   [key: string]: number;
@@ -71,6 +72,7 @@ export const NETWORK_NAME_TO_CHAIN_ID: {
   [NetworkNames.Ancient8Testnet]: 28122024,
   [NetworkNames.Ancient8]: 888888888,
   [NetworkNames.Amoy]: 80002,
+  [NetworkNames.XDCTestnet]: 51,
 };
 
 export const onRamperAllNetworks = ['OPTIMISM', 'POLYGON', 'ARBITRUM', 'FUSE', 'GNOSIS', 'ETHEREUM']
@@ -360,7 +362,7 @@ export const Networks: {
   },
   [888888888]: {
     chainId: 888888888,
-    bundler: '',
+    bundler: 'https://rpc.etherspot.io/v2/888888888',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
@@ -386,6 +388,16 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+    },
+  },
+  [51]: {
+    chainId: 51,
+    bundler: 'https://testnet-rpc.etherspot.io/v2/51',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '0x5952653F151e844346825050d7157A9a6b46A23A',
+      bootstrap: '0x805650ce74561C85baA44a8Bd13E19633Fd0F79d',
+      multipleOwnerECDSAValidator: '0x68BA597bf6B9097b1D89b8E0D34646D30997f773',
     },
   }
 };
