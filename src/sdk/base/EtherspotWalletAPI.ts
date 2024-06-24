@@ -153,7 +153,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       ? ethers.utils.getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
       : ethers.utils.getAddress(key.toHexString()) + "00000000";
 
-    return await this.nonceManager.getNonce(accountAddress, BigInt(dummyKey));
+    return await this.entryPointView.getNonce(accountAddress, BigInt(dummyKey));
   }
 
   /**

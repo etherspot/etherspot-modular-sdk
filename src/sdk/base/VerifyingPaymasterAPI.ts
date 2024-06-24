@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import fetch from 'cross-fetch';
 import { calcPreVerificationGas } from './calcPreVerificationGas';
 import { PaymasterAPI } from './PaymasterAPI';
@@ -8,12 +8,16 @@ import { UserOperation } from '../common';
 const DUMMY_PAYMASTER_AND_DATA =
   '0x0101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000001010101010100000000000000000000000000000000000000000000000000000000000000000101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101';
 
+// Expected EntryPoint v0.7 Paymaster Response
 export interface PaymasterResponse {
   result: {
-    paymasterAndData: string;
-    verificationGasLimit: string;
+    paymaster: string;
+    paymasterData: string;
     preVerificationGas: string;
+    verificationGasLimit: string;
     callGasLimit: string;
+    paymasterVerificationGasLimit: string;
+    paymasterPostOpGasLimit: string;
   }
 }
 
@@ -28,8 +32,8 @@ export class VerifyingPaymasterAPI extends PaymasterAPI {
     this.context = context;
   }
 
-  async getPaymasterAndData(userOp: Partial<UserOperation>): Promise<PaymasterResponse> {
-    // Hack: userOp includes empty paymasterAndData which calcPreVerificationGas requires.
+  async getPaymasterData(userOp: Partial<UserOperation>): Promise<PaymasterResponse> {
+    // Hack: userOp includes empty paymasterData which calcPreVerificationGas requires.
     try {
       // userOp.preVerificationGas contains a promise that will resolve to an error.
       await ethers.utils.resolveProperties(userOp);
@@ -44,37 +48,34 @@ export class VerifyingPaymasterAPI extends PaymasterAPI {
       verificationGasLimit: userOp.verificationGasLimit,
       maxFeePerGas: userOp.maxFeePerGas,
       maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
-      // A dummy value here is required in order to calculate a correct preVerificationGas value.
-      paymasterData: DUMMY_PAYMASTER_AND_DATA,
-      signature: userOp.signature ?? '0x',
-      paymaster: userOp.paymaster,
-      paymasterVerificationGasLimit: userOp.paymasterVerificationGasLimit,
-      paymasterPostOpGasLimit: userOp.paymasterPostOpGasLimit,
     };
     const op = await ethers.utils.resolveProperties(pmOp);
     op.preVerificationGas = calcPreVerificationGas(op);
 
-    // Ask the paymaster to sign the transaction and return a valid paymasterAndData value.
-    const paymasterAndData = await fetch(this.paymasterUrl, {
+    // Ask the paymaster to sign the transaction and return a valid paymasterData value.
+    const paymasterData = await fetch(this.paymasterUrl, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ params: [await toJSON(op), this.entryPoint, this.context], jsonrpc: '2', id: 2 }),
+      body: JSON.stringify({ method: 'pm_sponsorUserOperation', params: [await toJSON(op), this.entryPoint, this.context], jsonrpc: '2', id: 2 }),
     })
       .then(async (res) => {
         const response = await await res.json();
         if (response.error) {
           throw new Error(response.error);
         }
+        // Since the value of paymasterVerificationGasLimit is defined by the paymaster provider itself, it could be number in string
+        if (response.result && response.result.paymasterVerificationGasLimit) 
+          response.result.paymasterVerificationGasLimit = BigNumber.from(response.result.paymasterVerificationGasLimit).toHexString()
         return response
       })
       .catch((err) => {
         throw new Error(err.message);
       })
 
-    return paymasterAndData;
+    return paymasterData;
   }
 }
 
