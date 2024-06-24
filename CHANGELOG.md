@@ -1,4 +1,8 @@
 # Changelog
+## [1.0.3] - 2024-06-24
+### Bug Fixes
+- Added support for paymaster executions according to EPv7
+
 ## [1.0.2] - 2024-06-17
 ### New
 - Added support for XDC Testnet.
