@@ -49,7 +49,6 @@ export abstract class BaseAccountAPI {
 
   // entryPoint connected to "zero" address. allowed to make static calls (e.g. to getSenderAddress)
   protected readonly entryPointView: IEntryPoint;
-  protected readonly nonceManager: INonceManager;
 
   provider: Provider;
   overheads?: Partial<GasOverheads>;
@@ -101,9 +100,6 @@ export abstract class BaseAccountAPI {
     // factory "connect" define the contract address. the contract "connect" defines the "from" address.
     this.entryPointView = EntryPoint__factory.connect(params.entryPointAddress, params.provider).connect(
       ethers.constants.AddressZero,
-    );
-    this.nonceManager = INonceManager__factory.connect(params.entryPointAddress, params.provider).connect(
-      ethers.constants.AddressZero
     );
   }
 
@@ -440,19 +436,22 @@ export abstract class BaseAccountAPI {
     };
 
 
-    let paymasterAndData: PaymasterResponse | undefined = null;
+    let paymasterData: PaymasterResponse | undefined = null;
     if (this.paymasterAPI != null) {
-      // fill (partial) preVerificationGas (all except the cost of the generated paymasterAndData)
+      // fill (partial) preVerificationGas (all except the cost of the generated paymasterData)
       const userOpForPm = {
         ...partialUserOp,
         preVerificationGas: this.getPreVerificationGas(partialUserOp),
       };
-      paymasterAndData = (await this.paymasterAPI.getPaymasterAndData(userOpForPm));
-      partialUserOp.verificationGasLimit = paymasterAndData.result.verificationGasLimit;
-      partialUserOp.preVerificationGas = paymasterAndData.result.preVerificationGas;
-      partialUserOp.callGasLimit = paymasterAndData.result.callGasLimit;
+      paymasterData = (await this.paymasterAPI.getPaymasterData(userOpForPm));
+      partialUserOp.verificationGasLimit = paymasterData.result.verificationGasLimit;
+      partialUserOp.preVerificationGas = paymasterData.result.preVerificationGas;
+      partialUserOp.callGasLimit = paymasterData.result.callGasLimit;
+      partialUserOp.paymaster = paymasterData.result.paymaster;
+      partialUserOp.paymasterVerificationGasLimit = paymasterData.result.paymasterVerificationGasLimit;
+      partialUserOp.paymasterPostOpGasLimit = paymasterData.result.paymasterPostOpGasLimit;
     }
-    partialUserOp.paymasterAndData = paymasterAndData ? paymasterAndData.result.paymasterAndData : '0x';
+    partialUserOp.paymasterData = paymasterData ? paymasterData.result.paymasterData : '0x';
     return {
       ...partialUserOp,
       preVerificationGas: this.getPreVerificationGas(partialUserOp),
@@ -466,10 +465,13 @@ export abstract class BaseAccountAPI {
    */
   async signUserOp(userOp: UserOperation): Promise<UserOperation> {
     if (this.paymasterAPI != null) {
-      const paymasterAndData = await this.paymasterAPI.getPaymasterAndData(userOp);
-      userOp.verificationGasLimit = paymasterAndData.result.verificationGasLimit;
-      userOp.preVerificationGas = paymasterAndData.result.preVerificationGas;
-      userOp.callGasLimit = paymasterAndData.result.callGasLimit;
+      const paymasterData = await this.paymasterAPI.getPaymasterData(userOp);
+      userOp.verificationGasLimit = paymasterData.result.verificationGasLimit;
+      userOp.preVerificationGas = paymasterData.result.preVerificationGas;
+      userOp.callGasLimit = paymasterData.result.callGasLimit;
+      userOp.paymaster = paymasterData.result.paymaster;
+      userOp.paymasterVerificationGasLimit = paymasterData.result.paymasterVerificationGasLimit;
+      userOp.paymasterPostOpGasLimit = paymasterData.result.paymasterPostOpGasLimit;
     }
     const userOpHash = await this.getUserOpHash(userOp);
     const signature = await this.signUserOpHash(userOpHash);
