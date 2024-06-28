@@ -5,8 +5,8 @@ import { PaymasterAPI } from './PaymasterAPI';
 import { toJSON } from '../common/OperationUtils';
 import { UserOperation } from '../common';
 
-const DUMMY_PAYMASTER_AND_DATA =
-  '0x0101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000001010101010100000000000000000000000000000000000000000000000000000000000000000101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101';
+const DUMMY_SIGNATURE =
+  '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c';
 
 // Expected EntryPoint v0.7 Paymaster Response
 export interface PaymasterResponse {
@@ -39,16 +39,33 @@ export class VerifyingPaymasterAPI extends PaymasterAPI {
       await ethers.utils.resolveProperties(userOp);
       // eslint-disable-next-line no-empty
     } catch (_) { }
-    const pmOp: Partial<UserOperation> = {
-      sender: userOp.sender,
-      nonce: userOp.nonce,
-      factoryData: userOp.factoryData,
-      callData: userOp.callData,
-      callGasLimit: userOp.callGasLimit,
-      verificationGasLimit: userOp.verificationGasLimit,
-      maxFeePerGas: userOp.maxFeePerGas,
-      maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
-    };
+    let pmOp: Partial<UserOperation>;
+    if (userOp.factoryData !== "0x") {
+      pmOp = {
+        sender: userOp.sender,
+        nonce: userOp.nonce,
+        factory: userOp.factory,
+        factoryData: userOp.factoryData,
+        callData: userOp.callData,
+        callGasLimit: userOp.callGasLimit,
+        verificationGasLimit: userOp.verificationGasLimit,
+        maxFeePerGas: userOp.maxFeePerGas,
+        maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
+        signature: DUMMY_SIGNATURE,
+      };
+    } else {
+      pmOp = {
+        sender: userOp.sender,
+        nonce: userOp.nonce,
+        factoryData: userOp.factoryData,
+        callData: userOp.callData,
+        callGasLimit: userOp.callGasLimit,
+        verificationGasLimit: userOp.verificationGasLimit,
+        maxFeePerGas: userOp.maxFeePerGas,
+        maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
+        signature: DUMMY_SIGNATURE,
+      }
+    }
     const op = await ethers.utils.resolveProperties(pmOp);
     op.preVerificationGas = calcPreVerificationGas(op);
 
