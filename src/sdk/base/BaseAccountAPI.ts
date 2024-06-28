@@ -1,7 +1,7 @@
 import { ethers, BigNumber, BigNumberish, TypedDataField } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Provider } from '@ethersproject/providers';
-import { IEntryPoint, EntryPoint__factory, INonceManager, INonceManager__factory } from '../contracts';
+import { IEntryPoint, EntryPoint__factory } from '../contracts';
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
 import { resolveProperties } from 'ethers/lib/utils';
@@ -17,8 +17,9 @@ export interface BaseApiParams {
   entryPointAddress: string;
   accountAddress?: string;
   overheads?: Partial<GasOverheads>;
-  walletProvider: WalletProviderLike, 
-  optionsLike?: SdkOptions
+  walletProvider: WalletProviderLike;
+  factoryAddress?: string;
+  optionsLike?: SdkOptions;
 }
 
 export interface UserOpResult {
@@ -56,6 +57,7 @@ export abstract class BaseAccountAPI {
   accountAddress?: string;
   paymasterAPI?: PaymasterAPI;
   factoryUsed: Factory;
+  factoryAddress?: string;
 
   /**
    * base constructor.
@@ -96,6 +98,7 @@ export abstract class BaseAccountAPI {
     this.overheads = params.overheads;
     this.entryPointAddress = params.entryPointAddress;
     this.accountAddress = params.accountAddress;
+    this.factoryAddress = params.factoryAddress;
 
     // factory "connect" define the contract address. the contract "connect" defines the "from" address.
     this.entryPointView = EntryPoint__factory.connect(params.entryPointAddress, params.provider).connect(
@@ -423,17 +426,31 @@ export abstract class BaseAccountAPI {
         maxPriorityFeePerGas = feeData.maxPriorityFeePerGas ?? undefined;
       }
     }
-
-    const partialUserOp: any = {
-      sender: await this.getAccountAddress(),
-      nonce: await this.getNonce(key),
-      factoryData : '0x' + factoryData.substring(42),
-      callData,
-      callGasLimit,
-      verificationGasLimit,
-      maxFeePerGas,
-      maxPriorityFeePerGas,
-    };
+    let partialUserOp: any;
+    if (factoryData !== '0x') {
+      partialUserOp = {
+        sender: await this.getAccountAddress(),
+        nonce: await this.getNonce(key),
+        factory: this.factoryAddress,
+        factoryData : '0x' + factoryData.substring(42),
+        callData,
+        callGasLimit,
+        verificationGasLimit,
+        maxFeePerGas,
+        maxPriorityFeePerGas,
+      };
+    } else {
+      partialUserOp = {
+        sender: await this.getAccountAddress(),
+        nonce: await this.getNonce(key),
+        factoryData : '0x' + factoryData.substring(42),
+        callData,
+        callGasLimit,
+        verificationGasLimit,
+        maxFeePerGas,
+        maxPriorityFeePerGas,
+      };
+    }
 
 
     let paymasterData: PaymasterResponse | undefined = null;
