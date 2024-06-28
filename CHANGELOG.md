@@ -1,4 +1,8 @@
 # Changelog
+## [1.1.0] - 2024-06-27
+### Breaking Changes
+- Removed `ArkaPaymaster` as it is no longer relevant to the epv07 paymasters on Arka
+
 ## [1.0.3] - 2024-06-24
 ### Bug Fixes
 - Added support for paymaster executions according to EPv7
