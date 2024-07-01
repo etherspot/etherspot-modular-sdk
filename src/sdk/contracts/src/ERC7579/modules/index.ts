@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { MultipleOwnerECDSAValidator } from "./MultipleOwnerECDSAValidator";
+export type { ERC20SessionKeyValidator } from "./ERC20SessionKeyValidator";

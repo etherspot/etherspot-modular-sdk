@@ -13,5 +13,6 @@ export interface NetworkConfig {
     walletFactory: string;
     bootstrap: string;
     multipleOwnerECDSAValidator: string;
+    erc20SessionKeyValidator: string;
   };
 };
