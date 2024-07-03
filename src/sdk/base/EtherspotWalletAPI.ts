@@ -19,6 +19,18 @@ export interface EtherspotWalletApiParams extends BaseApiParams {
   predefinedAccountAddress?: string;
 }
 
+export type ModuleInfo = {
+    validators?: string[];
+    executors?: string[];
+    hook?: string;
+    fallbacks?: FallbackInfo[];
+};
+
+export type FallbackInfo = {
+    selector: string;
+    handlerAddress: string;
+};
+
 /**
  * An implementation of the BaseAccountAPI using the EtherspotWallet contract.
  * - contract deployer gets "entrypoint", "owner" addresses and "index" nonce
@@ -68,6 +80,90 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
     return accountContract.interface.encodeFunctionData('uninstallModule', [moduleTypeId, module, deinitData]);
   }
+
+  // Function to get all executors
+  async getAllExecutors(): Promise<string[]> {      
+    // Assuming getExecutorsPaginated is a contract function that can be called
+    // Initialize variables
+    let pageSize = 50;
+    let lastAddress = "0x1"; // Assuming this is your SENTINEL value
+    let totalExecutors: string[] = [];
+    
+    // Pagination loop
+    let tempExecutors: string[];
+    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
+
+    do {
+      // Fetch a page of executors
+      [tempExecutors, lastAddress] = await accountContract.getExecutorsPaginated(lastAddress, pageSize);
+      
+      // Append executors to the total list
+      totalExecutors = [...totalExecutors, ...tempExecutors];
+      
+      // Break if it's the last page
+      if (tempExecutors.length < pageSize || lastAddress === "0x1" || lastAddress === ethers.constants.AddressZero) {
+        break;
+      }
+    } while (true);
+      
+    return totalExecutors;
+  } 
+
+  // function to get validators
+  async getAllValidators(): Promise<string[]> {
+    // Assuming getValidatorsPaginated is a contract function that can be called
+    // Initialize variables
+    let pageSize = 50;
+    let lastAddress = "0x1"; // Assuming this is your SENTINEL value
+    let totalValidators: string[] = [];
+    
+    // Pagination loop
+    let tempValidators: string[];
+    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
+
+    do {
+      // Fetch a page of validators
+      [tempValidators, lastAddress] = await accountContract.getValidatorPaginated(lastAddress, pageSize);
+      
+      // Append validators to the total list
+      totalValidators = [...totalValidators, ...tempValidators];
+      
+      // Break if it's the last page
+      if (tempValidators.length < pageSize || lastAddress === "0x1" || lastAddress === ethers.constants.AddressZero) {
+        break;
+      }
+    } while (true);
+      
+    return totalValidators;
+  }
+
+  // function to get active hook
+  async getActiveHook(): Promise<string> {
+    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
+    return accountContract.getActiveHook();
+  }
+
+  async getFallbacks(): Promise<any[]> {
+    return [];
+  }
+
+  // function to club the response of getAllExecutors, getAllValidators and getActiveHook
+  // return should be a wrapper of tis way
+  // prepare a schema like above and return the response
+  async getAllModules(): Promise<ModuleInfo> {
+    const validators = await this.getAllValidators() || [];
+    const executors = await this.getAllExecutors() || [];
+    const hook = await this.getActiveHook() || "";
+    const fallbacks = await this.getFallbacks() || [];
+    
+    return {
+      validators,
+      executors,
+      hook,
+      fallbacks
+    };
+  }
+
 
   async checkAccountAddress(address: string): Promise<void> {
     const accountContract = EtherspotWallet7579__factory.connect(address, this.provider);

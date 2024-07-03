@@ -290,6 +290,7 @@ export class ModularSdk {
     return uoHash;
   }
 
+
   async totalGasEstimated(userOp: UserOperation): Promise<BigNumber> {
     const callGasLimit = BigNumber.from(await userOp.callGasLimit);
     const verificationGasLimit = BigNumber.from(await userOp.verificationGasLimit);
