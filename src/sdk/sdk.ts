@@ -18,6 +18,7 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
+import { ModuleInfo } from './base/EtherspotWalletAPI';
 
 /**
  * Modular-Sdk
@@ -78,6 +79,9 @@ export class ModularSdk {
     if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
     if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
 
+    console.log(`entryPointAddress: ${entryPointAddress}`)  
+    console.log(`predeterminedAccountAddress: ${accountAddress}`)
+
     this.etherspotWallet = new EtherspotWalletAPI({
       provider,
       walletProvider: walletConnectProvider ?? walletProvider,
@@ -129,6 +133,7 @@ export class ModularSdk {
   }
 
   async getCounterFactualAddress(): Promise<string> {
+    console.log(`inside getCounterFactualAddress`)
     return this.etherspotWallet.getCounterFactualAddress();
   }
 
@@ -260,6 +265,10 @@ export class ModularSdk {
     return this.etherspotWallet._getAccountContract();
   }
 
+  async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string): Promise<boolean> {
+    return this.etherspotWallet.isModuleInstalled(moduleTypeId, module);
+  }
+
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData?: string): Promise<string> {
     const installData = await this.etherspotWallet.installModule(moduleTypeId, module, initData);
 
@@ -275,6 +284,14 @@ export class ModularSdk {
     return uoHash;
   }
 
+  async getPreviousModuleAddress(moduleTypeId: MODULE_TYPE, module: string): Promise<string> {
+    return this.etherspotWallet.getPreviousAddressInSentinelList(module, moduleTypeId);
+  }
+
+  async generateModuleDeInitData(moduleTypeId: MODULE_TYPE, module: string, moduleDeInitData: string): Promise<string> {
+    return await this.etherspotWallet.generateModuleDeInitData(moduleTypeId, module, moduleDeInitData);
+  }
+
   async uninstallModule(moduleTypeId: MODULE_TYPE, module: string, deinitData: string): Promise<string> {
     const uninstallData = await this.etherspotWallet.uninstallModule(moduleTypeId, module, deinitData);
 
@@ -288,6 +305,11 @@ export class ModularSdk {
     const op = await this.estimate();
     const uoHash = await this.send(op);
     return uoHash;
+  }
+
+  async getAllModules(): Promise<ModuleInfo> {
+    const modules = await this.etherspotWallet.getAllModules();
+    return modules;
   }
 
 

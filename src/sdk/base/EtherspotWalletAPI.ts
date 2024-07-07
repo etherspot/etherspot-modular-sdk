@@ -7,6 +7,8 @@ import { BOOTSTRAP_ABI, BootstrapConfig, _makeBootstrapConfig, makeBootstrapConf
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
 
+// Creating a constant for the sentinel address using ethers.js
+const SENTINEL_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000001");
 /**
  * constructor params, added no top of base params:
  * @param owner the signer object for the account owner
@@ -20,15 +22,15 @@ export interface EtherspotWalletApiParams extends BaseApiParams {
 }
 
 export type ModuleInfo = {
-    validators?: string[];
-    executors?: string[];
-    hook?: string;
-    fallbacks?: FallbackInfo[];
+  validators?: string[];
+  executors?: string[];
+  hook?: string;
+  fallbacks?: FallbackInfo[];
 };
 
 export type FallbackInfo = {
-    selector: string;
-    handlerAddress: string;
+  selector: string;
+  handlerAddress: string;
 };
 
 /**
@@ -61,10 +63,18 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
     this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
     this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
+    //this.publicClient = getPublicClient({ rpcUrl: Networks[params.optionsLike.chainId] });
+  }
+
+  async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string): Promise<boolean> {
+    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
+    return await accountContract.isModuleInstalled(moduleTypeId, module, '0x');
   }
 
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {
+    const accountAddress = await this.getAccountAddress();
     const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
+    console.log(`accountContractAddress: ${accountAddress} \n moduleTypeId: ${moduleTypeId} \n module: ${module} \n initData: ${initData}`);
     if (await accountContract.isModuleInstalled(moduleTypeId, module, initData)) {
       throw new Error('the module is already installed')
     }
@@ -82,13 +92,13 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   // Function to get all executors
-  async getAllExecutors(): Promise<string[]> {      
+  async getAllExecutors(): Promise<string[]> {
     // Assuming getExecutorsPaginated is a contract function that can be called
     // Initialize variables
     let pageSize = 50;
-    let lastAddress = "0x1"; // Assuming this is your SENTINEL value
+    let lastAddress = SENTINEL_ADDRESS; // Assuming this is your SENTINEL value
     let totalExecutors: string[] = [];
-    
+
     // Pagination loop
     let tempExecutors: string[];
     const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
@@ -96,27 +106,111 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     do {
       // Fetch a page of executors
       [tempExecutors, lastAddress] = await accountContract.getExecutorsPaginated(lastAddress, pageSize);
-      
+
       // Append executors to the total list
       totalExecutors = [...totalExecutors, ...tempExecutors];
-      
+
       // Break if it's the last page
-      if (tempExecutors.length < pageSize || lastAddress === "0x1" || lastAddress === ethers.constants.AddressZero) {
+      if (tempExecutors.length < pageSize || lastAddress === SENTINEL_ADDRESS || lastAddress === ethers.constants.AddressZero) {
         break;
       }
     } while (true);
-      
+
     return totalExecutors;
-  } 
+  }
+
+  // Adjusting the function to be generic for handling different module types
+  async getPreviousAddressInSentinelList(targetAddress: string, moduleTypeId: MODULE_TYPE): Promise<string> {
+    let pageSize = 50;
+    let lastAddress = SENTINEL_ADDRESS; // Assuming SENTINEL_ADDRESS is defined elsewhere as the sentinel value
+    let found = false; // Flag to indicate if the target address has been found
+  
+    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
+  
+    do {
+      let currentAddresses: string[];
+      let newLastAddress: string;
+  
+      // Determine the method to call based on moduleTypeId
+      switch (moduleTypeId) {
+        case MODULE_TYPE.EXECUTOR:
+          [currentAddresses, newLastAddress] = await accountContract.getExecutorsPaginated(lastAddress, pageSize);
+          break;
+        case MODULE_TYPE.VALIDATOR:
+          [currentAddresses, newLastAddress] = await accountContract.getValidatorPaginated(lastAddress, pageSize);
+          break;
+        // Add cases for other MODULE_TYPEs as necessary
+        default:
+          throw new Error(`Unsupported module type: ${moduleTypeId}`);
+      }
+  
+      const targetIndex = currentAddresses.indexOf(targetAddress);
+      if (targetIndex !== -1) {
+        found = true;
+        // If the target address is the last in the current page, we need to fetch the next page to find the logical "previous" address
+        if (targetIndex === currentAddresses.length - 1) {
+          // Fetch the next page
+          const [nextPageAddresses] = await accountContract.getExecutorsPaginated(newLastAddress, pageSize); // Adjust based on moduleTypeId
+          if (nextPageAddresses.length > 0) {
+            return nextPageAddresses[0]; // The first address in the next page is the logical "previous" address
+          } else {
+            // If there are no more pages, the target address is the last in the list, and there is no "previous" address
+            throw new Error("The target address is the last in the list; no previous address exists.");
+          }
+        } else {
+          // The logical "previous" address is the one immediately after the target address in the current page
+          return currentAddresses[targetIndex + 1];
+        }
+      }
+  
+      lastAddress = newLastAddress;
+  
+      if (currentAddresses.length < pageSize || newLastAddress === SENTINEL_ADDRESS || found) {
+        break;
+      }
+    } while (true);
+  
+    if (!found) {
+      throw new Error("Target address not found in the list.");
+    }
+  
+    // This line should never be reached due to the logic above, but is required to satisfy TypeScript's need for a return
+    throw new Error("Unexpected error occurred.");
+  }
+
+  // here its users responsibility to prepare deInit Data
+  // deinitData is prepared as bytes data made of the previous node address and the deinit data
+  // the deinit data is the data that is passed to the module to be uninstalled
+  async generateModuleDeInitData(moduleTypeId: MODULE_TYPE, module: string, deinitData: string): Promise<string> {
+
+    // this is applicable only for Executor and Validator modules
+    // if the module type is not Executor or Validator, throw an error
+    if (moduleTypeId !== MODULE_TYPE.EXECUTOR && moduleTypeId !== MODULE_TYPE.VALIDATOR) {
+      throw new Error("Unsupported module type");
+    }
+
+    // Get the previous address in the list
+    const previousAddress = await this.getPreviousAddressInSentinelList(module, moduleTypeId);
+
+    console.log(`Previous address: ${previousAddress}`);
+
+    // Prepare the deinit data
+    const deInitData = ethers.utils.defaultAbiCoder.encode(
+      ["address", "bytes"],
+      [previousAddress, deinitData]
+    );
+
+    return deInitData;
+  }
 
   // function to get validators
   async getAllValidators(): Promise<string[]> {
     // Assuming getValidatorsPaginated is a contract function that can be called
     // Initialize variables
     let pageSize = 50;
-    let lastAddress = "0x1"; // Assuming this is your SENTINEL value
+    let lastAddress = SENTINEL_ADDRESS;
     let totalValidators: string[] = [];
-    
+
     // Pagination loop
     let tempValidators: string[];
     const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
@@ -124,16 +218,16 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     do {
       // Fetch a page of validators
       [tempValidators, lastAddress] = await accountContract.getValidatorPaginated(lastAddress, pageSize);
-      
+
       // Append validators to the total list
       totalValidators = [...totalValidators, ...tempValidators];
-      
+
       // Break if it's the last page
-      if (tempValidators.length < pageSize || lastAddress === "0x1" || lastAddress === ethers.constants.AddressZero) {
+      if (tempValidators.length < pageSize || lastAddress === SENTINEL_ADDRESS || lastAddress === ethers.constants.AddressZero) {
         break;
       }
     } while (true);
-      
+
     return totalValidators;
   }
 
@@ -155,7 +249,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const executors = await this.getAllExecutors() || [];
     const hook = await this.getActiveHook() || "";
     const fallbacks = await this.getFallbacks() || [];
-    
+
     return {
       validators,
       executors,
@@ -166,7 +260,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
 
   async checkAccountAddress(address: string): Promise<void> {
+    console.log(`inside checkAccountAddress for: ${address}`);
     const accountContract = EtherspotWallet7579__factory.connect(address, this.provider);
+    console.log('accountContract: ', accountContract);
     if (!(await accountContract.isOwner(this.services.walletService.EOAAddress))) {
       throw new Error('the specified accountAddress does not belong to the given EOA provider')
     }
@@ -226,7 +322,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async getCounterFactualAddress(): Promise<string> {
+    console.log(`inside getCounterFactualAddress ${this.predefinedAccountAddress}`);
     if (this.predefinedAccountAddress) {
+      console.log('predefinedAccountAddress: ', this.predefinedAccountAddress);
       await this.checkAccountAddress(this.predefinedAccountAddress);
     }
 

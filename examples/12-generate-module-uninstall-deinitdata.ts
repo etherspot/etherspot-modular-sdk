@@ -5,7 +5,7 @@ import { MODULE_TYPE, sleep } from '../src/sdk/common';
 
 dotenv.config();
 
-// npx ts-node examples/12-uninstall-module.ts
+// npx ts-node examples/12-generate-module-uninstall-deinitdata.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
@@ -23,23 +23,9 @@ async function main() {
   //deinit data is the data that is passed to the module to be uninstalled
   // here we need to call the function which can find out the address of previous node of the module to be uninstalled
   // and the deinit data can be 0x00 as default value
-  const deInitData = ethers.utils.defaultAbiCoder.encode(
-    ["address", "bytes"],
-    ['0x0000000000000000000000000000000000000001', '0x00']
-  );
-
-  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, '0x1417aDC5308a32265E0fA0690ea1408FFA62F37c', deInitData);
-  console.log(`UserOpHash: ${uoHash}`);
-
-  // get transaction hash...
-  console.log('Waiting for transaction...');
-  let userOpsReceipt = null;
-  const timeout = Date.now() + 60000; // 1 minute timeout
-  while ((userOpsReceipt == null) && (Date.now() < timeout)) {
-    await sleep(2);
-    userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
-  }
-  console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
+  const deInitData = '0x00';
+  const deinitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, '0x1417aDC5308a32265E0fA0690ea1408FFA62F37c', deInitData);
+  console.log(`deinitData: ${deinitData}`);
 }
 
 main()
