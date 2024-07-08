@@ -79,9 +79,6 @@ export class ModularSdk {
     if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
     if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
 
-    console.log(`entryPointAddress: ${entryPointAddress}`)  
-    console.log(`predeterminedAccountAddress: ${accountAddress}`)
-
     this.etherspotWallet = new EtherspotWalletAPI({
       provider,
       walletProvider: walletConnectProvider ?? walletProvider,
@@ -133,7 +130,6 @@ export class ModularSdk {
   }
 
   async getCounterFactualAddress(): Promise<string> {
-    console.log(`inside getCounterFactualAddress`)
     return this.etherspotWallet.getCounterFactualAddress();
   }
 

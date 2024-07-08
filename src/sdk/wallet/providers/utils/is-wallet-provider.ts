@@ -3,7 +3,6 @@ import { WalletLike, WalletProvider, WalletProviderLike } from '../interfaces';
 
 export function isWalletProvider(provider: WalletProviderLike): boolean {
   let result = false;
-
   if (provider) {
     switch (typeof provider) {
       case 'string':

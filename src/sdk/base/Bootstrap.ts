@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { encodeFunctionData, parseAbi } from "viem";
 
 export interface BootstrapConfig {
     module: string;
@@ -421,80 +422,42 @@ export const BOOTSTRAP_ABI = [
     }
 ];
 
-const abi = [
-    {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "typeID",
-                type: "uint256",
-            },
-        ],
-        name: "isModuleType",
-        outputs: [
-            {
-                internalType: "bool",
-                name: "",
-                type: "bool",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes",
-                name: "data",
-                type: "bytes",
-            },
-        ],
-        name: "onInstall",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes",
-                name: "data",
-                type: "bytes",
-            },
-        ],
-        name: "onUninstall",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-] as const;
+export const bootstrapAbi = [
+    'function singleInitMSA(address validator, bytes calldata data)',
+    'function initMSA(BootstrapConfig[] calldata $valdiators,BootstrapConfig[] calldata $executors,BootstrapConfig calldata _hook,BootstrapConfig[] calldata _fallbacks)',
+    'function onInstall(bytes calldata data)',
+    'struct BootstrapConfig {address module;bytes data;}',
+]
 
 export function _makeBootstrapConfig(module: string, data: string): BootstrapConfig {
     const config: BootstrapConfig = {
         module: "",
         data: ""
     };
-    const iface = new ethers.utils.Interface(abi);
-
     config.module = module;
-    config.data = iface.encodeFunctionData(
-        'onInstall',
-        [data]
-    );
+    config.data = generateBootstrapConfigData(data);
     return config;
 }
 
 export function makeBootstrapConfig(module: string, data: string): BootstrapConfig[] {
     const config: BootstrapConfig[] = [];
-    const iface = new ethers.utils.Interface(abi);
-    const data1 = iface.encodeFunctionData(
-        'onInstall',
-        [data]
-    );
+    const calldata = generateBootstrapConfigData(data)
     const newConfig: BootstrapConfig = {
         module: module,
-        data: data1
+        data: calldata
     };
     config.push(newConfig);
     return config;
 }
+
+
+function generateBootstrapConfigData(data: string) {
+    return encodeFunctionData({
+        functionName: 'onInstall',
+        abi: parseAbi(bootstrapAbi),
+        args: [
+            data,
+        ],
+    });
+}
+
