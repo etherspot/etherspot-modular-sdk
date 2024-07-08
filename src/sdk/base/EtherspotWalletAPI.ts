@@ -115,68 +115,28 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     return totalExecutors;
   }
 
-  // Adjusting the function to be generic for handling different module types
-  async getPreviousAddressInSentinelList(targetAddress: string, moduleTypeId: MODULE_TYPE, pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<string> {
-    let lastAddress = SENTINEL_ADDRESS; // Assuming SENTINEL_ADDRESS is defined elsewhere as the sentinel value
-    let found = false; // Flag to indicate if the target address has been found
+  async getPreviousAddress(targetAddress: string, moduleTypeId: MODULE_TYPE): Promise<string> {
   
-    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
-  
-    do {
-      let currentAddresses: string[];
-      let newLastAddress: string;
-  
-      // Determine the method to call based on moduleTypeId
-      switch (moduleTypeId) {
-        case MODULE_TYPE.EXECUTOR:
-          [currentAddresses, newLastAddress] = await accountContract.getExecutorsPaginated(lastAddress, pageSize);
-          break;
-        case MODULE_TYPE.VALIDATOR:
-          [currentAddresses, newLastAddress] = await accountContract.getValidatorPaginated(lastAddress, pageSize);
-          break;
-        // Add cases for other MODULE_TYPEs as necessary
-        default:
-          throw new Error(`Unsupported module type: ${moduleTypeId}`);
-      }
-  
-      const targetIndex = currentAddresses.indexOf(targetAddress);
-      if (targetIndex !== -1) {
-        found = true;
-        // If the target address is the last in the current page, we need to fetch the next page to find the logical "previous" address
-        if (targetIndex === currentAddresses.length - 1) {
-          // Fetch the next page
-          const [nextPageAddresses] = await accountContract.getExecutorsPaginated(newLastAddress, pageSize); // Adjust based on moduleTypeId
-          if (nextPageAddresses.length > 0) {
-            return nextPageAddresses[0]; // The first address in the next page is the logical "previous" address
-          } else {
-            // If there are no more pages, the target address is the last in the list, and there is no "previous" address
-            throw new Error("The target address is the last in the list; no previous address exists.");
-          }
-        } else {
-          // The logical "previous" address is the one immediately after the target address in the current page
-          return currentAddresses[targetIndex + 1];
-        }
-      }
-  
-      lastAddress = newLastAddress;
-  
-      if (currentAddresses.length < pageSize || newLastAddress === SENTINEL_ADDRESS || found) {
-        break;
-      }
-    } while (true);
-  
-    if (!found) {
-      throw new Error("Target address not found in the list.");
+    if (moduleTypeId !== MODULE_TYPE.EXECUTOR && moduleTypeId !== MODULE_TYPE.VALIDATOR) {
+      throw new Error("Unsupported module type");
     }
-  
-    // This line should never be reached due to the logic above, but is required to satisfy TypeScript's need for a return
-    throw new Error("Unexpected error occurred.");
+
+    const insalledModules = moduleTypeId === MODULE_TYPE.EXECUTOR ? await this.getAllExecutors() : await this.getAllValidators()
+
+    const index = insalledModules.indexOf(targetAddress)
+    if (index === 0) {
+      return SENTINEL_ADDRESS
+    } else if (index > 0) {
+      return insalledModules[index - 1]
+    } else {
+      throw new Error(`Module ${targetAddress} not found in installed modules`)
+    }
   }
 
   // here its users responsibility to prepare deInit Data
   // deinitData is prepared as bytes data made of the previous node address and the deinit data
   // the deinit data is the data that is passed to the module to be uninstalled
-  async generateModuleDeInitData(moduleTypeId: MODULE_TYPE, module: string, deinitData: string): Promise<string> {
+  async generateModuleDeInitData(moduleTypeId: MODULE_TYPE, module: string, deinitDataBase: string): Promise<string> {
 
     // this is applicable only for Executor and Validator modules
     // if the module type is not Executor or Validator, throw an error
@@ -185,15 +145,15 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     }
 
     // Get the previous address in the list
-    const previousAddress = await this.getPreviousAddressInSentinelList(module, moduleTypeId);
+    const previousAddress = await this.getPreviousAddress(module, moduleTypeId);
 
     // Prepare the deinit data
-    const deInitData = ethers.utils.defaultAbiCoder.encode(
+    const deInitDataGenerated = ethers.utils.defaultAbiCoder.encode(
       ["address", "bytes"],
-      [previousAddress, deinitData]
+      [previousAddress, deinitDataBase]
     );
 
-    return deInitData;
+    return deInitDataGenerated;
   }
 
   // function to get validators

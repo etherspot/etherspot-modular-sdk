@@ -23,12 +23,15 @@ async function main() {
   //deinit data is the data that is passed to the module to be uninstalled
   // here we need to call the function which can find out the address of previous node of the module to be uninstalled
   // and the deinit data can be 0x00 as default value
-  const deInitData = ethers.utils.defaultAbiCoder.encode(
-    ["address", "bytes"],
-    ['0x0000000000000000000000000000000000000001', '0x00']
-  );
+  const deInitDataDefault = '0x00';
 
-  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, '0x1417aDC5308a32265E0fA0690ea1408FFA62F37c', deInitData);
+  //generate deinit data...
+  const deInitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143', deInitDataDefault);
+
+  console.log(`deinitData: ${deInitData}`);
+
+  // default : 0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143
+  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143', deInitData);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

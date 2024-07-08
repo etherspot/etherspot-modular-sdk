@@ -280,11 +280,15 @@ export class ModularSdk {
   }
 
   async getPreviousModuleAddress(moduleTypeId: MODULE_TYPE, module: string): Promise<string> {
-    return this.etherspotWallet.getPreviousAddressInSentinelList(module, moduleTypeId);
+    return this.etherspotWallet.getPreviousAddress(module, moduleTypeId);
   }
 
   async generateModuleDeInitData(moduleTypeId: MODULE_TYPE, module: string, moduleDeInitData: string): Promise<string> {
     return await this.etherspotWallet.generateModuleDeInitData(moduleTypeId, module, moduleDeInitData);
+  }
+
+  async getPreviousAddress(moduleTypeId: MODULE_TYPE, targetAddress: string): Promise<string> {
+    return await this.etherspotWallet.getPreviousAddress(targetAddress, moduleTypeId);
   }
 
   async uninstallModule(moduleTypeId: MODULE_TYPE, module: string, deinitData: string): Promise<string> {
