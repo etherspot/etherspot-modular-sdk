@@ -12,6 +12,7 @@ const tokenAddress = '0xe55C5793a52AF819fBf3e87a23B36708E6FDd2Cc';
 const tokenId = 4;
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
+// npx ts-node examples/04-transfer-nft.ts
 async function main() {
   // initializating sdk...
   const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })

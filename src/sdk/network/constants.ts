@@ -404,6 +404,7 @@ export const Networks: {
 
 export const DEFAULT_BOOTSTRAP_ADDRESS = "0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066";
 export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = "0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9";
+export const DEFAULT_QUERY_PAGE_SIZE = 50;
 
 export const CHAIN_ID_TO_NETWORK_NAME: { [key: number]: NetworkNames } = Object.entries(
   NETWORK_NAME_TO_CHAIN_ID,
