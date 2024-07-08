@@ -194,9 +194,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   // function to club the response of getAllExecutors, getAllValidators and getActiveHook
   // return should be a wrapper of tis way
   // prepare a schema like above and return the response
-  async getAllModules(): Promise<ModuleInfo> {
-    const validators = await this.getAllValidators() || [];
-    const executors = await this.getAllExecutors() || [];
+  async getAllModules(pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<ModuleInfo> {
+    const validators = await this.getAllValidators(pageSize) || [];
+    const executors = await this.getAllExecutors(pageSize) || [];
     const hook = await this.getActiveHook() || "";
     const fallbacks = await this.getFallbacks() || [];
 

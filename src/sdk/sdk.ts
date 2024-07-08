@@ -11,7 +11,7 @@ import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
 import { BatchUserOpsRequest, Exception, getGasFee, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
 import { BigNumber, BigNumberish, Contract, TypedDataField, ethers, providers } from 'ethers';
-import { Networks, onRamperAllNetworks } from './network/constants';
+import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
 import { OnRamperDto, SignMessageDto, validateDto } from './dto';
@@ -306,11 +306,10 @@ export class ModularSdk {
     return uoHash;
   }
 
-  async getAllModules(): Promise<ModuleInfo> {
-    const modules = await this.etherspotWallet.getAllModules();
+  async getAllModules(pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<ModuleInfo> {
+    const modules = await this.etherspotWallet.getAllModules(pageSize);
     return modules;
   }
-
 
   async totalGasEstimated(userOp: UserOperation): Promise<BigNumber> {
     const callGasLimit = BigNumber.from(await userOp.callGasLimit);
