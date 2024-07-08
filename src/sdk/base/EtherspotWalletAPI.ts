@@ -4,7 +4,7 @@ import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { EtherspotWallet7579Factory__factory, EtherspotWallet7579__factory } from '../contracts/factories/src/ERC7579/wallet';
 import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts/src/ERC7579/wallet';
 import { BOOTSTRAP_ABI, BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
-import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
+import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
 
 // Creating a constant for the sentinel address using ethers.js
@@ -91,10 +91,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   // Function to get all executors
-  async getAllExecutors(): Promise<string[]> {
-    // Assuming getExecutorsPaginated is a contract function that can be called
-    // Initialize variables
-    let pageSize = 50;
+  async getAllExecutors(pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<string[]> {
     let lastAddress = SENTINEL_ADDRESS; // Assuming this is your SENTINEL value
     let totalExecutors: string[] = [];
 
@@ -119,8 +116,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   // Adjusting the function to be generic for handling different module types
-  async getPreviousAddressInSentinelList(targetAddress: string, moduleTypeId: MODULE_TYPE): Promise<string> {
-    let pageSize = 50;
+  async getPreviousAddressInSentinelList(targetAddress: string, moduleTypeId: MODULE_TYPE, pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<string> {
     let lastAddress = SENTINEL_ADDRESS; // Assuming SENTINEL_ADDRESS is defined elsewhere as the sentinel value
     let found = false; // Flag to indicate if the target address has been found
   
@@ -201,10 +197,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   // function to get validators
-  async getAllValidators(): Promise<string[]> {
-    // Assuming getValidatorsPaginated is a contract function that can be called
-    // Initialize variables
-    let pageSize = 50;
+  async getAllValidators(pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<string[]> {
     let lastAddress = SENTINEL_ADDRESS;
     let totalValidators: string[] = [];
 
