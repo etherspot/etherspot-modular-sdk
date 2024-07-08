@@ -34,7 +34,7 @@ async function main() {
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )
 
-  const response = await sessionKeyModule.enableSessionKey(
+  const response = await sessionKeyModule.rotateSessionKey(
     token,
     functionSelector,
     spendingLimit,

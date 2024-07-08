@@ -1,4 +1,9 @@
 # Changelog
+## [1.1.1] - 2024-07-08
+### New
+- Added `SessionKeyValidator` module for ERC20 SessionKeyValidator.
+- Added `enableSessionKey`, `rotateSessionKey`, `disableSessionKey`, and `getAssociatedSessionKeys` functions to `SessionKeyValidator`.
+
 ## [1.1.0] - 2024-06-27
 ### Breaking Changes
 - Removed `ArkaPaymaster` as it is no longer relevant to the epv07 paymasters on Arka

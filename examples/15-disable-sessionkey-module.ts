@@ -1,7 +1,6 @@
 import { EtherspotBundler, ModularSdk, SessionKeyValidator } from '../src';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
-import { KeyStore } from '../src/sdk/SessionKeyValidator';
 
 dotenv.config();
 
@@ -22,26 +21,13 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
-  const functionSelector = '0xa9059cbb';
-  const spendingLimit = '100000';
-  const validAfter = new Date().getTime();
-  const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
-
   // get instance  of SessionKeyValidator
   const sessionKeyModule = new SessionKeyValidator(
     modularSdk,
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )
 
-  const response = await sessionKeyModule.enableSessionKey(
-    token,
-    functionSelector,
-    spendingLimit,
-    validAfter,
-    validUntil,
-    KeyStore.AWS
-  );
+  const response = await sessionKeyModule.disableSessionKey();
 
   console.log('\x1b[33m%s\x1b[0m', `UserOpHash: `, response.userOpHash);
   console.log('\x1b[33m%s\x1b[0m', `SessionKey: `, response.sessionKey);
