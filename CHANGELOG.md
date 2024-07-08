@@ -1,4 +1,12 @@
 # Changelog
+
+## [1.1.1] - 2024-07-08
+### Feature Enhancement
+- sdk function to prepare the `deinitData` for `uninstall` module
+### New
+- List all modules in etherspot-modular-wallet
+- pagination based functions to fetch all modules by moduleType
+
 ## [1.1.0] - 2024-06-27
 ### Breaking Changes
 - Removed `ArkaPaymaster` as it is no longer relevant to the epv07 paymasters on Arka
