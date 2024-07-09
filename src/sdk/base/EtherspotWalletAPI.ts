@@ -6,6 +6,8 @@ import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts
 import { BOOTSTRAP_ABI, BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters } from 'viem';
+import { bootstrapAbi, factoryAbi } from '../common/abis';
 
 // Creating a constant for the sentinel address using ethers.js
 const SENTINEL_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000001");
@@ -73,9 +75,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {
     const accountAddress = await this.getAccountAddress();
-    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
+    const accountContract = EtherspotWallet7579__factory.connect(accountAddress, this.provider);
     if (await accountContract.isModuleInstalled(moduleTypeId, module, initData)) {
-      throw new Error('the module is already installed')
+      throw new Error('the module is already installed');
     }
 
     return accountContract.interface.encodeFunctionData('installModule', [moduleTypeId, module, initData]);
@@ -116,7 +118,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async getPreviousAddress(targetAddress: string, moduleTypeId: MODULE_TYPE): Promise<string> {
-  
+
     if (moduleTypeId !== MODULE_TYPE.EXECUTOR && moduleTypeId !== MODULE_TYPE.VALIDATOR) {
       throw new Error("Unsupported module type");
     }
@@ -233,15 +235,16 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const hook: BootstrapConfig = _makeBootstrapConfig(constants.AddressZero, '0x');
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(constants.AddressZero, '0x');
 
-    const initMSAData = iface.encodeFunctionData(
-      "initMSA",
-      [validators, executors, hook, fallbacks]
-    );
+    const initMSAData = encodeFunctionData({
+      functionName: 'initMSA',
+      abi: parseAbi(bootstrapAbi),
+      args: [validators, executors, hook, fallbacks],
+    });
 
-    const initCode = ethers.utils.defaultAbiCoder.encode(
-      ["address", "address", "bytes"],
-      [this.services.walletService.EOAAddress, this.bootstrapAddress, initMSAData]
-    );
+    const initCode = encodeAbiParameters(
+      parseAbiParameters('address, address, bytes'),
+      [this.services.walletService.EOAAddress as `0x${string}`, this.bootstrapAddress as `0x${string}`, initMSAData]
+    )
 
     return initCode;
   }
@@ -260,12 +263,18 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const initCode = await this.getInitCodeData();
     const salt = ethers.utils.hexZeroPad(ethers.utils.hexValue(this.index), 32);
 
-    return hexConcat([
-      this.factoryAddress,
-      this.factory.interface.encodeFunctionData('createAccount', [
+    const functionData = encodeFunctionData({
+      functionName: 'createAccount',
+      abi: parseAbi(factoryAbi),
+      args: [
         salt,
         initCode,
-      ]),
+      ],
+    })
+
+    return hexConcat([
+      this.factoryAddress,
+      functionData,
     ]);
   }
 
