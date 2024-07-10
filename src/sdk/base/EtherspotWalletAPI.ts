@@ -1,19 +1,19 @@
-import { BigNumber, BigNumberish, Contract, constants, ethers } from 'ethers';
-import { arrayify, hexConcat } from 'ethers/lib/utils';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { EtherspotWallet7579__factory } from '../contracts/factories/src/ERC7579/wallet';
 import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts/src/ERC7579/wallet';
-import { BOOTSTRAP_ABI, BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
+import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient } from 'viem';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient, toBytes, concat, getAddress } from 'viem';
 import { accountAbi, bootstrapAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/viem-utils';
-import { encode } from 'punycode';
 
-// Creating a constant for the sentinel address using ethers.js
-const SENTINEL_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000001");
+// Creating a constant for the sentinel address using viem
+const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
+const ADDRESS_ZERO = getAddress("0x0000000000000000000000000000000000000000");
+
 /**
  * constructor params, added no top of base params:
  * @param owner the signer object for the account owner
@@ -106,6 +106,16 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     if (!isModuleInstalled) {
       throw new Error('he module is not installed in the wallet');
     }
+
+    // if this is uninstall on validator or executor, we need to check if there is more than 1 module
+    // we cant delete all modules when moduletypeid is validator or executor
+    if (moduleTypeId === MODULE_TYPE.EXECUTOR || moduleTypeId === MODULE_TYPE.VALIDATOR) {
+      const installedModules = moduleTypeId === MODULE_TYPE.EXECUTOR ? await this.getAllExecutors() : await this.getAllValidators();
+      if (installedModules.length === 1) {
+        throw new Error('Cannot uninstall the only module');
+      }
+    }
+
     return encodeFunctionData({
       functionName: 'uninstallModule',
       abi: parseAbi(accountAbi),
@@ -206,19 +216,11 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     }
   }
 
-  async _getAccountContract(): Promise<Contract> {
-    if (this.accountContract == null) {
-      this.accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
-    }
-    return this.accountContract;
-  }
-
   async getInitCodeData(): Promise<string> {
-    const iface = new ethers.utils.Interface(BOOTSTRAP_ABI);
     const validators: BootstrapConfig[] = makeBootstrapConfig(this.multipleOwnerECDSAValidatorAddress, '0x');
-    const executors: BootstrapConfig[] = makeBootstrapConfig(constants.AddressZero, '0x');
-    const hook: BootstrapConfig = _makeBootstrapConfig(constants.AddressZero, '0x');
-    const fallbacks: BootstrapConfig[] = makeBootstrapConfig(constants.AddressZero, '0x');
+    const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+    const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
+    const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     const initMSAData = encodeFunctionData({
       functionName: 'initMSA',
@@ -255,8 +257,8 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       ],
     })
 
-    return hexConcat([
-      this.factoryAddress,
+    return concat([
+      this.factoryAddress as `0x${string}`,
       functionData,
     ]);
   }
@@ -301,10 +303,10 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       execType: EXEC_TYPE.DEFAULT
     });
 
-    const calldata = hexConcat([
-      target,
-      ethers.utils.hexZeroPad(ethers.utils.hexValue(value), 32),
-      data
+    const calldata = concat([
+      target as `0x${string}`,
+      ethers.utils.hexZeroPad(ethers.utils.hexValue(value), 32) as `0x${string}`,
+      data as `0x${string}`
     ]);
 
     return encodeFunctionData({
@@ -312,11 +314,10 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       abi: parseAbi(accountAbi),
       args: [executeMode, calldata],
     });
-      
   }
 
   async signUserOpHash(userOpHash: string): Promise<string> {
-    const signature = await this.services.walletService.signMessage(arrayify(userOpHash));
+    const signature = await this.services.walletService.signMessage(toBytes(userOpHash));
     return signature;
   }
 
@@ -325,7 +326,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async encodeBatch(targets: string[], values: BigNumberish[], datas: string[]): Promise<string> {
-    const accountContract = await this._getAccountContract();
 
     const executeMode = getExecuteMode({
       callType: CALL_TYPE.BATCH,
@@ -343,6 +343,16 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       [result]
     );
 
-    return accountContract.interface.encodeFunctionData('execute', [executeMode, calldata]);
+    // Prepare the deinit data
+    // const calldata = encodeAbiParameters(
+    //   parseAbiParameters('tuple(address target,uint256 value,bytes callData)[]'),
+    //   result
+    // )
+
+    return encodeFunctionData({
+      functionName: 'execute',
+      abi: parseAbi(accountAbi),
+      args: [executeMode, calldata],
+    });
   }
 }
