@@ -72,7 +72,8 @@
     "ethers": "5.7.2",
     "prettier": "2.8.8",
     "reflect-metadata": "0.1.14",
-    "rxjs": "6.6.7"
+    "rxjs": "6.6.7",
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
     "@types/node": "18.11.9",
@@ -86,6 +87,6 @@
     "npm": "9.6.4",
     "ts-node": "10.9.1",
     "typedoc": "^0.17.8",
-    "typescript": "4.9.5"
+    "typescript": "5.5.3"
   }
 }
