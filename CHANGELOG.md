@@ -1,5 +1,5 @@
 # Changelog
-## [1.1.1] - 2024-07-08
+## [1.1.2] - 2024-07-10
 ### New
 - Added `SessionKeyValidator` module for ERC20 SessionKeyValidator.
 - Added `enableSessionKey`, `rotateSessionKey`, `disableSessionKey`, and `getAssociatedSessionKeys` functions to `SessionKeyValidator`.

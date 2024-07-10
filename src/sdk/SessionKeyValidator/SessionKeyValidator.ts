@@ -237,7 +237,9 @@ export class SessionKeyValidator {
     ): Promise<GenerateSessionKeyResponse> {
         let response = null;
         try {
-            const url = `${PERMISSIONS_URL}/account/generateSessionKeyData`;
+            let url = `${PERMISSIONS_URL}/account/generateSessionKeyData`;
+            if (apiKey) url += `?apiKey=${apiKey}`;
+
             const requestBody = {
                 account,
                 chainId,
@@ -248,13 +250,7 @@ export class SessionKeyValidator {
                 spendingLimit,
                 validAfter,
                 validUntil,
-                apiKey,
             };
-
-            // Remove apiKey from requestBody if it's undefined
-            if (!apiKey) {
-                delete requestBody.apiKey;
-            }
 
             response = await fetch(url, {
                 method: 'POST',
