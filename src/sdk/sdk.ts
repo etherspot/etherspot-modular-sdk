@@ -19,6 +19,8 @@ import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
+import { PublicClient, WalletClient } from 'viem';
+import { getPublicClient, getWalletClientFromPrivateKey } from './common/viem-utils';
 
 /**
  * Modular-Sdk
@@ -32,6 +34,8 @@ export class ModularSdk {
   private chainId: number;
   private factoryUsed: Factory;
   private index: number;
+  private walletClient: WalletClient;
+  private publicClient: PublicClient;
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
@@ -61,10 +65,26 @@ export class ModularSdk {
     this.factoryUsed = optionsLike.factoryWallet ?? Factory.ETHERSPOT;
 
     let provider;
+    let viemClientUrl = '';
 
     if (rpcProviderUrl) {
       provider = new providers.JsonRpcProvider(rpcProviderUrl);
-    } else provider = new providers.JsonRpcProvider(optionsLike.bundlerProvider.url);
+      viemClientUrl = rpcProviderUrl;
+    } else {
+      provider = new providers.JsonRpcProvider(optionsLike.bundlerProvider.url);
+      viemClientUrl = optionsLike.bundlerProvider.url;
+    }
+
+    // TODO wallet provider need not always be a string, this needs to be changed
+    this.walletClient = getWalletClientFromPrivateKey({
+      rpcUrl: viemClientUrl,
+      privateKey: walletProvider["privateKey"] as `0x${string}`
+    });
+
+    this.publicClient = getPublicClient({
+      chainId: chainId,
+      rpcUrl: viemClientUrl
+    }) as PublicClient;
 
     let entryPointAddress = '', walletFactoryAddress = '';
     if (Networks[chainId]) {
@@ -86,6 +106,8 @@ export class ModularSdk {
       factoryAddress: walletFactoryAddress,
       predefinedAccountAddress: accountAddress,
       index: this.index,
+      walletClient: this.walletClient,
+      publicClient: this.publicClient,
     })
     this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId);
   }
@@ -152,7 +174,7 @@ export class ModularSdk {
 
     const tx: TransactionDetailsForUserOp = {
       target: this.userOpsBatch.to,
-      values: this.userOpsBatch.value,  
+      values: this.userOpsBatch.value,
       data: this.userOpsBatch.data,
       dummySignature: dummySignature,
       ...gasDetails,
@@ -198,7 +220,7 @@ export class ModularSdk {
       if (!callGasLimit)
         partialtx.callGasLimit = expectedCallGasLimit;
       else if (BigNumber.from(callGasLimit).lt(expectedCallGasLimit))
-          throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
+        throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
     }
 
     return partialtx;

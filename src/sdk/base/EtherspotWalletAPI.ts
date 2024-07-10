@@ -1,13 +1,16 @@
 import { BigNumber, BigNumberish, Contract, constants, ethers } from 'ethers';
 import { arrayify, hexConcat } from 'ethers/lib/utils';
 import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
-import { EtherspotWallet7579Factory__factory, EtherspotWallet7579__factory } from '../contracts/factories/src/ERC7579/wallet';
+import { EtherspotWallet7579__factory } from '../contracts/factories/src/ERC7579/wallet';
 import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts/src/ERC7579/wallet';
 import { BOOTSTRAP_ABI, BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters } from 'viem';
-import { bootstrapAbi, factoryAbi } from '../common/abis';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient } from 'viem';
+import { accountAbi, bootstrapAbi, factoryAbi } from '../common/abis';
+import { getInstalledModules } from '../common/getInstalledModules';
+import { getViemAddress } from '../common/viem-utils';
+import { encode } from 'punycode';
 
 // Creating a constant for the sentinel address using ethers.js
 const SENTINEL_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000001");
@@ -21,6 +24,8 @@ export interface EtherspotWalletApiParams extends BaseApiParams {
   factoryAddress?: string;
   index?: number;
   predefinedAccountAddress?: string;
+  walletClient?: WalletClient;
+  publicClient?: PublicClient;
 }
 
 export type ModuleInfo = {
@@ -49,6 +54,8 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   predefinedAccountAddress?: string;
   bootstrapAddress?: string;
   multipleOwnerECDSAValidatorAddress?: string;
+  walletClient: WalletClient;
+  publicClient: PublicClient
 
   /**
    * our account contract.
@@ -65,56 +72,49 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
     this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
     this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
-    //this.publicClient = getPublicClient({ rpcUrl: Networks[params.optionsLike.chainId] });
+    this.publicClient = params.publicClient;
+    this.walletClient = params.walletClient;
   }
 
-  async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string): Promise<boolean> {
-    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
-    return await accountContract.isModuleInstalled(moduleTypeId, module, '0x');
+  async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<boolean> {
+    const accountAddress = await this.getAccountAddress();
+    if (!accountAddress) throw new Error('Account address not found');
+    const response = await this.publicClient.readContract({
+      address: accountAddress as `0x${string}`,
+      abi: parseAbi(accountAbi),
+      functionName: 'isModuleInstalled',
+      args: [moduleTypeId, module, initData]
+    });
+    return response as boolean;
   }
 
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {
     const accountAddress = await this.getAccountAddress();
-    const accountContract = EtherspotWallet7579__factory.connect(accountAddress, this.provider);
-    if (await accountContract.isModuleInstalled(moduleTypeId, module, initData)) {
+    if (!accountAddress) throw new Error('Account address not found');
+    if (await this.isModuleInstalled(moduleTypeId, module, initData)) {
       throw new Error('the module is already installed');
     }
-
-    return accountContract.interface.encodeFunctionData('installModule', [moduleTypeId, module, initData]);
+    return encodeFunctionData({
+      functionName: 'installModule',
+      abi: parseAbi(accountAbi),
+      args: [moduleTypeId, module, initData],
+    });
   }
 
   async uninstallModule(moduleTypeId: MODULE_TYPE, module: string, deinitData: string): Promise<string> {
-    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
-    if (!(await accountContract.isModuleInstalled(moduleTypeId, module, deinitData))) {
-      throw new Error('the module is not installed in the wallet')
+    const isModuleInstalled = await this.isModuleInstalled(moduleTypeId, module, deinitData);
+    if (!isModuleInstalled) {
+      throw new Error('he module is not installed in the wallet');
     }
-
-    return accountContract.interface.encodeFunctionData('uninstallModule', [moduleTypeId, module, deinitData]);
+    return encodeFunctionData({
+      functionName: 'uninstallModule',
+      abi: parseAbi(accountAbi),
+      args: [moduleTypeId, module, deinitData],
+    });
   }
 
-  // Function to get all executors
   async getAllExecutors(pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<string[]> {
-    let lastAddress = SENTINEL_ADDRESS; // Assuming this is your SENTINEL value
-    let totalExecutors: string[] = [];
-
-    // Pagination loop
-    let tempExecutors: string[];
-    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
-
-    do {
-      // Fetch a page of executors
-      [tempExecutors, lastAddress] = await accountContract.getExecutorsPaginated(lastAddress, pageSize);
-
-      // Append executors to the total list
-      totalExecutors = [...totalExecutors, ...tempExecutors];
-
-      // Break if it's the last page
-      if (tempExecutors.length < pageSize || lastAddress === SENTINEL_ADDRESS || lastAddress === ethers.constants.AddressZero) {
-        break;
-      }
-    } while (true);
-
-    return totalExecutors;
+    return await getInstalledModules({ client: this.publicClient, moduleAddress: getViemAddress(this.accountAddress), moduleTypes: ['executor'], pageSize: pageSize });
   }
 
   async getPreviousAddress(targetAddress: string, moduleTypeId: MODULE_TYPE): Promise<string> {
@@ -150,43 +150,28 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const previousAddress = await this.getPreviousAddress(module, moduleTypeId);
 
     // Prepare the deinit data
-    const deInitDataGenerated = ethers.utils.defaultAbiCoder.encode(
-      ["address", "bytes"],
-      [previousAddress, deinitDataBase]
-    );
+    const deInitDataGenerated = encodeAbiParameters(
+      parseAbiParameters('address, bytes'),
+      [previousAddress as `0x${string}`, deinitDataBase as `0x${string}`]
+    )
 
     return deInitDataGenerated;
   }
 
   // function to get validators
   async getAllValidators(pageSize: number = DEFAULT_QUERY_PAGE_SIZE): Promise<string[]> {
-    let lastAddress = SENTINEL_ADDRESS;
-    let totalValidators: string[] = [];
-
-    // Pagination loop
-    let tempValidators: string[];
-    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
-
-    do {
-      // Fetch a page of validators
-      [tempValidators, lastAddress] = await accountContract.getValidatorPaginated(lastAddress, pageSize);
-
-      // Append validators to the total list
-      totalValidators = [...totalValidators, ...tempValidators];
-
-      // Break if it's the last page
-      if (tempValidators.length < pageSize || lastAddress === SENTINEL_ADDRESS || lastAddress === ethers.constants.AddressZero) {
-        break;
-      }
-    } while (true);
-
-    return totalValidators;
+    return await getInstalledModules({ client: this.publicClient, moduleAddress: getViemAddress(this.accountAddress), moduleTypes: ['validator'], pageSize: pageSize });
   }
 
   // function to get active hook
   async getActiveHook(): Promise<string> {
-    const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
-    return accountContract.getActiveHook();
+    const activeHook = await this.publicClient.readContract({
+      address: this.accountAddress as `0x${string}`,
+      abi: parseAbi(accountAbi),
+      functionName: 'getActiveHook',
+    });
+
+    return activeHook as `0x${string}`;
   }
 
   async getFallbacks(): Promise<any[]> {
@@ -254,9 +239,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
    * this value holds the "factory" address, followed by this account's information
    */
   async getAccountInitCode(): Promise<string> {
-    if (this.factoryAddress != null && this.factoryAddress !== '') {
-      this.factory = EtherspotWallet7579Factory__factory.connect(this.factoryAddress, this.provider);
-    } else {
+    if (this.factoryAddress == null || this.factoryAddress == '') {
       throw new Error('no factory to get initCode');
     }
 
@@ -287,11 +270,12 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const initCode = await this.getInitCodeData();
 
     if (!this.accountAddress) {
-      this.factory = EtherspotWallet7579Factory__factory.connect(this.factoryAddress, this.provider);
-      this.accountAddress = await this.factory.getAddress(
-        salt,
-        initCode,
-      );
+      this.accountAddress = (await this.publicClient.readContract({
+        address: this.factoryAddress as `0x${string}`,
+        abi: parseAbi(factoryAbi),
+        functionName: 'getAddress',
+        args: [salt, initCode]
+      })) as `0x${string}`;
     }
     return this.accountAddress;
   }
@@ -312,7 +296,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
    * @param data
    */
   async encodeExecute(target: string, value: BigNumberish, data: string): Promise<string> {
-    const accountContract = await this._getAccountContract();
     const executeMode = getExecuteMode({
       callType: CALL_TYPE.SINGLE,
       execType: EXEC_TYPE.DEFAULT
@@ -324,7 +307,12 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       data
     ]);
 
-    return accountContract.interface.encodeFunctionData('execute', [executeMode, calldata]);
+    return encodeFunctionData({
+      functionName: 'execute',
+      abi: parseAbi(accountAbi),
+      args: [executeMode, calldata],
+    });
+      
   }
 
   async signUserOpHash(userOpHash: string): Promise<string> {

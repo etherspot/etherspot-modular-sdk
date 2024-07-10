@@ -22,7 +22,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const isModuleInstalled = await modularSdk.isModuleInstalled(MODULE_TYPE.VALIDATOR, '0x1417aDC5308a32265E0fA0690ea1408FFA62F37c');
+  const isModuleInstalled = await modularSdk.isModuleInstalled(MODULE_TYPE.VALIDATOR, '0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B');
   console.log(`isModuleInstalled: ${isModuleInstalled}`);
 }
 

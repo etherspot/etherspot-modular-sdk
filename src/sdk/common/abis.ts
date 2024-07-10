@@ -1,5 +1,6 @@
 export const factoryAbi = [
     'function createAccount(bytes32 salt,bytes calldata initCode) returns (address)',
+    'function getAddress(bytes32 salt,bytes calldata initcode) view returns (address)'
   ]
   
   export const bootstrapAbi = [
@@ -8,7 +9,9 @@ export const factoryAbi = [
     'struct BootstrapConfig {address module;bytes data;}',
   ]
   
+  
   export const accountAbi = [
+    'function execute(bytes32 mode,bytes executionCalldata)',
     'function getActiveHook() external view returns (address hook)',
     'function getValidatorPaginated(address cursor,uint256 size) returns (address[] memory, address)',
     'function getExecutorsPaginated(address cursor,uint256 size) returns (address[] memory, address)',
