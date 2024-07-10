@@ -88,6 +88,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [11155111]: {
@@ -98,6 +99,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '0x90A5d7496C8D83f6389E60C0c26ea3928d9bb891',
     },
   },
   [10]: {
@@ -108,6 +110,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [137]: {
@@ -118,6 +121,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [42161]: {
@@ -128,6 +132,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [1]: {
@@ -138,6 +143,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [10200]: {
@@ -148,6 +154,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [122]: {
@@ -158,6 +165,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [123]: {
@@ -168,6 +176,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [100]: {
@@ -178,6 +187,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [2357]: {
@@ -188,6 +198,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [30]: {
@@ -198,6 +209,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [31]: {
@@ -208,6 +220,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [5000]: {
@@ -218,6 +231,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [5003]: {
@@ -228,6 +242,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [43114]: {
@@ -238,6 +253,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [8453]: {
@@ -248,6 +264,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [56]: {
@@ -258,6 +275,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [97]: {
@@ -268,6 +286,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [43113]: {
@@ -278,6 +297,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [59144]: {
@@ -288,6 +308,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [59140]: {
@@ -298,6 +319,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [114]: {
@@ -308,6 +330,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [14]: {
@@ -318,6 +341,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [534351]: {
@@ -328,6 +352,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [534352]: {
@@ -338,6 +363,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [11155420]: {
@@ -348,6 +374,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [28122024]: {
@@ -358,6 +385,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [888888888]: {
@@ -368,6 +396,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [80002]: {
@@ -378,6 +407,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [421614]: {
@@ -388,6 +418,7 @@ export const Networks: {
       walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '',
     },
   },
   [51]: {
@@ -398,10 +429,12 @@ export const Networks: {
       walletFactory: '0x5952653F151e844346825050d7157A9a6b46A23A',
       bootstrap: '0x805650ce74561C85baA44a8Bd13E19633Fd0F79d',
       multipleOwnerECDSAValidator: '0x68BA597bf6B9097b1D89b8E0D34646D30997f773',
+      erc20SessionKeyValidator: '',
     },
   }
 };
 
+export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = "0x90A5d7496C8D83f6389E60C0c26ea3928d9bb891";
 export const DEFAULT_BOOTSTRAP_ADDRESS = "0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066";
 export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = "0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9";
 export const DEFAULT_QUERY_PAGE_SIZE = 50;
