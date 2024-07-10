@@ -277,11 +277,7 @@ export class ModularSdk {
     this.userOpsBatch.data = [];
     this.userOpsBatch.value = [];
   }
-
-  async getAccountContract(): Promise<ModularEtherspotWallet | Contract> {
-    return this.etherspotWallet._getAccountContract();
-  }
-
+  
   async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string): Promise<boolean> {
     return this.etherspotWallet.isModuleInstalled(moduleTypeId, module);
   }

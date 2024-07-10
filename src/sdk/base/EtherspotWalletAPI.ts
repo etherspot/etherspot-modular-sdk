@@ -5,7 +5,7 @@ import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient, toBytes, concat, getAddress } from 'viem';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes } from 'viem';
 import { accountAbi, bootstrapAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/viem-utils';
@@ -246,7 +246,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     }
 
     const initCode = await this.getInitCodeData();
-    const salt = ethers.utils.hexZeroPad(ethers.utils.hexValue(this.index), 32);
+    const salt = pad(toHex(this.index), { size: 32 });
 
     const functionData = encodeFunctionData({
       functionName: 'createAccount',
@@ -268,7 +268,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       await this.checkAccountAddress(this.predefinedAccountAddress);
     }
 
-    const salt = ethers.utils.hexZeroPad(ethers.utils.hexValue(this.index), 32);
+    const salt = pad(toHex(this.index), { size: 32 });
     const initCode = await this.getInitCodeData();
 
     if (!this.accountAddress) {
@@ -303,9 +303,33 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       execType: EXEC_TYPE.DEFAULT
     });
 
+    // Assuming toHex is a function that accepts string | number | bigint | boolean | Uint8Array
+    // Convert BigNumberish to a string if it's a BigNumber
+    // Convert BigNumberish or Bytes to a compatible type
+    let valueToProcess: string | number | bigint | boolean | Uint8Array;
+
+    if (BigNumber.isBigNumber(value)) {
+      valueToProcess = value.toString(); // Convert BigNumber to string
+    } else if (isBytes(value)) {
+      valueToProcess = new Uint8Array(value); // Convert Bytes to Uint8Array
+    } else {
+      // Here, TypeScript is unsure about the type of `value`
+      // You need to ensure `value` is of a type compatible with `valueToProcess`
+      // If `value` can only be string, number, bigint, boolean, or Uint8Array, this assignment is safe
+      // If `value` can be of other types (like Bytes), you need an explicit conversion or handling here
+      // For example, if there's a chance `value` is still `Bytes`, you could handle it like so:
+      if (typeof value === 'object' && value !== null && 'length' in value) {
+        // Assuming this condition is sufficient to identify Bytes-like objects
+        // Convert it to Uint8Array
+        valueToProcess = new Uint8Array(Object.values(value));
+      } else {
+        valueToProcess = value as string | number | bigint | boolean | Uint8Array;
+      }
+    }
+
     const calldata = concat([
       target as `0x${string}`,
-      ethers.utils.hexZeroPad(ethers.utils.hexValue(value), 32) as `0x${string}`,
+      pad(toHex(valueToProcess), { size: 32 }) as `0x${string}`,
       data as `0x${string}`
     ]);
 

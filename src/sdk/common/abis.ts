@@ -8,6 +8,10 @@ export const factoryAbi = [
     'function initMSA(BootstrapConfig[] calldata $valdiators,BootstrapConfig[] calldata $executors,BootstrapConfig calldata _hook,BootstrapConfig[] calldata _fallbacks)',
     'struct BootstrapConfig {address module;bytes data;}',
   ]
+
+  export const modulesAbi = [
+    'function onInstall(bytes data)'
+  ];
   
   
   export const accountAbi = [
