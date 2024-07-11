@@ -77,6 +77,7 @@ export class ModularSdk {
     // TODO wallet provider need not always be a string, this needs to be changed
     this.walletClient = getWalletClientFromPrivateKey({
       rpcUrl: viemClientUrl,
+      chainId: chainId,
       privateKey: walletProvider["privateKey"] as `0x${string}`
     });
 

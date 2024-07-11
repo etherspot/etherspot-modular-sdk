@@ -25,10 +25,11 @@ export const getPublicClient = ({ chainId, rpcUrl }: { chainId: number, rpcUrl: 
   return publicClient;
 }
 
-export const getWalletClientFromPrivateKey = ({ rpcUrl, privateKey }: { rpcUrl: string, privateKey: string }) => {
+export const getWalletClientFromPrivateKey = ({ rpcUrl, chainId, privateKey }: { rpcUrl: string,  chainId: number, privateKey: string }) => {
   return createWalletClient({
-    transport: http(rpcUrl) as any, // Asserting to `any` to bypass the deep instantiation check
     account: privateKeyToAccount(privateKey as `0x${string}`),
+    chain: Networks[chainId].chain,
+    transport: http(rpcUrl) as any, // Asserting to `any` to bypass the deep instantiation check
   });
 }
 

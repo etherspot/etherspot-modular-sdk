@@ -369,7 +369,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     );
 
     // const calldata1 = encodeAbiParameters(
-    //   parseAbiParameters('tuple(address target,uint256 value,bytes callData)[]'),
+    //   parseAbiParameters('(address target,uint256 value,bytes callData)[]'),
     //   [result]
     // )
 

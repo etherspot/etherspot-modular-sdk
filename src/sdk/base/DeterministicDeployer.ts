@@ -1,7 +1,7 @@
 import { BigNumber, BigNumberish } from 'ethers'
-import { hexConcat, hexlify, hexZeroPad, keccak256 } from 'ethers/lib/utils'
 import { TransactionRequest } from '@ethersproject/abstract-provider'
 import { JsonRpcProvider } from '@ethersproject/providers'
+import { concat, keccak256, pad, toHex } from 'viem'
 
 /**
  * wrapper class for Arachnid's deterministic deployer
@@ -67,25 +67,25 @@ export class DeterministicDeployer {
 
   async getDeployTransaction (ctrCode: string, salt: BigNumberish = 0): Promise<TransactionRequest> {
     await this.deployDeployer()
-    const saltEncoded = hexZeroPad(hexlify(salt), 32)
+    const saltEncoded = pad(toHex(salt as `0x${string}`), {size: 32})
     return {
       to: this.proxyAddress,
-      data: hexConcat([
-        saltEncoded,
-        ctrCode])
+      data: concat([
+        saltEncoded as `0x${string}`,
+        ctrCode as `0x${string}`])
     }
   }
 
   async getDeterministicDeployAddress (ctrCode: string, salt: BigNumberish = 0): Promise<string> {
     // this method works only before the contract is already deployed:
     // return await this.provider.call(await this.getDeployTransaction(ctrCode, salt))
-    const saltEncoded = hexZeroPad(hexlify(salt), 32)
+    const saltEncoded = pad(toHex(salt as `0x${string}`), { size: 32 })
 
-    return '0x' + keccak256(hexConcat([
+    return '0x' + keccak256(concat([
       '0xff',
-      this.proxyAddress,
-      saltEncoded,
-      keccak256(ctrCode)
+      this.proxyAddress as `0x${string}`,
+      saltEncoded as `0x${string}`,
+      keccak256(ctrCode as `0x${string}`) as `0x${string}`
     ])).slice(-40)
   }
 

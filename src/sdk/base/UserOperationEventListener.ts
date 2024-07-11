@@ -1,8 +1,8 @@
 import { BigNumberish, Event } from 'ethers'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { IEntryPoint } from '../contracts'
-import { defaultAbiCoder } from 'ethers/lib/utils'
 import Debug from 'debug'
+import { decodeAbiParameters, parseAbiParameters } from 'viem'
 
 const debug = Debug('aa.listener')
 
@@ -89,7 +89,10 @@ export class UserOperationEventListener {
       let message = revertReasonEvents[0].args.revertReason
       if (message.startsWith('0x08c379a0')) {
         // Error(string)
-        message = defaultAbiCoder.decode(['string'], '0x' + message.substring(10)).toString()
+
+        message = decodeAbiParameters(parseAbiParameters('string'), '0x' + message.substring(10) as `0x${string}`).toString()
+
+        //message = defaultAbiCoder.decode(['string'], '0x' + message.substring(10)).toString()
       }
       debug(`rejecting with reason: ${message}`)
       this.reject(new Error(`UserOp failed with reason: ${message}`)
