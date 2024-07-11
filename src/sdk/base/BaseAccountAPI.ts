@@ -10,7 +10,8 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { zeroAddress } from 'viem';
+import { parseAbi, PublicClient, WalletClient, zeroAddress } from 'viem';
+import { accountAbi, entryPointAbi } from '../common/abis';
 
 export interface BaseApiParams {
   provider: Provider;
@@ -20,6 +21,8 @@ export interface BaseApiParams {
   walletProvider: WalletProviderLike;
   factoryAddress?: string;
   optionsLike?: SdkOptions;
+  walletClient?: WalletClient;
+  publicClient?: PublicClient;
 }
 
 export interface UserOpResult {
@@ -64,6 +67,8 @@ export abstract class BaseAccountAPI {
   paymasterAPI?: PaymasterAPI;
   factoryUsed: Factory;
   factoryAddress?: string;
+  walletClient: WalletClient;
+  publicClient: PublicClient;
 
   /**
    * base constructor.
@@ -105,6 +110,8 @@ export abstract class BaseAccountAPI {
     this.entryPointAddress = params.entryPointAddress;
     this.accountAddress = params.accountAddress;
     this.factoryAddress = params.factoryAddress;
+    this.walletClient = params.walletClient;
+    this.publicClient = params.publicClient;
 
     // factory "connect" define the contract address. the contract "connect" defines the "from" address.
     this.entryPointView = EntryPoint__factory.connect(params.entryPointAddress, params.provider).connect(
@@ -285,7 +292,15 @@ export abstract class BaseAccountAPI {
     // use entryPoint to query account address (factory can provide a helper method to do the same, but
     // this method attempts to be generic
     try {
-      await this.entryPointView.callStatic.getSenderAddress(initCode);
+      //await this.entryPointView.callStatic.getSenderAddress(initCode);
+      await this.publicClient.simulateContract({
+        address: this.entryPointAddress as `0x${string}`,
+        abi: parseAbi(entryPointAbi),
+        functionName: 'getSenderAddress',
+        args: [initCode]
+      });
+
+
     } catch (e: any) {
       return e.errorArgs.sender;
     }

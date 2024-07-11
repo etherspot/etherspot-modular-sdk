@@ -12,8 +12,12 @@ export const factoryAbi = [
   export const modulesAbi = [
     'function onInstall(bytes data)'
   ];
+
+  export const entryPointAbi = [
+    'function getSenderAddress(bytes initCode)'
+  ];
   
-  
+
   export const accountAbi = [
     'function execute(bytes32 mode,bytes executionCalldata)',
     'function getActiveHook() external view returns (address hook)',

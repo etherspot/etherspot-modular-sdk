@@ -23,8 +23,6 @@ export interface EtherspotWalletApiParams extends BaseApiParams {
   factoryAddress?: string;
   index?: number;
   predefinedAccountAddress?: string;
-  walletClient?: WalletClient;
-  publicClient?: PublicClient;
 }
 
 export type ModuleInfo = {
