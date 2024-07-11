@@ -35,3 +35,7 @@ export const moduleTypeIds: ModuleTypeIds = {
   fallback: 3,
   hook: 4,
 }
+
+export type BigNumberish = Hex | number | bigint
+
+export type BytesLike = Uint8Array | Hex

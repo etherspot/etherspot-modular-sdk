@@ -10,14 +10,13 @@ import {
 import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
 import { BatchUserOpsRequest, Exception, getGasFee, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
-import { BigNumber, BigNumberish, Contract, TypedDataField, ethers, providers } from 'ethers';
+import { BigNumber, BigNumberish, TypedDataField, ethers, providers } from 'ethers';
 import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
 import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
-import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
 import { PublicClient, WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromPrivateKey } from './common/viem-utils';

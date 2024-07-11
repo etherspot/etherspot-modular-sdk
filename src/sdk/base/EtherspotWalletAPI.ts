@@ -1,6 +1,5 @@
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
-import { EtherspotWallet7579__factory } from '../contracts/factories/src/ERC7579/wallet';
 import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts/src/ERC7579/wallet';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
@@ -207,11 +206,15 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
 
   async checkAccountAddress(address: string): Promise<void> {
-    const accountContract = EtherspotWallet7579__factory.connect(address, this.provider);
-    if (!(await accountContract.isOwner(this.services.walletService.EOAAddress))) {
+    const isOwner = await this.publicClient.readContract({
+      address: address  as `0x${string}`,
+      abi: parseAbi(accountAbi),
+      functionName: 'isOwner',
+      args: [this.services.walletService.EOAAddress]
+    }) as boolean;
+    if (!isOwner) {
       throw new Error('the specified accountAddress does not belong to the given EOA provider')
-    }
-    else {
+    } else {
       this.accountAddress = address;
     }
   }
@@ -285,8 +288,8 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
     const accountAddress = await this.getAccountAddress();
     const dummyKey = key.eq(0)
-      ? ethers.utils.getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
-      : ethers.utils.getAddress(key.toHexString()) + "00000000";
+      ? getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
+      : getAddress(key.toHexString()) + "00000000";
 
     return await this.entryPointView.getNonce(accountAddress, BigInt(dummyKey));
   }
@@ -367,10 +370,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       [result]
     );
 
-    // Prepare the deinit data
-    // const calldata = encodeAbiParameters(
+    // const calldata1 = encodeAbiParameters(
     //   parseAbiParameters('tuple(address target,uint256 value,bytes callData)[]'),
-    //   result
+    //   [result]
     // )
 
     return encodeFunctionData({

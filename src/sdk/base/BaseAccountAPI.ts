@@ -1,16 +1,16 @@
-import { ethers, BigNumber, BigNumberish, TypedDataField } from 'ethers';
+import { BigNumber, BigNumberish, TypedDataField } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Provider } from '@ethersproject/providers';
 import { IEntryPoint, EntryPoint__factory } from '../contracts';
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
-import { resolveProperties } from 'ethers/lib/utils';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
 import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
+import { zeroAddress } from 'viem';
 
 export interface BaseApiParams {
   provider: Provider;
@@ -25,6 +25,12 @@ export interface BaseApiParams {
 export interface UserOpResult {
   transactionHash: string;
   success: boolean;
+}
+
+type Result = { key: string, value: any };
+
+export type Deferrable<T> = {
+  [K in keyof T]: T[K] | Promise<T[K]>;
 }
 
 /**
@@ -92,7 +98,7 @@ export abstract class BaseAccountAPI {
     this.context = new Context(this.services);
 
     this.factoryUsed = factoryWallet;
-    
+
     // super();
     this.provider = params.provider;
     this.overheads = params.overheads;
@@ -102,7 +108,7 @@ export abstract class BaseAccountAPI {
 
     // factory "connect" define the contract address. the contract "connect" defines the "from" address.
     this.entryPointView = EntryPoint__factory.connect(params.entryPointAddress, params.provider).connect(
-      ethers.constants.AddressZero,
+      zeroAddress,
     );
   }
 
@@ -127,7 +133,7 @@ export abstract class BaseAccountAPI {
   /**
    * destroys
    */
-   destroy(): void {
+  destroy(): void {
     this.context.destroy();
   }
 
@@ -305,12 +311,26 @@ export abstract class BaseAccountAPI {
     return 100000;
   }
 
+  async resolveProperties<T>(object: Readonly<Deferrable<T>>): Promise<T> {
+    const promises: Array<Promise<Result>> = Object.keys(object).map((key) => {
+      const value = object[<keyof Deferrable<T>>key];
+      return Promise.resolve(value).then((v) => ({ key: key, value: v }));
+    });
+
+    const results = await Promise.all(promises);
+
+    return results.reduce((accum, result) => {
+      accum[<keyof T>(result.key)] = result.value;
+      return accum;
+    }, <T>{});
+  }
+
   /**
    * should cover cost of putting calldata on-chain, and some overhead.
    * actual overhead depends on the expected bundle size
    */
   async getPreVerificationGas(userOp: Partial<UserOperationStruct>): Promise<number> {
-    const p = await resolveProperties(userOp);
+    const p = await this.resolveProperties(userOp);
     return calcPreVerificationGas(p, this.overheads);
   }
 
@@ -360,7 +380,7 @@ export abstract class BaseAccountAPI {
    * @param userOp userOperation, (signature field ignored)
    */
   async getUserOpHash(userOp: UserOperation): Promise<string> {
-    const op = await resolveProperties(userOp);
+    const op = await this.resolveProperties(userOp);
     const provider = this.services.walletService.getWalletProvider();
     const chainId = await provider.getNetwork().then((net) => net.chainId);
     return getUserOpHash(op, this.entryPointAddress, chainId);
@@ -429,7 +449,7 @@ export abstract class BaseAccountAPI {
         sender: await this.getAccountAddress(),
         nonce: await this.getNonce(key),
         factory: this.factoryAddress,
-        factoryData : '0x' + factoryData.substring(42),
+        factoryData: '0x' + factoryData.substring(42),
         callData,
         callGasLimit,
         verificationGasLimit,
@@ -440,7 +460,7 @@ export abstract class BaseAccountAPI {
       partialUserOp = {
         sender: await this.getAccountAddress(),
         nonce: await this.getNonce(key),
-        factoryData : '0x' + factoryData.substring(42),
+        factoryData: '0x' + factoryData.substring(42),
         callData,
         callGasLimit,
         verificationGasLimit,

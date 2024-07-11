@@ -1,4 +1,3 @@
-import { get } from 'http';
 import { PublicClient, Address, createPublicClient, createWalletClient, http, Account, Chain, getAddress, extractChain, Hex } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts';
 import * as chains from "viem/chains";
@@ -27,8 +26,6 @@ export const getPublicClient = ({ chainId, rpcUrl }: { chainId: number, rpcUrl: 
 }
 
 export const getWalletClientFromPrivateKey = ({ rpcUrl, privateKey }: { rpcUrl: string, privateKey: string }) => {
-  console.log(`privateKey: ${JSON.stringify(privateKey)}`)
-  console.log(`rpcUrl: ${JSON.stringify(rpcUrl)}`)
   return createWalletClient({
     transport: http(rpcUrl) as any, // Asserting to `any` to bypass the deep instantiation check
     account: privateKeyToAccount(privateKey as `0x${string}`),
@@ -61,10 +58,10 @@ export const getViemAddress = (address: string): Address => {
  * @returns a {@link Chain} object for the given chainId
  * @throws if the chainId is not found
  */
-// export const getChain = (chainId: number) : Chain => {
-//   return extractChain({
-//     chains: Object.values(chains) as Chain[],
-//     chainId: chainId,
-//   });
-// }
+export const getChain = (chainId: number) : Chain => {
+  return extractChain({
+    chains: Object.values(chains) as Chain[],
+    id: chainId,
+  });
+}
 

@@ -1,8 +1,8 @@
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 
 import { NotPromise, packUserOp } from '../common';
-import { arrayify, hexlify } from 'ethers/lib/utils';
 import { Buffer } from 'buffer';
+import { toBytes, toHex } from 'viem';
 
 export interface GasOverheads {
   /**
@@ -68,11 +68,11 @@ export function calcPreVerificationGas(
   const p: NotPromise<UserOperationStruct> = {
     // dummy values, in case the UserOp is incomplete.
     preVerificationGas: 21000, // dummy value, just for calldata cost
-    signature: hexlify(Buffer.alloc(ov.sigSize, 1)), // dummy signature
+    signature: toHex(Buffer.alloc(ov.sigSize, 1)), // dummy signature
     ...userOp,
   } as any;
 
-  const packed = arrayify(packUserOp(p, false));
+  const packed = toBytes(packUserOp(p, false));
   const callDataCost = packed.map((x) => (x === 0 ? ov.zeroByte : ov.nonZeroByte)).reduce((sum, x) => sum + x);
   const ret = Math.round(callDataCost + ov.fixed / ov.bundleSize + ov.perUserOp + ov.perUserOpWord * packed.length);
   return ret;

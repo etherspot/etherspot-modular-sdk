@@ -1,5 +1,7 @@
+import { base, bsc } from "viem/chains";
 import { NetworkConfig } from ".";
 import * as Chain from "viem/chains";
+import { defineChain } from "viem";
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -38,6 +40,56 @@ export enum NetworkNames {
 
 export const SupportedNetworks =
   [1, 10, 14, 30, 31, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
+
+
+const sourceId = 1 // mainnet
+
+export const optimism = /*#__PURE__*/ defineChain({
+    id: 10,
+    name: 'OP Mainnet',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://mainnet.optimism.io'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Optimism Explorer',
+        url: 'https://optimistic.etherscan.io',
+        apiUrl: 'https://api-optimistic.etherscan.io/api',
+      },
+    },
+    contracts: {
+      disputeGameFactory: {
+        [sourceId]: {
+          address: '0xe5965Ab5962eDc7477C8520243A95517CD252fA9',
+        },
+      },
+      l2OutputOracle: {
+        [sourceId]: {
+          address: '0xdfe97868233d1aa22e815a266982f2cf17685a27',
+        },
+      },
+      multicall3: {
+        address: '0xca11bde05977b3631167028862be2a173976ca11',
+        blockCreated: 4286263,
+      },
+      portal: {
+        [sourceId]: {
+          address: '0xbEb5Fc579115071764c7423A4f12eDde41f106Ed',
+        },
+      },
+      l1StandardBridge: {
+        [sourceId]: {
+          address: '0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1',
+        },
+      },
+    },
+    sourceId,
+  })
+
+
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
   [key: string]: number;
@@ -107,8 +159,7 @@ export const Networks: {
   [10]: {
     chainId: 10,
     // compilation issue for optimism mainnet
-    //chain: Chain.optimism,
-    chain: null,
+    chain: optimism,
     bundler: 'https://rpc.etherspot.io/v2/10',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -264,7 +315,7 @@ export const Networks: {
   [8453]: {
     chainId: 8453,
     // TODO check compilation issue
-    //chain: Chain.base,
+    //chain: base,
     chain: null,
     bundler: 'https://rpc.etherspot.io/v2/8453',
     contracts: {
@@ -276,7 +327,7 @@ export const Networks: {
   },
   [56]: {
     chainId: 56,
-    chain: Chain.bsc,
+    chain: bsc,
     bundler: 'https://rpc.etherspot.io/v2/56',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
