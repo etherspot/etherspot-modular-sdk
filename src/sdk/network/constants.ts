@@ -1,7 +1,7 @@
-import { base, bsc } from "viem/chains";
+import { bsc, gnosis } from "viem/chains";
 import { NetworkConfig } from ".";
 import * as Chain from "viem/chains";
-import { defineChain } from "viem";
+import { ancient8, base, optimism, optimismSepolia, ancient8Sepolia } from "./ViemChainConfig";
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -40,55 +40,6 @@ export enum NetworkNames {
 
 export const SupportedNetworks =
   [1, 10, 14, 30, 31, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
-
-
-const sourceId = 1 // mainnet
-
-export const optimism = /*#__PURE__*/ defineChain({
-    id: 10,
-    name: 'OP Mainnet',
-    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    rpcUrls: {
-      default: {
-        http: ['https://mainnet.optimism.io'],
-      },
-    },
-    blockExplorers: {
-      default: {
-        name: 'Optimism Explorer',
-        url: 'https://optimistic.etherscan.io',
-        apiUrl: 'https://api-optimistic.etherscan.io/api',
-      },
-    },
-    contracts: {
-      disputeGameFactory: {
-        [sourceId]: {
-          address: '0xe5965Ab5962eDc7477C8520243A95517CD252fA9',
-        },
-      },
-      l2OutputOracle: {
-        [sourceId]: {
-          address: '0xdfe97868233d1aa22e815a266982f2cf17685a27',
-        },
-      },
-      multicall3: {
-        address: '0xca11bde05977b3631167028862be2a173976ca11',
-        blockCreated: 4286263,
-      },
-      portal: {
-        [sourceId]: {
-          address: '0xbEb5Fc579115071764c7423A4f12eDde41f106Ed',
-        },
-      },
-      l1StandardBridge: {
-        [sourceId]: {
-          address: '0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1',
-        },
-      },
-    },
-    sourceId,
-  })
-
 
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
@@ -158,7 +109,7 @@ export const Networks: {
   },
   [10]: {
     chainId: 10,
-    // compilation issue for optimism mainnet
+    // compilation issue for optimism mainnet, using custom config
     chain: optimism,
     bundler: 'https://rpc.etherspot.io/v2/10',
     contracts: {
@@ -225,7 +176,7 @@ export const Networks: {
   },
   [123]: {
     chainId: 123,
-    // TODO no support for ultron mainnet
+    // TODO no-support for ultron mainnet
     chain: null,
     bundler: 'https://testnet-rpc.etherspot.io/v2/123',
     contracts: {
@@ -237,7 +188,7 @@ export const Networks: {
   },
   [100]: {
     chainId: 100,
-    chain: Chain.gnosis,
+    chain: gnosis,
     bundler: 'https://rpc.etherspot.io/v2/100',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -314,9 +265,7 @@ export const Networks: {
   },
   [8453]: {
     chainId: 8453,
-    // TODO check compilation issue
-    //chain: base,
-    chain: null,
+    chain: base,
     bundler: 'https://rpc.etherspot.io/v2/8453',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -427,8 +376,7 @@ export const Networks: {
   [11155420]: {
     chainId: 11155420,
     // TODO check compilation issue
-    //chain: Chain.optimismSepolia,
-    chain: null,
+    chain: optimismSepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155420',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -439,9 +387,7 @@ export const Networks: {
   },
   [28122024]: {
     chainId: 28122024,
-    // TODO check compilation issue
-    //chain: Chain.ancient8Sepolia,
-    chain: null,
+    chain: ancient8Sepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/28122024',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -452,9 +398,7 @@ export const Networks: {
   },
   [888888888]: {
     chainId: 888888888,
-    // TODO check compilation issue
-    //chain: Chain.ancient8,
-    chain: null,
+    chain: ancient8,
     bundler: 'https://rpc.etherspot.io/v2/888888888',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
