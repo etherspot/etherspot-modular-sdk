@@ -39,7 +39,6 @@ cloning down an example repo and setting up a dapp in your own environment.
 The mainnet bundler API key `eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9` is included in the example programs which is a public API key with rate limits, to get higher limits register to https://portal.etherspot.io
 
 ### Note: The smart wallet address differs on the `XDC Testnet` compared to other chains.
-### Note: The smart wallet address differs on the `XDC Mainnet` compared to other chains.
 
 ## 📖 Documentation
 
