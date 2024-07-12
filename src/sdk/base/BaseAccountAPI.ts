@@ -10,7 +10,7 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { parseAbi, PublicClient, WalletClient, zeroAddress } from 'viem';
+import { parseAbi, parseAbiItem, PublicClient, WalletClient, zeroAddress } from 'viem';
 import { accountAbi, entryPointAbi } from '../common/abis';
 
 export interface BaseApiParams {
@@ -548,13 +548,23 @@ export abstract class BaseAccountAPI {
   async getUserOpReceipt(userOpHash: string, timeout = 30000, interval = 5000): Promise<string | null> {
     const endtime = Date.now() + timeout;
     while (Date.now() < endtime) {
-      //TODO identify viem migration for queryFilter function
-      const events = await this.entryPointView.queryFilter(this.entryPointView.filters.UserOperationEvent(userOpHash));
-      if (events.length > 0) {
-        return events[0].transactionHash;
+      const filter = await this.publicClient.createEventFilter({
+        address: this.entryPointAddress as `0x${string}`,
+        args: {
+          userOpHash: userOpHash as `0x${string}`,
+        },
+        event: parseAbiItem('event UserOperationEvent(bytes32 indexed userOpHash,address indexed sender,address indexed paymaster,uint256 nonce,bool success,uint256 actualGasCost,uint256 actualGasUsed)'),
+      })
+
+      const logs = await this.publicClient.getFilterLogs({ filter })
+
+      if (logs.length > 0) {
+        return logs[0].transactionHash;
       }
+
       await new Promise((resolve) => setTimeout(resolve, interval));
     }
+
     return null;
   }
 

@@ -255,7 +255,8 @@ export class ModularSdk {
   }
 
   async getUserOpReceipt(userOpHash: string) {
-    return this.bundler.getUserOpsReceipt(userOpHash);
+    //return this.bundler.getUserOpsReceipt(userOpHash);
+    return await this.etherspotWallet.getUserOpReceipt(userOpHash);
   }
 
   async getUserOpHash(userOp: UserOperation) {

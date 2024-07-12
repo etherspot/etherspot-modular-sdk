@@ -346,10 +346,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     return signature;
   }
 
-  get epView() {
-    return this.entryPointView;
-  }
-
   async encodeBatch(targets: string[], values: BigNumberish[], datas: string[]): Promise<string> {
 
     const executeMode = getExecuteMode({
