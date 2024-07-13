@@ -1,11 +1,11 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { resolveProperties } from 'ethers/lib/utils';
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import Debug from 'debug';
 import { UserOperation, deepHexlify } from '../common/ERC4337Utils';
 import { Gas } from '../common';
 import { ErrorHandler } from '../errorHandler/errorHandler.service';
+import { resolveProperties } from '../common/utils/userop-utils';
 
 const debug = Debug('aa.rpc');
 

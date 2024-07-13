@@ -12,6 +12,7 @@ import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
 import { Account, parseAbi, parseAbiItem, PublicClient, WalletClient, zeroAddress } from 'viem';
 import { accountAbi, entryPointAbi } from '../common/abis';
+import { Deferrable, resolveProperties, Result } from '../common/utils/userop-utils';
 
 export interface BaseApiParams {
   provider: Provider;
@@ -29,12 +30,6 @@ export interface BaseApiParams {
 export interface UserOpResult {
   transactionHash: string;
   success: boolean;
-}
-
-type Result = { key: string, value: any };
-
-export type Deferrable<T> = {
-  [K in keyof T]: T[K] | Promise<T[K]>;
 }
 
 /**
@@ -327,26 +322,12 @@ export abstract class BaseAccountAPI {
     return 100000;
   }
 
-  async resolveProperties<T>(object: Readonly<Deferrable<T>>): Promise<T> {
-    const promises: Array<Promise<Result>> = Object.keys(object).map((key) => {
-      const value = object[<keyof Deferrable<T>>key];
-      return Promise.resolve(value).then((v) => ({ key: key, value: v }));
-    });
-
-    const results = await Promise.all(promises);
-
-    return results.reduce((accum, result) => {
-      accum[<keyof T>(result.key)] = result.value;
-      return accum;
-    }, <T>{});
-  }
-
   /**
    * should cover cost of putting calldata on-chain, and some overhead.
    * actual overhead depends on the expected bundle size
    */
   async getPreVerificationGas(userOp: Partial<UserOperationStruct>): Promise<number> {
-    const p = await this.resolveProperties(userOp);
+    const p = await resolveProperties(userOp);
     return calcPreVerificationGas(p, this.overheads);
   }
 
@@ -396,7 +377,7 @@ export abstract class BaseAccountAPI {
    * @param userOp userOperation, (signature field ignored)
    */
   async getUserOpHash(userOp: UserOperation): Promise<string> {
-    const op = await this.resolveProperties(userOp);
+    const op = await resolveProperties(userOp);
     const provider = this.services.walletService.getWalletProvider();
     const chainId = await provider.getNetwork().then((net) => net.chainId);
     return getUserOpHash(op, this.entryPointAddress, chainId);
@@ -559,9 +540,11 @@ export abstract class BaseAccountAPI {
 
       const logs = await this.publicClient.getFilterLogs({ filter })
 
-      if (logs.length > 0) {
+      if (logs && logs.length > 0) {
         return logs[0].transactionHash;
       }
+
+      console.log(`getUserOpReceipt for ${userOpHash} to wait for ${interval} ms for next retry on event filter...`)
 
       await new Promise((resolve) => setTimeout(resolve, interval));
     }

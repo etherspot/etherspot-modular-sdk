@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
+import { resolveProperties } from './utils/userop-utils';
 
 export function toJSON(op: Partial<UserOperationStruct>): Promise<any> {
-  return ethers.utils.resolveProperties(op).then((userOp) =>
+  return resolveProperties(op).then((userOp) =>
     Object.keys(userOp)
       .map((key) => {
         let val = (userOp as any)[key];

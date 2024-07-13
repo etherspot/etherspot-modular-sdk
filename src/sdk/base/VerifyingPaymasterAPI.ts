@@ -4,6 +4,7 @@ import { calcPreVerificationGas } from './calcPreVerificationGas';
 import { PaymasterAPI } from './PaymasterAPI';
 import { toJSON } from '../common/OperationUtils';
 import { UserOperation } from '../common';
+import { resolveProperties } from '../common/utils/userop-utils';
 
 const DUMMY_SIGNATURE =
   '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c';
@@ -36,7 +37,7 @@ export class VerifyingPaymasterAPI extends PaymasterAPI {
     // Hack: userOp includes empty paymasterData which calcPreVerificationGas requires.
     try {
       // userOp.preVerificationGas contains a promise that will resolve to an error.
-      await ethers.utils.resolveProperties(userOp);
+      await resolveProperties(userOp);
       // eslint-disable-next-line no-empty
     } catch (_) { }
     let pmOp: Partial<UserOperation>;
@@ -66,7 +67,7 @@ export class VerifyingPaymasterAPI extends PaymasterAPI {
         signature: DUMMY_SIGNATURE,
       }
     }
-    const op = await ethers.utils.resolveProperties(pmOp);
+    const op = await resolveProperties(pmOp);
     op.preVerificationGas = calcPreVerificationGas(op);
 
     // Ask the paymaster to sign the transaction and return a valid paymasterData value.
