@@ -1,7 +1,6 @@
 import { BigNumber, BigNumberish, TypedDataField } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Provider } from '@ethersproject/providers';
-import { IEntryPoint, EntryPoint__factory } from '../contracts';
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
 import { PaymasterAPI } from './PaymasterAPI';
@@ -52,9 +51,6 @@ export abstract class BaseAccountAPI {
   readonly services: Context['services'];
 
   context: Context;
-
-  // entryPoint connected to "zero" address. allowed to make static calls (e.g. to getSenderAddress)
-  protected readonly entryPointView: IEntryPoint;
 
   provider: Provider;
   overheads?: Partial<GasOverheads>;
@@ -108,11 +104,6 @@ export abstract class BaseAccountAPI {
     this.factoryAddress = params.factoryAddress;
     this.walletClient = params.walletClient;
     this.publicClient = params.publicClient;
-
-    // factory "connect" define the contract address. the contract "connect" defines the "from" address.
-    this.entryPointView = EntryPoint__factory.connect(params.entryPointAddress, params.provider).connect(
-      zeroAddress,
-    );
   }
 
   get state(): StateService {

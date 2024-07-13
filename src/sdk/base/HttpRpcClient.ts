@@ -6,15 +6,18 @@ import { UserOperation, deepHexlify } from '../common/ERC4337Utils';
 import { Gas } from '../common';
 import { ErrorHandler } from '../errorHandler/errorHandler.service';
 import { resolveProperties } from '../common/utils/userop-utils';
-
+import {
+  type PublicClient,
+} from "viem"
 const debug = Debug('aa.rpc');
 
 export class HttpRpcClient {
   private readonly userOpJsonRpcProvider: JsonRpcProvider;
 
+
   initializing: Promise<void>;
 
-  constructor(readonly bundlerUrl: string, readonly entryPointAddress: string, readonly chainId: number) {
+  constructor(readonly bundlerUrl: string, publicClient: PublicClient, readonly entryPointAddress: string, readonly chainId: number) {
     try {
       this.userOpJsonRpcProvider = new ethers.providers.JsonRpcProvider({
         url: this.bundlerUrl

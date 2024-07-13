@@ -18,7 +18,7 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { Account, http, PublicClient, WalletClient } from 'viem';
+import { Account, http, type PublicClient, type WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromAccount } from './common/viem-utils';
 
 /**
@@ -117,7 +117,7 @@ export class ModularSdk {
       walletClient: this.walletClient,
       publicClient: this.publicClient,
     })
-    this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId);
+    this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, this.publicClient, entryPointAddress, chainId);
   }
 
 

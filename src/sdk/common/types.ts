@@ -36,6 +36,11 @@ export const moduleTypeIds: ModuleTypeIds = {
   hook: 4,
 }
 
+export interface TypedDataField {
+  name: string;
+  type: string;
+};
+
 export type BigNumberish = Hex | number | bigint
 
 export type BytesLike = Uint8Array | Hex

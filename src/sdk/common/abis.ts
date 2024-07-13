@@ -14,8 +14,10 @@ export const factoryAbi = [
   ];
 
   export const entryPointAbi = [
-    'function getSenderAddress(bytes initCode)',
-    'function getNonce(address sender, uint192 key)',
+    'function getSenderAddress(bytes initCode) view returns (address)',
+    'function balanceOf(address account) view returns (uint256)',
+    'function getNonce(address sender, uint192 key) view returns (uint256)',
+    'function getDepositInfo(address account) view returns (uint256,bool,uint112,uint32,uint48)',
     'event UserOperationEvent(bytes32 indexed userOpHash,address indexed sender,address indexed paymaster,uint256 nonce,bool success,uint256 actualGasCost,uint256 actualGasUsed)'
   ];
   

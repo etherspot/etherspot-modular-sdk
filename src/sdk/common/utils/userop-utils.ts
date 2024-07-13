@@ -4,7 +4,7 @@
 export type Result = { key: string, value: any };
 
 export type Deferrable<T> = {
-  [K in keyof T]: T[K] | Promise<T[K]>;r
+  [K in keyof T]: T[K] | Promise<T[K]>;
 }
 
 export const resolveProperties = async <T>(object: Readonly<Deferrable<T>>): Promise<T> => {
