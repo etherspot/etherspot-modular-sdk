@@ -13,6 +13,6 @@ export const getExecuteMode = ({
         execType, // 1 byte
         "0x00000000", // 4 bytes
         "0x00000000", // 4 bytes
-        pad("0x00000000", {size: 32})
+        pad("0x00000000", {size: 22})
     ]);
 }
