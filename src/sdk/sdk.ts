@@ -155,6 +155,7 @@ export class ModularSdk {
       network: false,
     });
 
+    //return this.walletClient.signMessage(message);
     return this.etherspotWallet.services.walletService.signMessage(message);
   }
 

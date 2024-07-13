@@ -2,6 +2,7 @@ import { BytesLike, TypedDataField } from 'ethers';
 import { toHex } from '../../common';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { EthereumProvider } from './interfaces';
+import { Hex } from 'viem';
 
 export class WalletConnect2WalletProvider extends DynamicWalletProvider {
   constructor(readonly provider: EthereumProvider) {
@@ -32,7 +33,7 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
   async signMessage(message: BytesLike): Promise<string> {
     const response = await this.provider.signer.request({
       method: 'personal_sign',
-      params: [toHex(message), this.address],
+      params: [toHex(message as any), this.address],
     });
 
     return typeof response === 'string' ? response : null;

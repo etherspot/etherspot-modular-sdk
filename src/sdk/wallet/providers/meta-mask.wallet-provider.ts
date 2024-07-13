@@ -1,6 +1,7 @@
 import { BytesLike, TypedDataField } from 'ethers';
 import { toHex } from '../../common';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
+import { Hex } from 'viem';
 
 declare const window: Window & {
   ethereum: {
@@ -52,7 +53,7 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
 
   async signMessage(message: BytesLike): Promise<string> {
     return this.sendRequest('personal_sign', [
-      toHex(message),
+      toHex(message as any),
       this.address, //
     ]);
   }

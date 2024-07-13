@@ -1,15 +1,17 @@
-import { constants, utils } from 'ethers';
+import { getAddress } from 'viem';
+import { AddressZero } from '../constants';
 
 /**
  * @ignore
  */
+// TODO - test this function
 export function prepareAddress(value: string, zeroAddressAsNull = false): string {
   let result: string = null;
 
   try {
-    result = utils.getAddress(value);
+    result = getAddress(value);
 
-    if (result === constants.AddressZero) {
+    if (result === AddressZero) {
       result = null;
     }
   } catch (err) {
@@ -17,7 +19,7 @@ export function prepareAddress(value: string, zeroAddressAsNull = false): string
   }
 
   if (!result && zeroAddressAsNull) {
-    result = constants.AddressZero;
+    result = AddressZero;
   }
 
   return result;

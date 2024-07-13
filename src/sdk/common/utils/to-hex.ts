@@ -1,5 +1,6 @@
-import { BytesLike, utils } from 'ethers';
+import { BytesLike } from '../types';
 import { isHex } from './is-hex';
+import { stringToBytes } from 'viem';
 
 /**
  * @ignore
@@ -13,13 +14,13 @@ export function toHex(data: BytesLike): string {
         if (isHex(data)) {
           result = data;
         } else {
-          result = utils.hexlify(utils.toUtf8Bytes(data));
+          result = toHex(stringToBytes(data));
         }
         break;
 
       case 'object':
         try {
-          result = utils.hexlify(data as any);
+          result = toHex(data as any);
         } catch (err) {
           result = null;
         }

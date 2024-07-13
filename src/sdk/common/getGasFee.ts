@@ -12,7 +12,7 @@ export async function getGasFee(provider: ethers.providers.JsonRpcProvider): Pro
     if (BigNumber.from(0).eq(fee)) {
       throw new Error('failed to get priorityFeePerGas');
     }
-    const tip = ethers.BigNumber.from(fee);
+    const tip = BigNumber.from(fee);
     const buffer = tip.div(100).mul(bufferPercent);
     const maxPriorityFeePerGas = tip.add(buffer);
     const maxFeePerGas =

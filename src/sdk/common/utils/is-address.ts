@@ -1,4 +1,5 @@
-import { utils, constants } from 'ethers';
+import { getAddress } from 'viem';
+import { AddressZero } from '../constants';
 
 /**
  * @ignore
@@ -6,9 +7,9 @@ import { utils, constants } from 'ethers';
 export function isAddress(value: string): boolean {
   let result = false;
 
-  if (value && value !== constants.AddressZero) {
+  if (value && value !== AddressZero) {
     try {
-      const address = utils.getAddress(value);
+      const address = getAddress(value);
 
       if (address) {
         result = address === value;
@@ -16,7 +17,7 @@ export function isAddress(value: string): boolean {
     } catch (err) {
       result = false;
     }
-  } else if (value === constants.AddressZero) {
+  } else if (value === AddressZero) {
     result = true;
   }
 

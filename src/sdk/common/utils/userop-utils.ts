@@ -1,6 +1,3 @@
-
-
-
 export type Result = { key: string, value: any };
 
 export type Deferrable<T> = {

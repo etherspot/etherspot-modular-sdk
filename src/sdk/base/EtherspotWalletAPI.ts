@@ -8,6 +8,7 @@ import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, 
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/viem-utils';
+import { sign } from 'crypto';
 
 // Creating a constant for the sentinel address using viem
 const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
@@ -207,7 +208,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
   async checkAccountAddress(address: string): Promise<void> {
     const isOwner = await this.publicClient.readContract({
-      address: address  as `0x${string}`,
+      address: address as `0x${string}`,
       abi: parseAbi(accountAbi),
       functionName: 'isOwner',
       args: [this.services.walletService.EOAAddress]
@@ -267,6 +268,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async getCounterFactualAddress(): Promise<string> {
+    console.log(`inside getCounterFactualAddress for predefinedAccountAddress: ${this.predefinedAccountAddress} and factoryAddress: ${this.factoryAddress} and accountAddress: ${this.accountAddress}`)
     if (this.predefinedAccountAddress) {
       await this.checkAccountAddress(this.predefinedAccountAddress);
     }
@@ -275,6 +277,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const initCode = await this.getInitCodeData();
 
     if (!this.accountAddress) {
+      console.log(`about to get account address via readContract on factoryAddress: ${this.factoryAddress} and salt: ${salt} and initCode: ${initCode}`)
       this.accountAddress = (await this.publicClient.readContract({
         address: this.factoryAddress as `0x${string}`,
         abi: parseAbi(factoryAbi),
@@ -290,23 +293,23 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const dummyKey = key.eq(0)
       ? getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
       : getAddress(key.toHexString()) + "00000000";
-      console.log(`inside getNonce for accountAddress: ${accountAddress} and dummyKey ${dummyKey} and entrypointAddress: ${this.entryPointAddress}`)
+    console.log(`inside getNonce for accountAddress: ${accountAddress} and dummyKey ${dummyKey} and entrypointAddress: ${this.entryPointAddress}`)
 
-      // TODO fix this and entrypoint contract instance must be set as a private property which is initialized in the constructor
-      // const entryPoint = getContract({
-      //   address: this.entryPointAddress as `0x${string}`,
-      //   abi: EntryPointAbi,
-      //   client: this.publicClient
-      // })
-      // return entryPoint.read.getNonce([accountAddress, dummyKey])
+    // TODO fix this and entrypoint contract instance must be set as a private property which is initialized in the constructor
+    // const entryPoint = getContract({
+    //   address: this.entryPointAddress as `0x${string}`,
+    //   abi: EntryPointAbi,
+    //   client: this.publicClient
+    // })
+    // return entryPoint.read.getNonce([accountAddress, dummyKey])
 
-      const nonceResponse = await this.publicClient.readContract({
-        address: this.entryPointAddress as `0x${string}`,
-        abi: parseAbi(entryPointAbi),
-        functionName: 'getNonce',
-        args: [accountAddress, BigInt(dummyKey)]
-      });
-      return nonceResponse as BigNumber;
+    const nonceResponse = await this.publicClient.readContract({
+      address: this.entryPointAddress as `0x${string}`,
+      abi: parseAbi(entryPointAbi),
+      functionName: 'getNonce',
+      args: [accountAddress, BigInt(dummyKey)]
+    });
+    return nonceResponse as BigNumber;
   }
 
   /**
@@ -359,8 +362,15 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async signUserOpHash(userOpHash: string): Promise<string> {
-    const signature = await this.services.walletService.signMessage(toBytes(userOpHash));
+    const signature = await this.walletClient.signMessage(
+      {
+        message: userOpHash,
+        account: this.account
+      });
+
     return signature;
+    // const signature = await this.services.walletService.signMessage(toBytes(userOpHash));
+    // return signature;
   }
 
   async encodeBatch(targets: string[], values: BigNumberish[], datas: string[]): Promise<string> {

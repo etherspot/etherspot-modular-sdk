@@ -1,6 +1,5 @@
-import { hexConcat } from "ethers/lib/utils";
 import { CALL_TYPE, EXEC_TYPE } from "../constants";
-import { ethers } from "ethers";
+import { concat, pad } from "viem";
 
 export const getExecuteMode = ({
     callType,
@@ -9,11 +8,11 @@ export const getExecuteMode = ({
     callType: CALL_TYPE
     execType: EXEC_TYPE
 }): string => {
-    return hexConcat([
+    return concat([
         callType, // 1 byte
         execType, // 1 byte
         "0x00000000", // 4 bytes
         "0x00000000", // 4 bytes
-        ethers.utils.zeroPad("0x00000000", 22)
+        pad("0x00000000", {size: 32})
     ]);
 }

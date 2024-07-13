@@ -3,6 +3,7 @@ import { prepareAddress, toHex } from '../../common';
 import { NetworkNames, prepareNetworkName } from '../../network';
 import { Web3Provider } from './interfaces';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
+import { Hex } from 'viem';
 
 export class Web3WalletProvider extends DynamicWalletProvider {
   static async connect(provider: Web3Provider, type = 'Web3'): Promise<Web3WalletProvider> {
@@ -51,7 +52,7 @@ export class Web3WalletProvider extends DynamicWalletProvider {
     return this.sendRequest(
       'personal_sign',
       [
-        toHex(message),
+        toHex(message as any),
         this.address, //
       ],
       this.address,

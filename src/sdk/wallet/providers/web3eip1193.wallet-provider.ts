@@ -47,7 +47,7 @@ export class Web3eip1193WalletProvider extends DynamicWalletProvider {
   }
 
   async signMessage(message: BytesLike): Promise<string> {
-    return this.sendRequest('personal_sign', [toHex(message), this.address]);
+    return this.sendRequest('personal_sign', [toHex(message as any), this.address]);
   }
 
   async signTypedData(typedData: TypedDataField[], message: any, accountAddress: string): Promise<string> {

@@ -13,6 +13,8 @@ export const bufferPercent = 13; // Buffer in percent
 
 export const onRampApiKey = 'pk_prod_01H66WYDRFM95JBTJ4VMGY1FAX';
 
+export const AddressZero = "0x0000000000000000000000000000000000000000";
+
 export enum CALL_TYPE {
   SINGLE = "0x00",
   BATCH = "0x01",
