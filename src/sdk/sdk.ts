@@ -18,8 +18,8 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { PublicClient, WalletClient } from 'viem';
-import { getPublicClient, getWalletClientFromPrivateKey } from './common/viem-utils';
+import { Account, PublicClient, WalletClient } from 'viem';
+import { getPublicClient, getWalletClientFromAccount } from './common/viem-utils';
 
 /**
  * Modular-Sdk
@@ -35,6 +35,7 @@ export class ModularSdk {
   private index: number;
   private walletClient: WalletClient;
   private publicClient: PublicClient;
+  private account: Account;
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
@@ -52,8 +53,12 @@ export class ModularSdk {
       chainId,
       rpcProviderUrl,
       accountAddress,
+      account
     } = optionsLike;
 
+    if(!account) throw new Exception('Account object is required');
+
+    this.account = account;
     this.chainId = chainId;
     this.index = index ?? 0;
 
@@ -75,10 +80,10 @@ export class ModularSdk {
     }
 
     // TODO wallet provider need not always be a string, this needs to be changed
-    this.walletClient = getWalletClientFromPrivateKey({
+    this.walletClient = getWalletClientFromAccount({
       rpcUrl: viemClientUrl,
       chainId: chainId,
-      privateKey: walletProvider["privateKey"] as `0x${string}`
+      account: this.account
     });
 
     this.publicClient = getPublicClient({
@@ -98,6 +103,7 @@ export class ModularSdk {
 
     if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
     if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
+    this.account = optionsLike.account;
     this.etherspotWallet = new EtherspotWalletAPI({
       provider,
       walletProvider: walletConnectProvider ?? walletProvider,

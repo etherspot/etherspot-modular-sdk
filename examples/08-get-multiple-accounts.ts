@@ -1,3 +1,4 @@
+import { getViemAccount } from '../src/sdk/common/viem-utils';
 import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
 
@@ -9,7 +10,8 @@ async function main() {
   // initializating sdk for index 0...
   const modularSdk = new ModularSdk(
     { privateKey: process.env.WALLET_PRIVATE_KEY },
-    { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
+    { chainId: Number(process.env.CHAIN_ID),
+      account: getViemAccount(process.env.WALLET_PRIVATE_KEY), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
   );
 
   // get EtherspotWallet address for index 0...
@@ -19,7 +21,7 @@ async function main() {
   // initializating sdk for index 1...
   const modularSdk1 = new ModularSdk(
     { privateKey: process.env.WALLET_PRIVATE_KEY },
-    { chainId: Number(process.env.CHAIN_ID), index: 1, bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
+    { chainId: Number(process.env.CHAIN_ID), account: getViemAccount(process.env.WALLET_PRIVATE_KEY), index: 1, bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
   );
 
   // get EtherspotWallet address for index 1...

@@ -4,7 +4,7 @@ import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes } from 'viem';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account } from 'viem';
 import { accountAbi, bootstrapAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/viem-utils';
@@ -52,7 +52,8 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   bootstrapAddress?: string;
   multipleOwnerECDSAValidatorAddress?: string;
   walletClient: WalletClient;
-  publicClient: PublicClient
+  publicClient: PublicClient;
+  account: Account;
 
   /**
    * our account contract.
@@ -71,6 +72,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
     this.publicClient = params.publicClient;
     this.walletClient = params.walletClient;
+    this.account = params.account;
   }
 
   async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<boolean> {

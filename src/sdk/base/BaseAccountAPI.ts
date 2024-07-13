@@ -10,7 +10,7 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { parseAbi, parseAbiItem, PublicClient, WalletClient, zeroAddress } from 'viem';
+import { Account, parseAbi, parseAbiItem, PublicClient, WalletClient, zeroAddress } from 'viem';
 import { accountAbi, entryPointAbi } from '../common/abis';
 
 export interface BaseApiParams {
@@ -23,6 +23,7 @@ export interface BaseApiParams {
   optionsLike?: SdkOptions;
   walletClient?: WalletClient;
   publicClient?: PublicClient;
+  account?: Account;
 }
 
 export interface UserOpResult {
