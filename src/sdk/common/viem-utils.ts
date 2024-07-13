@@ -1,4 +1,4 @@
-import { PublicClient, Address, createPublicClient, createWalletClient, http, Account, Chain, getAddress, extractChain, Hex } from 'viem'
+import { PublicClient, Address, createPublicClient, createWalletClient, http, Account, Chain, getAddress, extractChain, Hex, Transport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts';
 import * as chains from "viem/chains";
 import { Networks } from '../network/constants';
@@ -17,10 +17,10 @@ export const isContract = async ({
 }
 
 
-export const getPublicClient = ({ chainId, rpcUrl }: { chainId: number, rpcUrl: string }) => {
+export const getPublicClient = ({ chainId, transport }: { chainId: number, transport: Transport }) => {
   const publicClient = createPublicClient({
     chain: Networks[chainId].chain,
-    transport: http(rpcUrl) as any, // Asserting to `any` to bypass the deep instantiation check
+    transport: transport
   });
   return publicClient;
 }

@@ -18,7 +18,7 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { Account, PublicClient, WalletClient } from 'viem';
+import { Account, http, PublicClient, WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromAccount } from './common/viem-utils';
 
 /**
@@ -88,7 +88,9 @@ export class ModularSdk {
 
     this.publicClient = getPublicClient({
       chainId: chainId,
-      rpcUrl: viemClientUrl
+      transport: http(
+        viemClientUrl
+      )
     }) as PublicClient;
 
     let entryPointAddress = '', walletFactoryAddress = '';
@@ -341,6 +343,11 @@ export class ModularSdk {
     const verificationGasLimit = BigNumber.from(await userOp.verificationGasLimit);
     const preVerificationGas = BigNumber.from(await userOp.preVerificationGas);
     return callGasLimit.add(verificationGasLimit).add(preVerificationGas);
+  }
+
+  async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
+    const nonce = await this.etherspotWallet.getNonce(key);
+    return nonce;
   }
 
   async getFiatOnRamp(params: OnRamperDto = {}) {

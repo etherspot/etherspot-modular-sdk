@@ -4,10 +4,12 @@ import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account } from 'viem';
-import { accountAbi, bootstrapAbi, factoryAbi } from '../common/abis';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, WalletClient, PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, getContract, createPublicClient, http } from 'viem';
+import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/viem-utils';
+import { EntryPointAbi } from "../common/abi/EntryPointAbi.js"
+import { mainnet } from 'viem/chains';
 
 // Creating a constant for the sentinel address using viem
 const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
@@ -290,8 +292,26 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const dummyKey = key.eq(0)
       ? getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
       : getAddress(key.toHexString()) + "00000000";
+      console.log(`inside getNonce for accountAddress: ${accountAddress} and dummyKey ${dummyKey} and entrypointAddress: ${this.entryPointAddress}`)
 
-    return await this.entryPointView.getNonce(accountAddress, BigInt(dummyKey));
+      // const entryPoint = getContract({
+      //   address: this.entryPointAddress as `0x${string}`,
+      //   abi: EntryPointAbi,
+      //   client: this.publicClient
+      // })
+      // return entryPoint.read.getNonce([accountAddress, dummyKey])
+
+      // const response = await this.publicClient.readContract({
+      //   address: this.entryPointAddress as `0x${string}`,
+      //   abi: parseAbi(entryPointAbi),
+      //   functionName: 'getNonce',
+      //   args: [accountAddress, BigInt(dummyKey)]
+      // });
+
+      // console.log(`response from getNonce ${response}`);
+      // return BigNumber.from(response);
+
+      return await this.entryPointView.getNonce(accountAddress, BigInt(dummyKey));
   }
 
   /**

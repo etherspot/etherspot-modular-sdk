@@ -5,6 +5,7 @@ import config from "../../config.json";
 import { ModularSdk } from '../../../src';
 import { printOp } from "../../../src/sdk/common/OperationUtils";
 import { sleep } from "../../../src/sdk/common";
+import { getViemAccount } from "src/sdk/common/viem-utils";
 
 // This example requires several layers of calls:
 // EntryPoint
@@ -17,7 +18,7 @@ export default async function main(
   t: Array<string>,
   amt: string,
 ) {
-  const modularSdk = new ModularSdk({ privateKey: config.signingKey }, { chainId: config.chainId })
+  const modularSdk = new ModularSdk({ privateKey: config.signingKey }, { chainId: config.chainId, account: getViemAccount(config.signingKey) })
 
   const address = await modularSdk.getCounterFactualAddress();
   console.log(`Etherspot address: ${address}`)
