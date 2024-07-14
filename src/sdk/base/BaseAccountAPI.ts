@@ -536,8 +536,6 @@ export abstract class BaseAccountAPI {
         return logs[0].transactionHash;
       }
 
-      console.log(`getUserOpReceipt for ${userOpHash} to wait for ${interval} ms for next retry on event filter...`)
-
       await new Promise((resolve) => setTimeout(resolve, interval));
     }
 

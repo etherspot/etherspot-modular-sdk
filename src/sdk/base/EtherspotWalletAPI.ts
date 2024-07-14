@@ -1,6 +1,5 @@
 import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
-import { ModularEtherspotWallet, EtherspotWallet7579Factory } from '../contracts/src/ERC7579/wallet';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
@@ -55,14 +54,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   walletClient: WalletClient;
   publicClient: PublicClient;
   account: Account;
-
-  /**
-   * our account contract.
-   * should support the "execFromEntryPoint" and "nonce" methods
-   */
-  accountContract?: ModularEtherspotWallet;
-
-  factory?: EtherspotWallet7579Factory;
 
   constructor(params: EtherspotWalletApiParams) {
     super(params);
@@ -268,7 +259,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async getCounterFactualAddress(): Promise<string> {
-    console.log(`inside getCounterFactualAddress for predefinedAccountAddress: ${this.predefinedAccountAddress} and factoryAddress: ${this.factoryAddress} and accountAddress: ${this.accountAddress}`)
     if (this.predefinedAccountAddress) {
       await this.checkAccountAddress(this.predefinedAccountAddress);
     }
@@ -277,7 +267,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const initCode = await this.getInitCodeData();
 
     if (!this.accountAddress) {
-      console.log(`about to get account address via readContract on factoryAddress: ${this.factoryAddress} and salt: ${salt} and initCode: ${initCode}`)
       this.accountAddress = (await this.publicClient.readContract({
         address: this.factoryAddress as `0x${string}`,
         abi: parseAbi(factoryAbi),
@@ -293,7 +282,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const dummyKey = key.eq(0)
       ? getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
       : getAddress(key.toHexString()) + "00000000";
-    console.log(`inside getNonce for accountAddress: ${accountAddress} and dummyKey ${dummyKey} and entrypointAddress: ${this.entryPointAddress}`)
 
     // TODO fix this and entrypoint contract instance must be set as a private property which is initialized in the constructor
     // const entryPoint = getContract({
@@ -368,8 +356,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
         message: { raw: userOpHashHex },
         account: this.account,
       });
-
-    console.log(`signature made via viem: ${signature} for userOpHash: ${userOpHash} and userOpHashHex: ${userOpHashHex}`);
 
     return signature;
   }

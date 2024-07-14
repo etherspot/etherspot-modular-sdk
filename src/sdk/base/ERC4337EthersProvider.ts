@@ -6,10 +6,10 @@ import { ClientConfig } from './ClientConfig';
 import { ERC4337EthersSigner } from './ERC4337EthersSigner';
 import { UserOperationEventListener } from './UserOperationEventListener';
 import { HttpRpcClient } from './HttpRpcClient';
-import type { IEntryPoint } from '../contracts';
 import { UserOperation, getUserOpHash } from '../common';
 import { BaseAccountAPI } from './BaseAccountAPI';
 import { resolveProperties } from '../common/utils/userop-utils';
+import { IEntryPoint } from '../contracts/account-abstraction/IEntrypoint';
 
 export class ERC4337EthersProvider extends BaseProvider {
   initializedBlockNumber!: number;

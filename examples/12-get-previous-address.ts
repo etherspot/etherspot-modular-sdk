@@ -6,7 +6,7 @@ import { getViemAccount } from '../src/sdk/common/viem-utils';
 
 dotenv.config();
 
-// npx ts-node examples/11-get-previous-address.ts
+// npx ts-node examples/12-get-previous-address.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
@@ -20,7 +20,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const previousAddress = await modularSdk.getPreviousAddress(MODULE_TYPE.VALIDATOR, '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143');
+  const previousAddress = await modularSdk.getPreviousAddress(MODULE_TYPE.VALIDATOR, '0x409474DFf53dD5824a7bf62D183639263853e3D5');
   console.log(`previousAddress: ${previousAddress}`);
 }
 

@@ -1,9 +1,9 @@
 import { BytesLike, defaultAbiCoder } from 'ethers/lib/utils';
-import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Buffer } from 'buffer';
 import { concat, encodeAbiParameters, Hex, keccak256, pad, parseAbiParameters, toHex } from 'viem';
 import { hexlify } from './utils/hexlify';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 
 export interface UserOperation {
   sender: string
@@ -35,8 +35,8 @@ export type NotPromise<T> = {
  * @param forSignature "true" if the hash is needed to calculate the getUserOpHash()
  *  "false" to pack entire UserOp, for calculating the calldata cost of putting it on-chain.
  */
-export function packUserOp(op1: UserOperation | NotPromise<UserOperationStruct>, forSignature = true): string {
-  let op: NotPromise<UserOperationStruct>;
+export function packUserOp(op1: UserOperation | NotPromise<BaseAccountUserOperationStruct>, forSignature = true): string {
+  let op: NotPromise<BaseAccountUserOperationStruct>;
   if ('callGasLimit' in op1) {
     op = packUserOpData(op1)
   } else {
@@ -104,7 +104,7 @@ export function packPaymasterData(paymaster: string, paymasterVerificationGasLim
 }
 
 // TODO - test this on sepolia
-export function packUserOpData(op: any): NotPromise<UserOperationStruct> {
+export function packUserOpData(op: any): NotPromise<BaseAccountUserOperationStruct> {
   let paymasterAndData: BytesLike
   if (op.paymaster == null) {
     paymasterAndData = '0x'

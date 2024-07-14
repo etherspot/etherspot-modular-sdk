@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
-import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { resolveProperties } from './utils/userop-utils';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 
-export function toJSON(op: Partial<UserOperationStruct>): Promise<any> {
+export function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<any> {
   return resolveProperties(op).then((userOp) =>
     Object.keys(userOp)
       .map((key) => {
@@ -21,6 +21,6 @@ export function toJSON(op: Partial<UserOperationStruct>): Promise<any> {
       ),
   );
 }
-export async function printOp(op: Partial<UserOperationStruct>): Promise<string> {
+export async function printOp(op: Partial<BaseAccountUserOperationStruct>): Promise<string> {
   return toJSON(op).then((userOp) => JSON.stringify(userOp, null, 2));
 }

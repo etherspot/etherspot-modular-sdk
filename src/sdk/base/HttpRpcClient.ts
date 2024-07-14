@@ -1,4 +1,3 @@
-import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import Debug from 'debug';
 import { UserOperation, deepHexlify } from '../common/ERC4337Utils';
 import { Gas } from '../common';
@@ -9,6 +8,7 @@ import {
   WalletClient,
   type PublicClient,
 } from "viem"
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 const debug = Debug('aa.rpc');
 
 export class HttpRpcClient {
@@ -18,7 +18,6 @@ export class HttpRpcClient {
 
   constructor(readonly bundlerUrl: string, readonly entryPointAddress: string, readonly chainId: number, walletClient: WalletClient, publicClient: PublicClient) {
     try {
-      console.log('bundlerUrl: ', bundlerUrl);
       this.publicClient = publicClient;
       this.walletClient = walletClient;
 
@@ -39,9 +38,7 @@ export class HttpRpcClient {
         method: 'eth_chainId',
         params: []
       });
-      console.log('chain: ', chain);
       const bundlerChain = parseInt(chain as Hex, 16);
-      console.log('bundlerChain: ', bundlerChain);
       if (bundlerChain !== this.chainId) {
         throw new Error(
           `bundler ${this.bundlerUrl} is on chainId ${bundlerChain}, but provider is on chainId ${this.chainId}`,
@@ -56,7 +53,7 @@ export class HttpRpcClient {
     }
   }
 
-  async getVerificationGasInfo(tx: UserOperationStruct): Promise<any> {
+  async getVerificationGasInfo(tx: BaseAccountUserOperationStruct): Promise<any> {
     const hexifiedUserOp = deepHexlify(await resolveProperties(tx));
     try {
       const response = await this.publicClient.request({
@@ -82,7 +79,7 @@ export class HttpRpcClient {
     try {
       await this.initializing;
       const hexifiedUserOp = deepHexlify(await resolveProperties(userOp1));
-      const jsonRequestData: [UserOperationStruct, string] = [hexifiedUserOp, this.entryPointAddress];
+      const jsonRequestData: [BaseAccountUserOperationStruct, string] = [hexifiedUserOp, this.entryPointAddress];
       await this.printUserOperation('eth_sendUserOperation', jsonRequestData);
       //return await this.userOpJsonRpcProvider.send('eth_sendUserOperation', [hexifiedUserOp, this.entryPointAddress]);
       return await this.publicClient.request({
@@ -98,7 +95,7 @@ export class HttpRpcClient {
     }
   }
 
-  async sendAggregatedOpsToBundler(userOps1: UserOperationStruct[]): Promise<string> {
+  async sendAggregatedOpsToBundler(userOps1: BaseAccountUserOperationStruct[]): Promise<string> {
     try {
       const hexifiedUserOps = await Promise.all(userOps1.map(async (userOp1) => await resolveProperties(userOp1)));
       // return await this.userOpJsonRpcProvider.send('eth_sendAggregatedUserOperation', [
@@ -131,7 +128,6 @@ export class HttpRpcClient {
         "getGas: skandha_getGasPrice failed, falling back to legacy gas price."
       );
       const gas = await this.publicClient.getGasPrice();
-      console.log('gas: ', gas);
       return { maxFeePerGas: gas, maxPriorityFeePerGas: gas };
     }
   }
@@ -162,7 +158,7 @@ export class HttpRpcClient {
 
   private async printUserOperation(
     method: string,
-    [userOp1, entryPointAddress]: [UserOperationStruct, string],
+    [userOp1, entryPointAddress]: [BaseAccountUserOperationStruct, string],
   ): Promise<void> {
     const userOp = await resolveProperties(userOp1);
     debug(

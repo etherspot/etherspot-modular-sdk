@@ -1,8 +1,8 @@
-import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 
 import { NotPromise, packUserOp } from '../common';
 import { Buffer } from 'buffer';
 import { toBytes, toHex } from 'viem';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 
 export interface GasOverheads {
   /**
@@ -61,11 +61,11 @@ export const DefaultGasOverheads: GasOverheads = {
  * @param overheads gas overheads to use, to override the default values
  */
 export function calcPreVerificationGas(
-  userOp: Partial<UserOperationStruct>,
+  userOp: Partial<BaseAccountUserOperationStruct>,
   overheads?: Partial<GasOverheads>,
 ): number {
   const ov = { ...DefaultGasOverheads, ...(overheads ?? {}) };
-  const p: NotPromise<UserOperationStruct> = {
+  const p: NotPromise<BaseAccountUserOperationStruct> = {
     // dummy values, in case the UserOp is incomplete.
     preVerificationGas: 21000, // dummy value, just for calldata cost
     signature: toHex(Buffer.alloc(ov.sigSize, 1)), // dummy signature
