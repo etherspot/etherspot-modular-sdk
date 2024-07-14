@@ -1,7 +1,6 @@
-import { BigNumber, BigNumberish, TypedDataField } from 'ethers';
+import { TypedDataField } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Provider } from '@ethersproject/providers';
-import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
@@ -9,9 +8,11 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { Account, parseAbi, parseAbiItem, PublicClient, WalletClient, zeroAddress } from 'viem';
-import { accountAbi, entryPointAbi } from '../common/abis';
-import { Deferrable, resolveProperties, Result } from '../common/utils/userop-utils';
+import { Account, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
+import { entryPointAbi } from '../common/abis';
+import { resolveProperties, Result } from '../common/utils/userop-utils';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
+import { BigNumber, BigNumberish } from '../types/bignumber';
 
 export interface BaseApiParams {
   provider: Provider;
@@ -317,7 +318,7 @@ export abstract class BaseAccountAPI {
    * should cover cost of putting calldata on-chain, and some overhead.
    * actual overhead depends on the expected bundle size
    */
-  async getPreVerificationGas(userOp: Partial<UserOperationStruct>): Promise<number> {
+  async getPreVerificationGas(userOp: Partial<BaseAccountUserOperationStruct>): Promise<number> {
     const p = await resolveProperties(userOp);
     return calcPreVerificationGas(p, this.overheads);
   }
@@ -325,7 +326,7 @@ export abstract class BaseAccountAPI {
   /**
    * ABI-encode a user operation. used for calldata cost estimation
    */
-  packUserOp(userOp: NotPromise<UserOperationStruct>): string {
+  packUserOp(userOp: NotPromise<BaseAccountUserOperationStruct>): string {
     return packUserOp(userOp, false);
   }
 

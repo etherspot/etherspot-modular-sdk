@@ -41,6 +41,4 @@ export interface TypedDataField {
   type: string;
 };
 
-export type BigNumberish = Hex | number | bigint
-
 export type BytesLike = Uint8Array | Hex
