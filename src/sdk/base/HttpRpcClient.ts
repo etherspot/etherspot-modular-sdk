@@ -56,12 +56,13 @@ export class HttpRpcClient {
   async getVerificationGasInfo(tx: BaseAccountUserOperationStruct): Promise<any> {
     const hexifiedUserOp = deepHexlify(await resolveProperties(tx));
     try {
-      const response = await this.publicClient.request({
+      const response = await this.walletClient.request({
         method: 'eth_estimateUserOperationGas',
         params: [hexifiedUserOp, this.entryPointAddress]
       });
       return response;
     } catch (err) {
+      console.error(`getVerificationGasInfo failed: ${err}`);
       const body = JSON.parse(err.body);
       if (body?.error?.code) {
         throw new ErrorHandler(body.error.message, body.error.code)
@@ -82,17 +83,36 @@ export class HttpRpcClient {
       const jsonRequestData: [BaseAccountUserOperationStruct, string] = [hexifiedUserOp, this.entryPointAddress];
       await this.printUserOperation('eth_sendUserOperation', jsonRequestData);
       //return await this.userOpJsonRpcProvider.send('eth_sendUserOperation', [hexifiedUserOp, this.entryPointAddress]);
-      return await this.publicClient.request({
+      return await this.walletClient.request({
         method: 'eth_sendUserOperation',
         params: [hexifiedUserOp, this.entryPointAddress]
       });
     } catch (err) {
-      const body = JSON.parse(err.body);
-      if (body?.error?.code) {
-        throw new ErrorHandler(body.error.message, body.error.code)
+      const body = this.parseRpcError(err.toString());
+      if (body?.requestBody) {
+        throw new ErrorHandler(body.details, 400);
       }
-      throw new Error(err);
+      throw new Error(body.details);
     }
+  }
+
+   parseRpcError(errorString: string) {
+    const urlPattern = /URL: (\S+)/;
+    const requestBodyPattern = /Request body: ({.*})/;
+    const detailsPattern = /Details: (.+)/;
+    const versionPattern = /Version: (\S+)/;
+  
+    const urlMatch = errorString.match(urlPattern);
+    const requestBodyMatch = errorString.match(requestBodyPattern);
+    const detailsMatch = errorString.match(detailsPattern);
+    const versionMatch = errorString.match(versionPattern);
+  
+    return {
+      url: urlMatch ? urlMatch[1] : null,
+      requestBody: requestBodyMatch ? JSON.parse(requestBodyMatch[1]) : null,
+      details: detailsMatch ? detailsMatch[1] : null,
+      version: versionMatch ? versionMatch[1] : null,
+    };
   }
 
   async sendAggregatedOpsToBundler(userOps1: BaseAccountUserOperationStruct[]): Promise<string> {
@@ -102,7 +122,7 @@ export class HttpRpcClient {
       //   hexifiedUserOps,
       //   this.entryPointAddress,
       // ]);
-      return await this.publicClient.request({
+      return await this.walletClient.request({
         method: 'eth_sendAggregatedUserOperation',
         params: [hexifiedUserOps, this.entryPointAddress]
       });

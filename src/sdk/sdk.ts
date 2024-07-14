@@ -192,7 +192,7 @@ export class ModularSdk {
       ...gasDetails,
     }
 
-    const gasInfo = await this.getGasFee()
+    const gasInfo = await this.getGasFee();
 
     const partialtx = await this.etherspotWallet.createUnsignedUserOp({
       ...tx,
@@ -243,7 +243,7 @@ export class ModularSdk {
     const version = await this.bundler.getBundlerVersion();
     if (version && version.includes('skandha'))
       return this.bundler.getSkandhaGasPrice();
-    return getGasFee(this.etherspotWallet.provider as providers.JsonRpcProvider);
+    return getGasFee(this.publicClient);
   }
 
   async send(userOp: any) {

@@ -1,7 +1,7 @@
-import { BytesLike, defaultAbiCoder } from 'ethers/lib/utils';
+import { BytesLike } from 'ethers/lib/utils';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Buffer } from 'buffer';
-import { concat, encodeAbiParameters, Hex, keccak256, pad, parseAbiParameters, toHex } from 'viem';
+import { concat, decodeAbiParameters, encodeAbiParameters, Hex, keccak256, pad, parseAbiParameters, toHex } from 'viem';
 import { hexlify } from './utils/hexlify';
 import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 
@@ -139,7 +139,8 @@ export function packUserOpData(op: any): NotPromise<BaseAccountUserOperationStru
  */
 export function getUserOpHash(op: UserOperation, entryPoint: string, chainId: number): string {
   const userOpHash = keccak256(packUserOp(op, true) as `0x${string}`);
-  const enc = defaultAbiCoder.encode(['bytes32', 'address', 'uint256'], [userOpHash, entryPoint, chainId]);
+  //const enc = defaultAbiCoder.encode(['bytes32', 'address', 'uint256'], [userOpHash, entryPoint, chainId]);
+  const enc = encodeAbiParameters(parseAbiParameters('bytes32, address, uint256'), [userOpHash, entryPoint as Hex, BigInt(chainId)]);
   return keccak256(enc as `0x${string}`);
 }
 
@@ -154,16 +155,17 @@ interface DecodedError {
 /**
  * decode bytes thrown by revert as Error(message) or FailedOp(opIndex,paymaster,message)
  */
+// TODO-Test decodeErrorReason
 export function decodeErrorReason(error: string): DecodedError | undefined {
   if (error.startsWith(ErrorSig)) {
-    const [message] = defaultAbiCoder.decode(['string'], '0x' + error.substring(10));
+    const [message] = decodeAbiParameters(parseAbiParameters('string'), '0x' + error.substring(10) as Hex);
     return { message };
   } else if (error.startsWith(FailedOpSig)) {
-    const [opIndex, message] = defaultAbiCoder.decode(['uint256', 'string'], '0x' + error.substring(10));
+    const [opIndexBigInt, message] =  decodeAbiParameters(parseAbiParameters('uint256, string'), '0x' + error.substring(10) as Hex);
     const formattedMessage = `FailedOp: ${message as string}`;
     return {
       message: formattedMessage,
-      opIndex,
+      opIndex: Number(opIndexBigInt),
     };
   }
 }
@@ -190,7 +192,7 @@ export function rethrowError(e: any): any {
 
     if (decoded.opIndex != null) {
       // helper for chai: convert our FailedOp error into "Error(msg)"
-      const errorWithMsg = concat([ErrorSig as `0x${string}`, defaultAbiCoder.encode(['string'], [decoded.message]) as `0x${string}`]);
+      const errorWithMsg = concat([ErrorSig as `0x${string}`, encodeAbiParameters(parseAbiParameters('string'), [decoded.message]) as `0x${string}`]);
       // modify in-place the error object:
       parent.data = errorWithMsg;
     }

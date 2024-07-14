@@ -3,7 +3,7 @@ import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, getContract, createPublicClient, http } from 'viem';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, getContract, createPublicClient, http, decodeAbiParameters } from 'viem';
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/viem-utils';
@@ -82,9 +82,10 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('Account address not found');
-    if (await this.isModuleInstalled(moduleTypeId, module, initData)) {
-      throw new Error('the module is already installed');
-    }
+
+    // if (await this.isModuleInstalled(moduleTypeId, module, initData)) {
+    //   throw new Error('the module is already installed');
+    // }
     return encodeFunctionData({
       functionName: 'installModule',
       abi: parseAbi(accountAbi),
@@ -379,7 +380,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     );
 
     // TODO fix the compilation error when setting a tuple-array in args for encodeAbiParameters
-    // const calldata1 = encodeAbiParameters(
+    // const calldata = decodeAbiParameters(
     //   parseAbiParameters('(address target,uint256 value,bytes callData)[]'),
     //   [result]
     // )

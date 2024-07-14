@@ -4,6 +4,7 @@ import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
 import { getViemAccount } from '../src/sdk/common/viem-utils';
+import { parseEther } from 'viem';
 
 dotenv.config();
 
@@ -29,7 +30,7 @@ async function main() {
   await modularSdk.clearUserOpsFromBatch();
 
   // add transactions to the batch
-  const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: ethers.utils.parseEther(value) });
+  const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: parseEther(value) });
   console.log('transactions: ', transactionBatch);
 
   // get balance of the account address

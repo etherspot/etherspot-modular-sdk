@@ -1,9 +1,9 @@
-import { ethers } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
 import { getViemAccount } from '../src/sdk/common/viem-utils';
+import { encodeFunctionData, parseAbi } from 'viem';
 
 dotenv.config();
 
@@ -30,12 +30,25 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const addGuardianInterface = new ethers.utils.Interface(['function addGuardian(address _newGuardian)']);
+  const addGuardianInterface = ['function addGuardian(address _newGuardian)'];
 
-  const addGuardianData1 = addGuardianInterface.encodeFunctionData('addGuardian', [guardianAddresses[0]]);
-  const addGuardianData2 = addGuardianInterface.encodeFunctionData('addGuardian', [guardianAddresses[1]]);
-  const addGuardianData3 = addGuardianInterface.encodeFunctionData('addGuardian', [guardianAddresses[2]]);
-
+  const addGuardianData1 =
+    encodeFunctionData({
+      functionName: 'addGuardian',
+      abi: parseAbi(addGuardianInterface),
+      args: [guardianAddresses[0]],
+    });
+  const addGuardianData2 =
+    encodeFunctionData({
+      functionName: 'addGuardian',
+      abi: parseAbi(addGuardianInterface),
+      args: [guardianAddresses[1]],
+    });
+  const addGuardianData3 = encodeFunctionData({
+    functionName: 'addGuardian',
+    abi: parseAbi(addGuardianInterface),
+    args: [guardianAddresses[2]],
+  });
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 

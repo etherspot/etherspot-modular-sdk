@@ -1,9 +1,9 @@
-import { ethers } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
 import { getViemAccount } from '../src/sdk/common/viem-utils';
+import { encodeFunctionData, parseAbi } from 'viem';
 
 dotenv.config();
 
@@ -24,17 +24,22 @@ async function main() {
   const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const erc721Interface = new ethers.utils.Interface([
+  const erc721Interface = [
     'function safeTransferFrom(address _from, address _to, uint256 _tokenId)'
-  ])
+  ];
 
-  const erc721Data = erc721Interface.encodeFunctionData('safeTransferFrom', [address, recipient, tokenId]);
+  const erc721Data = encodeFunctionData(
+    {
+      functionName: 'safeTransferFrom',
+      abi: parseAbi(erc721Interface),
+      args: [address, recipient, tokenId]
+    });
 
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 
   // add transactions to the batch
-  const userOpsBatch = await modularSdk.addUserOpsToBatch({to: tokenAddress, data: erc721Data});
+  const userOpsBatch = await modularSdk.addUserOpsToBatch({ to: tokenAddress, data: erc721Data });
   console.log('transactions: ', userOpsBatch);
 
   // sign transactions added to the batch
@@ -49,7 +54,7 @@ async function main() {
   console.log('Waiting for transaction...');
   let userOpsReceipt = null;
   const timeout = Date.now() + 60000; // 1 minute timeout
-  while((userOpsReceipt == null) && (Date.now() < timeout)) {
+  while ((userOpsReceipt == null) && (Date.now() < timeout)) {
     await sleep(2);
     userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
   }

@@ -1,9 +1,10 @@
-import { BigNumber, ethers, providers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
-import { getViemAccount } from '../src/sdk/common/viem-utils';
+import { getPublicClient, getViemAccount } from '../src/sdk/common/viem-utils';
+import { Hex, http, parseEther, PublicClient } from 'viem';
 
 dotenv.config();
 
@@ -12,7 +13,6 @@ const value = '0.000001'; // transfer value
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
 async function main() {
-  const provider = new providers.JsonRpcProvider(process.env.RPC_PROVIDER_URL);
   // initializating sdk...
   const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
     chainId: Number(process.env.CHAIN_ID),
@@ -22,11 +22,21 @@ async function main() {
 
   console.log('address: ', modularSdk.state.EOAAddress)
 
+  const publicClient = getPublicClient({
+    chainId: Number(process.env.CHAIN_ID),
+    transport: http(bundlerApiKey)
+  }) as PublicClient;
+
   // get address of EtherspotWallet...
   const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  if ((await provider.getCode(address)).length <= 2) {
+  // get code
+  const code = await publicClient.getCode({
+    address: address as Hex
+  });
+
+  if (code.length <= 2) {
     console.log("Account must be created first");
     return;
   }
@@ -35,7 +45,7 @@ async function main() {
   await modularSdk.clearUserOpsFromBatch();
 
   // add transactions to the batch
-  const transactionBatch = await modularSdk.addUserOpsToBatch({to: recipient, value: ethers.utils.parseEther(value)});
+  const transactionBatch = await modularSdk.addUserOpsToBatch({to: recipient, value: parseEther(value)});
   console.log('transactions: ', transactionBatch);
 
   // get balance of the account address

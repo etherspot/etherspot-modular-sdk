@@ -1,14 +1,29 @@
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { bufferPercent } from './constants';
+import { PublicClient } from 'viem';
 
 export interface Gas {
   maxFeePerGas: BigNumberish;
   maxPriorityFeePerGas: BigNumberish;
 }
 
-export async function getGasFee(provider: ethers.providers.JsonRpcProvider): Promise<Gas> {
+export async function getGasFee(publicClient: PublicClient): Promise<Gas> {
   try {
-    const [fee, block] = await provider.send('eth_maxPriorityFeePerGas', []);
+    //const [fee, block] = await provider.send('eth_maxPriorityFeePerGas', []);
+
+    const gasFeeResponse : any = await publicClient.request(
+      {
+        method: 'eth_maxPriorityFeePerGas',
+        params: [],
+      }
+    );
+
+    if(!gasFeeResponse) {
+      throw new Error('failed to get priorityFeePerGas');
+    }
+
+    const [fee, block] = gasFeeResponse;
+
     if (BigNumber.from(0).eq(fee)) {
       throw new Error('failed to get priorityFeePerGas');
     }
@@ -23,7 +38,7 @@ export async function getGasFee(provider: ethers.providers.JsonRpcProvider): Pro
     console.warn(
       "getGas: eth_maxPriorityFeePerGas failed, falling back to legacy gas price."
     );
-    const gas = await provider.getGasPrice();
+    const gas = await publicClient.getGasPrice();
     return { maxFeePerGas: gas, maxPriorityFeePerGas: gas };
   }
 }
