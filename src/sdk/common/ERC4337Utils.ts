@@ -1,8 +1,9 @@
-import { BytesLike, defaultAbiCoder, hexlify } from 'ethers/lib/utils';
+import { BytesLike, defaultAbiCoder } from 'ethers/lib/utils';
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Buffer } from 'buffer';
 import { concat, encodeAbiParameters, Hex, keccak256, pad, parseAbiParameters, toHex } from 'viem';
+import { hexlify } from './utils/hexlify';
 
 export interface UserOperation {
   sender: string

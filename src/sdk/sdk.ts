@@ -117,7 +117,7 @@ export class ModularSdk {
       walletClient: this.walletClient,
       publicClient: this.publicClient,
     })
-    this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, this.publicClient, entryPointAddress, chainId);
+    this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId, this.walletClient, this.publicClient);
   }
 
 
@@ -154,9 +154,6 @@ export class ModularSdk {
     await this.etherspotWallet.require({
       network: false,
     });
-
-    // just console log the type of the message
-    console.log(`typeof message is: ${typeof message}`);
 
     return this.walletClient.signMessage({
       message: message as Hex,

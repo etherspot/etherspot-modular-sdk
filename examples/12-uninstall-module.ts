@@ -27,12 +27,12 @@ async function main() {
   const deInitDataDefault = '0x00';
 
   //generate deinit data...
-  const deInitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, '0x409474DFf53dD5824a7bf62D183639263853e3D5', deInitDataDefault);
+  const deInitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, '0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B', deInitDataDefault);
 
   console.log(`deinitData: ${deInitData}`);
 
   // default : 0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B
-  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, '0x409474DFf53dD5824a7bf62D183639263853e3D5', deInitData);
+  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, '0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B', deInitData);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...
