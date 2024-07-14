@@ -10,7 +10,7 @@ import {
 import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
 import { BatchUserOpsRequest, Exception, getGasFee, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
-import { BigNumber, BigNumberish, TypedDataField, ethers, providers } from 'ethers';
+import { TypedDataField, ethers, providers } from 'ethers';
 import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
@@ -20,6 +20,7 @@ import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
 import { Account, Hex, http, type PublicClient, type WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromAccount } from './common/viem-utils';
+import { BigNumber, BigNumberish } from './types/bignumber';
 
 /**
  * Modular-Sdk
@@ -159,7 +160,6 @@ export class ModularSdk {
       message: message as Hex,
       account: this.account
     });
-    return this.etherspotWallet.services.walletService.signMessage(message);
   }
 
   async getCounterFactualAddress(): Promise<string> {
