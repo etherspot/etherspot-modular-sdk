@@ -18,7 +18,7 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { Account, http, type PublicClient, type WalletClient } from 'viem';
+import { Account, Hex, http, type PublicClient, type WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromAccount } from './common/viem-utils';
 
 /**
@@ -155,7 +155,13 @@ export class ModularSdk {
       network: false,
     });
 
-    //return this.walletClient.signMessage(message);
+    // just console log the type of the message
+    console.log(`typeof message is: ${typeof message}`);
+
+    return this.walletClient.signMessage({
+      message: message as Hex,
+      account: this.account
+    });
     return this.etherspotWallet.services.walletService.signMessage(message);
   }
 

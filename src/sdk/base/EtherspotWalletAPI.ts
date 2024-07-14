@@ -362,15 +362,16 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async signUserOpHash(userOpHash: string): Promise<string> {
+    const userOpHashHex = userOpHash as `0x${string}`;
     const signature = await this.walletClient.signMessage(
       {
-        message: userOpHash,
-        account: this.account
+        message: { raw: userOpHashHex },
+        account: this.account,
       });
 
+    console.log(`signature made via viem: ${signature} for userOpHash: ${userOpHash} and userOpHashHex: ${userOpHashHex}`);
+
     return signature;
-    // const signature = await this.services.walletService.signMessage(toBytes(userOpHash));
-    // return signature;
   }
 
   async encodeBatch(targets: string[], values: BigNumberish[], datas: string[]): Promise<string> {
