@@ -68,12 +68,9 @@ export class HttpRpcClient {
   }
 
   handleRPCError(err: any) {
-    console.error(`sendUserOpToBundler failed: ${err}`);
     const body: RpcRequestError = this.parseViemRPCRequestError(err);
-    if (body && body?.details) {
+    if (body && body?.details && body?.code) {
       throw new ErrorHandler(body.details, body.code);
-    } else if (body) {
-      throw new Error(body.details);
     } else {
       throw new Error(JSON.stringify(err));
     }
@@ -84,7 +81,7 @@ export class HttpRpcClient {
       return JSON.parse(JSON.stringify(error));
     }
 
-    // TOD handle BaseError and ContractFunctionExecutionError
+    // TODO handle BaseError and ContractFunctionExecutionError
   }
 
   /**
