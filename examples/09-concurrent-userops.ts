@@ -3,7 +3,7 @@ import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
-import { getPublicClient, getViemAccount } from '../src/sdk/common/viem-utils';
+import { getPublicClient, getViemAccount } from '../src/sdk/common/utils/viem-utils';
 import { Hex, http, parseEther, PublicClient } from 'viem';
 
 dotenv.config();

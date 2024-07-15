@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { getWalletClientFromPrivateKey } from '../src/sdk/common/viem-utils';
+import { getWalletClientFromPrivateKey } from '../src/sdk/common/utils/viem-utils';
 import { privateKeyToAccount } from 'viem/accounts';
 dotenv.config();
 

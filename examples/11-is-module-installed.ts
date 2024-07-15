@@ -1,7 +1,7 @@
 import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
 import { MODULE_TYPE } from '../src/sdk/common';
-import { getViemAccount } from '../src/sdk/common/viem-utils';
+import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
 
 dotenv.config();
 

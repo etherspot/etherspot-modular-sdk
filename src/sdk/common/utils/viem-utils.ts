@@ -1,7 +1,7 @@
 import { PublicClient, Address, createPublicClient, createWalletClient, http, Account, Chain, getAddress, extractChain, Hex, Transport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts';
 import * as chains from "viem/chains";
-import { Networks } from '../network/constants';
+import { Networks } from '../../network/constants';
 
 export const isContract = async ({
   client,
@@ -41,9 +41,9 @@ export const getWalletClientFromAccount = ({ rpcUrl, chainId, account }: { rpcUr
   });
 }
 
-export const toHex = (value: string | number): Hex => {
-  return value as Hex;
-}
+// export const toHex = (value: string | number): Hex => {
+//   return value as Hex;
+// }
 
 export const getViemAccount = (privateKey: string): Account => {
   return privateKeyToAccount(privateKey as `0x${string}`);

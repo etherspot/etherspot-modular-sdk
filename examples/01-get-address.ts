@@ -1,4 +1,4 @@
-import { getViemAccount } from '../src/sdk/common/viem-utils';
+import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
 import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
 

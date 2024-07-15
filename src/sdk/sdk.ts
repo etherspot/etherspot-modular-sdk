@@ -19,7 +19,7 @@ import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
 import { Account, Hex, http, type PublicClient, type WalletClient } from 'viem';
-import { getPublicClient, getWalletClientFromAccount } from './common/viem-utils';
+import { getPublicClient, getWalletClientFromAccount } from './common/utils/viem-utils';
 import { BigNumber, BigNumberish } from './types/bignumber';
 
 /**

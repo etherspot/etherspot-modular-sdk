@@ -6,7 +6,7 @@ import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
 import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, getContract, createPublicClient, http, decodeAbiParameters } from 'viem';
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
-import { getViemAddress } from '../common/viem-utils';
+import { getViemAddress } from '../common/utils/viem-utils';
 import { sign } from 'crypto';
 
 // Creating a constant for the sentinel address using viem

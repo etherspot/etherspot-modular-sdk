@@ -2,7 +2,7 @@ import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
-import { getViemAccount } from '../src/sdk/common/viem-utils';
+import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
 import { encodeFunctionData, parseAbi } from 'viem';
 
 dotenv.config();

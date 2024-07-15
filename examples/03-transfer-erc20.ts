@@ -3,7 +3,7 @@ import { printOp } from '../src/sdk/common/OperationUtils';
 import { ERC20_ABI } from '../src/sdk/helpers/abi/ERC20_ABI';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
-import { getPublicClient, getViemAccount } from '../src/sdk/common/viem-utils';
+import { getPublicClient, getViemAccount } from '../src/sdk/common/utils/viem-utils';
 import { encodeFunctionData, http, parseAbi, parseUnits } from 'viem';
 
 dotenv.config();

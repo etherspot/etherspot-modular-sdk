@@ -14,3 +14,4 @@ export * from './stringify-json';
 export * from './to-hex';
 export * from './openurl';
 export * from './execute-mode';
+export * from './viem-utils';

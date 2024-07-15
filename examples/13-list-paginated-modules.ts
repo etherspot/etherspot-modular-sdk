@@ -1,7 +1,7 @@
 import {  NETWORK_NAME_TO_CHAIN_ID, NetworkNames } from '../src';
 import * as dotenv from 'dotenv';
 import { Networks } from '../src/sdk/network/constants';
-import { getPublicClient, getViemAddress } from '../src/sdk/common/viem-utils';
+import { getPublicClient, getViemAddress } from '../src/sdk/common/utils/viem-utils';
 import { getModulesPaginated } from '../src/sdk/common/getInstalledModules';
 import { PublicClient } from 'viem';
 

@@ -1,7 +1,7 @@
 import { Address, PublicClient, parseAbi, zeroAddress } from 'viem'
 import { ModuleType } from './types'
 import { VIEM_SENTINEL_ADDRESS } from './constants'
-import { isContract } from './viem-utils'
+import { isContract } from './utils/viem-utils'
 import { accountAbi } from './abis'
 import { DEFAULT_QUERY_PAGE_SIZE } from '../network/constants'
 
