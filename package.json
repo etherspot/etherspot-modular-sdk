@@ -28,6 +28,7 @@
     "01-get-address": "./node_modules/.bin/ts-node ./examples/01-get-address",
     "02-transfer-funds": "./node_modules/.bin/ts-node ./examples/02-transfer-funds",
     "03-transfer-erc20": "./node_modules/.bin/ts-node ./examples/03-transfer-erc20",
+    "03-transfer-erc20-session-key": "./node_modules/.bin/ts-node ./examples/03-transfer-erc20-session-key",
     "04-transfer-nft": "./node_modules/.bin/ts-node ./examples/04-transfer-nft",
     "05-add-guardians": "./node_modules/.bin/ts-node ./examples/05-add-guardians",
     "06-paymaster": "./node_modules/.bin/ts-node ./examples/06-paymaster",

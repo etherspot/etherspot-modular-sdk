@@ -2,9 +2,10 @@ import { ERC20SessionKeyValidator__factory } from "../contracts/factories/src/ER
 import { BigNumber, providers } from "ethers";
 import { ModularSdk } from "../sdk";
 import { KeyStore, PERMISSIONS_URL } from "./constants";
-import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse } from "./interfaces";
+import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SignUserOpHashResponse } from "./interfaces";
 import { BundlerProvider } from "../bundler";
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
+import { UserOperation } from "../common";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
@@ -173,6 +174,29 @@ export class SessionKeyValidator {
         }
     }
 
+    async signUserOpHash(userOpHash: string, userOp: UserOperation): Promise<UserOperation> {
+        try {
+            const account = await this.modularSdk.getCounterFactualAddress();
+            const chainId = await this.getChainId();
+            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
+
+            const data = await this.getSignUserOpHash(
+                account,
+                chainId,
+                apiKey,
+                userOpHash
+            )
+
+            return {
+                ...userOp,
+                signature: data.signature,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getNonce(): Promise<GetNonceResponse> {
         try {
             const account = await this.modularSdk.getCounterFactualAddress();
@@ -324,6 +348,38 @@ export class SessionKeyValidator {
 
             if (response.status === 200) {
                 const responseJson: DeleteSessionKeyResponse = await response.json();
+                return responseJson
+            } else {
+                const responseJson = await response.json();
+                throw new Error(responseJson.message)
+            }
+        } catch (err) {
+            throw new Error(err.message)
+        }
+    }
+
+    private async getSignUserOpHash(
+        account: string,
+        chainId: number,
+        apiKey: string,
+        userOpHash: string,
+    ): Promise<SignUserOpHashResponse> {
+        let response = null;
+
+        try {
+            let url = `${PERMISSIONS_URL}/account/signUserOpHash?account=${account}&chainId=${chainId}&userOpHash=${userOpHash}`;
+            if (apiKey) url += `&apiKey=${apiKey}`;
+
+            response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 200) {
+                const responseJson = await response.json();
                 return responseJson
             } else {
                 const responseJson = await response.json();
