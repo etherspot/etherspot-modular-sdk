@@ -5,6 +5,7 @@ import { ErrorHandler } from '../errorHandler/errorHandler.service';
 import { resolveProperties } from '../common/utils/userop-utils';
 import {
   Hex,
+  RpcRequestError,
   WalletClient,
   type PublicClient,
 } from "viem"
@@ -62,13 +63,28 @@ export class HttpRpcClient {
       });
       return response;
     } catch (err) {
-      console.error(`getVerificationGasInfo failed: ${err}`);
-      const body = JSON.parse(err.body);
-      if (body?.error?.code) {
-        throw new ErrorHandler(body.error.message, body.error.code)
-      }
-      throw new Error(err.message);
+      this.handleRPCError(err);
     }
+  }
+
+  handleRPCError(err: any) {
+    console.error(`sendUserOpToBundler failed: ${err}`);
+    const body: RpcRequestError = this.parseViemRPCRequestError(err);
+    if (body && body?.details) {
+      throw new ErrorHandler(body.details, body.code);
+    } else if (body) {
+      throw new Error(body.details);
+    } else {
+      throw new Error(JSON.stringify(err));
+    }
+  }
+
+  parseViemRPCRequestError(error: any): RpcRequestError {
+    if (error instanceof RpcRequestError) {
+      return JSON.parse(JSON.stringify(error));
+    }
+
+    // TOD handle BaseError and ContractFunctionExecutionError
   }
 
   /**
@@ -88,31 +104,8 @@ export class HttpRpcClient {
         params: [hexifiedUserOp, this.entryPointAddress]
       });
     } catch (err) {
-      const body = this.parseRpcError(err.toString());
-      if (body?.requestBody) {
-        throw new ErrorHandler(body.details, 400);
-      }
-      throw new Error(body.details);
+      this.handleRPCError(err);
     }
-  }
-
-   parseRpcError(errorString: string) {
-    const urlPattern = /URL: (\S+)/;
-    const requestBodyPattern = /Request body: ({.*})/;
-    const detailsPattern = /Details: (.+)/;
-    const versionPattern = /Version: (\S+)/;
-  
-    const urlMatch = errorString.match(urlPattern);
-    const requestBodyMatch = errorString.match(requestBodyPattern);
-    const detailsMatch = errorString.match(detailsPattern);
-    const versionMatch = errorString.match(versionPattern);
-  
-    return {
-      url: urlMatch ? urlMatch[1] : null,
-      requestBody: requestBodyMatch ? JSON.parse(requestBodyMatch[1]) : null,
-      details: detailsMatch ? detailsMatch[1] : null,
-      version: versionMatch ? versionMatch[1] : null,
-    };
   }
 
   async sendAggregatedOpsToBundler(userOps1: BaseAccountUserOperationStruct[]): Promise<string> {
@@ -127,11 +120,7 @@ export class HttpRpcClient {
         params: [hexifiedUserOps, this.entryPointAddress]
       });
     } catch (err) {
-      const body = JSON.parse(err.body);
-      if (body?.error?.code) {
-        throw new ErrorHandler(body.error.message, body.error.code)
-      }
-      throw new Error(err);
+      this.handleRPCError(err);
     }
   }
 
