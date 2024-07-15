@@ -22,3 +22,8 @@ export interface SessionKeyResponse {
 export interface GetNonceResponse {
     nonce: number;
 }
+
+export interface SignUserOpHashResponse {
+    signature: string;
+    sessionKey: string;
+}
