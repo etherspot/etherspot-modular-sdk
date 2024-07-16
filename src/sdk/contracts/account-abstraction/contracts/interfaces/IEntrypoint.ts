@@ -20,14 +20,8 @@ import type {
     EventFragment,
   } from "@ethersproject/abi";
   import type { Listener, Provider } from "@ethersproject/providers";
-  import type {
-    TypedEventFilter,
-    TypedEvent,
-    TypedListener,
-    OnEvent,
-    PromiseOrValue,
-  } from "../../../common";
-  
+import { OnEvent, PromiseOrValue, TypedEvent, TypedEventFilter, TypedListener } from "src/sdk/contracts/common";
+
   export type PackedUserOperationStruct = {
     sender: PromiseOrValue<string>;
     nonce: PromiseOrValue<BigNumberish>;

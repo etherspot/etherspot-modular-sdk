@@ -3,7 +3,7 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import Debug from 'debug'
 import { decodeAbiParameters, parseAbiParameters } from 'viem'
 import { BigNumberish } from '../types/bignumber'
-import { IEntryPoint } from '../contracts/account-abstraction/IEntrypoint'
+import { IEntryPoint } from '../contracts/account-abstraction/contracts/interfaces/IEntrypoint'
 
 const debug = Debug('aa.listener')
 

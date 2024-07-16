@@ -9,7 +9,7 @@ import { HttpRpcClient } from './HttpRpcClient';
 import { UserOperation, getUserOpHash } from '../common';
 import { BaseAccountAPI } from './BaseAccountAPI';
 import { resolveProperties } from '../common/utils/userop-utils';
-import { IEntryPoint } from '../contracts/account-abstraction/IEntrypoint';
+import { IEntryPoint } from '../contracts/account-abstraction/contracts/interfaces/IEntrypoint';
 
 export class ERC4337EthersProvider extends BaseProvider {
   initializedBlockNumber!: number;
