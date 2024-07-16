@@ -4,7 +4,7 @@ import { getViemAccount } from '../src/sdk/common/utils';
 
 dotenv.config();
 
-// npx ts-node examples/13-list-modules.ts
+// tsx examples/13-list-modules.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
