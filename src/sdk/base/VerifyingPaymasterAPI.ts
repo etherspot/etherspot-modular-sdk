@@ -1,10 +1,10 @@
-import { BigNumber } from 'ethers';
 import fetch from 'cross-fetch';
 import { calcPreVerificationGas } from './calcPreVerificationGas';
 import { PaymasterAPI } from './PaymasterAPI';
 import { toJSON } from '../common/OperationUtils';
 import { UserOperation } from '../common';
 import { resolveProperties } from '../common/utils/userop-utils';
+import { BigNumber } from '../types/bignumber';
 
 const DUMMY_SIGNATURE =
   '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c';

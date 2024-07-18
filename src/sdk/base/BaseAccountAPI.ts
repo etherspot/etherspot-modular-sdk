@@ -1,4 +1,3 @@
-import { TypedDataField } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Provider } from '@ethersproject/providers';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
@@ -11,7 +10,7 @@ import { PaymasterResponse } from './VerifyingPaymasterAPI';
 import { Account, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
 import { entryPointAbi } from '../common/abis';
 import { resolveProperties, Result } from '../common/utils/userop-utils';
-import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
+import { BaseAccountUserOperationStruct, TypedDataField } from '../types/user-operation-types';
 import { BigNumber, BigNumberish } from '../types/bignumber';
 
 export interface BaseApiParams {

@@ -1,9 +1,9 @@
 import { BytesLike } from 'ethers/lib/utils';
-import { BigNumber, BigNumberish } from 'ethers';
 import { Buffer } from 'buffer';
 import { concat, decodeAbiParameters, encodeAbiParameters, Hex, keccak256, pad, parseAbiParameters, toHex } from 'viem';
 import { hexlify } from './utils/hexlify';
 import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
+import { BigNumber, BigNumberish } from '../types/bignumber';
 
 export interface UserOperation {
   sender: string

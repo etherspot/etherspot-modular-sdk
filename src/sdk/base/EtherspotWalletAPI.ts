@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
@@ -7,7 +7,7 @@ import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, 
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/utils/viem-utils';
-import { sign } from 'crypto';
+import { BigNumber, BigNumberish } from '../types/bignumber';
 
 // Creating a constant for the sentinel address using viem
 const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");

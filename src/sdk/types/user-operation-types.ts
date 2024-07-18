@@ -28,3 +28,8 @@ export type UserOperationStruct = {
     paymasterAndData: PromiseOrValue<BytesLike>;
     signature: PromiseOrValue<BytesLike>;
 };
+
+export interface TypedDataField {
+    name: string;
+    type: string;
+};

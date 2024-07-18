@@ -5,7 +5,7 @@ import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
 
 dotenv.config();
 
-// npx ts-node examples/12-uninstall-module.ts
+// tsx examples/12-uninstall-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
@@ -26,12 +26,16 @@ async function main() {
   const deInitDataDefault = '0x00';
 
   //generate deinit data...
-  const deInitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, '0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B', deInitDataDefault);
+  const deInitData = await modularSdk.generateModuleDeInitData(
+      MODULE_TYPE.VALIDATOR,
+     '0xf47600D8dFef04269206255E53c8926519BA09a9', 
+     deInitDataDefault);
 
   console.log(`deinitData: ${deInitData}`);
 
   // default : 0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B
-  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, '0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B', deInitData);
+  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, 
+    '0xf47600D8dFef04269206255E53c8926519BA09a9', deInitData);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

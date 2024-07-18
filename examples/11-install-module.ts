@@ -5,7 +5,7 @@ import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
 
 dotenv.config();
 
-// npx ts-node examples/11-install-module.ts
+// tsx examples/11-install-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
@@ -24,7 +24,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, '0x409474DFf53dD5824a7bf62D183639263853e3D5');
+  const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, '0xf47600D8dFef04269206255E53c8926519BA09a9');
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...
