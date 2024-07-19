@@ -1,5 +1,5 @@
 import { BigNumber } from '../../types/bignumber';
-import { isBigNumber } from './is-big-number';
+import { isBigNumber } from './bignumber-utils';
 
 /**
  * @ignore
