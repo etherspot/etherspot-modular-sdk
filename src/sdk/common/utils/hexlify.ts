@@ -19,11 +19,11 @@ export interface Hexable {
 ///////////////////////////////
 
 
-function isHexable(value: any): value is Hexable {
+function isHexableValue(value: any): value is Hexable {
     return !!(value.toHexString);
 }
 
-export function isBytesLike(value: any): value is BytesLike {
+export function isBytesLikeValue(value: any): value is BytesLike {
     return ((isHexString(value) && !(value.length % 2)) || isBytes(value));
 }
 
@@ -70,7 +70,7 @@ export function checkSafeUint53(value: number, message?: string): void {
 
 const HexCharacters: string = "0123456789abcdef";
 
-export function hexlify(value: BytesLike | Hexable | number | bigint, options?: DataOptions): string {
+export function hexlifyValue(value: BytesLike | Hexable | number | bigint, options?: DataOptions): string {
     if (!options) { options = {}; }
 
     if (typeof (value) === "number") {
@@ -100,7 +100,7 @@ export function hexlify(value: BytesLike | Hexable | number | bigint, options?: 
         value = "0x" + value;
     }
 
-    if (isHexable(value)) { return value.toHexString(); }
+    if (isHexableValue(value)) { return value.toHexString(); }
 
     if (isHexString(value)) {
         if ((<string>value).length % 2) {

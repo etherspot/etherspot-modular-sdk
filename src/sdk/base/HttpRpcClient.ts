@@ -2,7 +2,7 @@ import Debug from 'debug';
 import { UserOperation, deepHexlify } from '../common/ERC4337Utils';
 import { Gas } from '../common';
 import { ErrorHandler } from '../errorHandler/errorHandler.service';
-import { resolveProperties } from '../common/utils/userop-utils';
+import { resolveProperties } from '../common/utils';
 import {
   Hex,
   RpcRequestError,

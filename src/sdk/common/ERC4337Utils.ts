@@ -1,7 +1,7 @@
 import { BytesLike } from 'ethers/lib/utils';
 import { Buffer } from 'buffer';
 import { concat, decodeAbiParameters, encodeAbiParameters, Hex, keccak256, pad, parseAbiParameters, toHex } from 'viem';
-import { hexlify } from './utils/hexlify';
+import { hexlifyValue } from './utils/hexlify';
 import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 import { BigNumber, BigNumberish } from '../types/bignumber';
 
@@ -211,7 +211,7 @@ export function deepHexlify(obj: any): any {
   if (obj == null || typeof obj === 'string' || typeof obj === 'boolean') {
     return obj;
   } else if (obj._isBigNumber != null || typeof obj !== 'object') {
-    const hexlified = hexlify(obj).replace(/^0x0/, '0x');
+    const hexlified = hexlifyValue(obj).replace(/^0x0/, '0x');
     return hexlified;
   }
   if (Array.isArray(obj)) {

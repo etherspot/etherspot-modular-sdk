@@ -3,7 +3,7 @@ import { calcPreVerificationGas } from './calcPreVerificationGas';
 import { PaymasterAPI } from './PaymasterAPI';
 import { toJSON } from '../common/OperationUtils';
 import { UserOperation } from '../common';
-import { resolveProperties } from '../common/utils/userop-utils';
+import { resolveProperties } from '../common/utils';
 import { BigNumber } from '../types/bignumber';
 
 const DUMMY_SIGNATURE =
