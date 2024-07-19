@@ -7,7 +7,7 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { Account, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
+import { Account, Hex, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
 import { entryPointAbi } from '../common/abis';
 import { resolveProperties, Result } from '../common/utils';
 import { BaseAccountUserOperationStruct, TypedDataField } from '../types/user-operation-types';
@@ -59,6 +59,7 @@ export abstract class BaseAccountAPI {
   paymasterAPI?: PaymasterAPI;
   factoryUsed: Factory;
   factoryAddress?: string;
+  account: Account;
   walletClient: WalletClient;
   publicClient: PublicClient;
 
@@ -100,6 +101,7 @@ export abstract class BaseAccountAPI {
     this.provider = params.provider;
     this.overheads = params.overheads;
     this.entryPointAddress = params.entryPointAddress;
+    this.account = params.account;
     this.accountAddress = params.accountAddress;
     this.factoryAddress = params.factoryAddress;
     this.walletClient = params.walletClient;
@@ -221,7 +223,7 @@ export abstract class BaseAccountAPI {
 
   async init(): Promise<this> {
     // check EntryPoint is deployed at given address
-    if ((await this.provider.getCode(this.entryPointAddress)) === '0x') {
+    if ((await this.publicClient.getCode({ address: this.entryPointAddress as Hex } )) === '0x') {
       throw new Error(`entryPoint not deployed at ${this.entryPointAddress}`);
     }
 
@@ -264,7 +266,8 @@ export abstract class BaseAccountAPI {
       // already deployed. no need to check anymore.
       return this.isPhantom;
     }
-    const senderAddressCode = await this.provider.getCode(this.getAccountAddress());
+    const accountAddress = await this.getAccountAddress();
+    const senderAddressCode = await this.publicClient.getCode({ address: accountAddress as Hex } )
     if (senderAddressCode.length > 2) {
       this.isPhantom = false;
     }
@@ -369,8 +372,7 @@ export abstract class BaseAccountAPI {
    */
   async getUserOpHash(userOp: UserOperation): Promise<string> {
     const op = await resolveProperties(userOp);
-    const provider = this.services.walletService.getWalletProvider();
-    const chainId = await provider.getNetwork().then((net) => net.chainId);
+    const chainId = await this.publicClient.getChainId();
     return getUserOpHash(op, this.entryPointAddress, chainId);
   }
 
@@ -393,8 +395,13 @@ export abstract class BaseAccountAPI {
     if (initCode == null || initCode === '0x') return 0;
     const deployerAddress = initCode.substring(0, 42);
     const deployerCallData = '0x' + initCode.substring(42);
-    const provider = this.services.walletService.getWalletProvider();
-    return await provider.estimateGas({ to: deployerAddress, data: deployerCallData });
+    const estimatedGas = await this.publicClient.estimateGas({
+      account: this.account,
+      to: deployerAddress,
+      data: deployerCallData,
+    });
+
+    return estimatedGas ? estimatedGas : 0;
   }
 
   /**
@@ -420,7 +427,7 @@ export abstract class BaseAccountAPI {
         console.warn(
           "getGas: eth_maxPriorityFeePerGas failed, falling back to legacy gas price."
         );
-        const gas = await provider.getGasPrice();
+        const gas = await this.publicClient.getGasPrice();
 
         feeData = { maxFeePerGas: gas, maxPriorityFeePerGas: gas };
       }

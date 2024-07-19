@@ -16,3 +16,7 @@ export function bigNumberishToBigInt(value: BigNumberish): bigint {
 export function isBigNumber(value: any): boolean {
   return value instanceof BigNumber;
 }
+
+export function fromBigInt(value: bigint): BigNumber {
+  return new BigNumber(value.toString());
+}
