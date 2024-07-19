@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish } from '../types/bignumber';
 import { bufferPercent } from './constants';
 import { PublicClient } from 'viem';
 

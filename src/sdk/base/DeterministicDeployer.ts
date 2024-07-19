@@ -1,7 +1,7 @@
-import { BigNumber, BigNumberish } from 'ethers'
 import { TransactionRequest } from '@ethersproject/abstract-provider'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { concat, keccak256, pad, toHex } from 'viem'
+import { BigNumber, BigNumberish } from '../types/bignumber'
 
 /**
  * wrapper class for Arachnid's deterministic deployer
