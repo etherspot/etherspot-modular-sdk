@@ -1,5 +1,5 @@
 import { BytesLike } from "ethers";
-import { BigNumberish } from "./bignumber";
+import { BigNumber, BigNumberish } from "./bignumber";
 
 export type PromiseOrValue<T> = T | Promise<T>;
 
@@ -33,3 +33,10 @@ export interface TypedDataField {
     name: string;
     type: string;
 };
+
+export interface FeeData {
+    lastBaseFeePerGas: null | BigNumber;
+    maxFeePerGas: null | BigNumber;
+    maxPriorityFeePerGas: null | BigNumber;
+    gasPrice: null | BigNumber;
+}

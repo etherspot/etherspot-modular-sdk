@@ -10,7 +10,7 @@ import { PaymasterResponse } from './VerifyingPaymasterAPI';
 import { Account, Hex, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
 import { entryPointAbi } from '../common/abis';
 import { resolveProperties, Result } from '../common/utils';
-import { BaseAccountUserOperationStruct, TypedDataField } from '../types/user-operation-types';
+import { BaseAccountUserOperationStruct, FeeData, TypedDataField } from '../types/user-operation-types';
 import { BigNumber, BigNumberish } from '../types/bignumber';
 
 export interface BaseApiParams {
@@ -223,7 +223,7 @@ export abstract class BaseAccountAPI {
 
   async init(): Promise<this> {
     // check EntryPoint is deployed at given address
-    if ((await this.publicClient.getCode({ address: this.entryPointAddress as Hex } )) === '0x') {
+    if ((await this.publicClient.getCode({ address: this.entryPointAddress as Hex })) === '0x') {
       throw new Error(`entryPoint not deployed at ${this.entryPointAddress}`);
     }
 
@@ -267,7 +267,7 @@ export abstract class BaseAccountAPI {
       return this.isPhantom;
     }
     const accountAddress = await this.getAccountAddress();
-    const senderAddressCode = await this.publicClient.getCode({ address: accountAddress as Hex } )
+    const senderAddressCode = await this.publicClient.getCode({ address: accountAddress as Hex })
     if (senderAddressCode.length > 2) {
       this.isPhantom = false;
     }
@@ -404,6 +404,26 @@ export abstract class BaseAccountAPI {
     return estimatedGas ? estimatedGas : 0;
   }
 
+  async getViemFeeData(): Promise<FeeData> {
+    const block = await this.publicClient.getBlock();
+    const gasPrice = await this.publicClient.getGasPrice();
+    const gasPriceInDecimals = BigNumber.from(gasPrice);
+
+    let lastBaseFeePerGas = null, maxFeePerGas = null, maxPriorityFeePerGas = null;
+
+    if (block && block.baseFeePerGas) {
+      // We may want to compute this more accurately in the future,
+      // using the formula "check if the base fee is correct".
+      // See: https://eips.ethereum.org/EIPS/eip-1559
+      lastBaseFeePerGas = block.baseFeePerGas;
+      const baseFeePerGasAsBigNumber = BigNumber.from(block.baseFeePerGas);
+      maxPriorityFeePerGas = BigNumber.from("1500000000");
+      maxFeePerGas = baseFeePerGasAsBigNumber.mul(2).add(maxPriorityFeePerGas);
+    }
+
+    return { lastBaseFeePerGas, maxFeePerGas, maxPriorityFeePerGas, gasPrice: gasPriceInDecimals };
+  }
+
   /**
    * create a UserOperation, filling all details (except signature)
    * - if account is not yet created, add initCode to deploy it.
@@ -422,7 +442,7 @@ export abstract class BaseAccountAPI {
       const provider = this.services.walletService.getWalletProvider();
       let feeData: any = {};
       try {
-        feeData = await provider.getFeeData();
+        feeData = await this.getViemFeeData();
       } catch (err) {
         console.warn(
           "getGas: eth_maxPriorityFeePerGas failed, falling back to legacy gas price."
