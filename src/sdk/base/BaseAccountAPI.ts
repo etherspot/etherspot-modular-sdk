@@ -5,7 +5,7 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { Account, Hex, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
+import { Account, Hex, parseAbi, parseAbiItem, PublicClient, TypedDataParameter, WalletClient } from 'viem';
 import { entryPointAbi } from '../common/abis';
 import { resolveProperties, Result } from '../common/utils';
 import { BaseAccountUserOperationStruct, FeeData, TypedDataField } from '../types/user-operation-types';
@@ -536,12 +536,29 @@ export abstract class BaseAccountAPI {
   }
 
   // TODO fix signTypedData
-  async signTypedData(types: TypedDataField[], message: any) {
-  //   this.walletClient.signTypedData({
-  //     account: this.account,
-  //     types, 
-  //     message
-  // });
+  async signTypedData(domain: any, types: TypedDataParameter[], message: any) {
+
+    // Step 1: Initialize an empty object for the transformed types
+    const typesObject: { [key: string]: TypedDataParameter[] } = {};
+
+    // Step 2: Iterate over the types array to transform it into the required format
+    types.forEach((type) => {
+      if (!typesObject[type.type]) {
+        // Step 3a: If the type does not exist, create it with the current item as the first element
+        typesObject[type.type] = [type];
+      } else {
+        // Step 3b: If the type exists, append the current item to its array
+        typesObject[type.type].push(type);
+      }
+    });
+
+    return await this.walletClient.signTypedData({
+      domain,
+      types: typesObject,
+      primaryType: 'UserOperation',
+      account: this.account,
+      message
+    });
     //return this.services.walletService.signTypedData(types, message, this.accountAddress);
   }
 }
