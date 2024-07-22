@@ -4,7 +4,7 @@ import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
 import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
-import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
+import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
 import { Account, Hex, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
@@ -14,11 +14,9 @@ import { BaseAccountUserOperationStruct, FeeData, TypedDataField } from '../type
 import { BigNumber, BigNumberish } from '../types/bignumber';
 
 export interface BaseApiParams {
-  provider: Provider;
   entryPointAddress: string;
   accountAddress?: string;
   overheads?: Partial<GasOverheads>;
-  walletProvider: WalletProviderLike;
   factoryAddress?: string;
   optionsLike?: SdkOptions;
   walletClient?: WalletClient;
@@ -52,7 +50,6 @@ export abstract class BaseAccountAPI {
 
   context: Context;
 
-  provider: Provider;
   overheads?: Partial<GasOverheads>;
   entryPointAddress: string;
   accountAddress?: string;
@@ -71,10 +68,6 @@ export abstract class BaseAccountAPI {
 
     const optionsLike = params.optionsLike;
 
-    if (!isWalletProvider(params.walletProvider)) {
-      throw new Exception('Invalid wallet provider');
-    }
-
     const {
       chainId, //
       stateStorage,
@@ -85,9 +78,6 @@ export abstract class BaseAccountAPI {
 
     this.services = {
       networkService: new NetworkService(chainId),
-      walletService: new WalletService(params.walletProvider, {
-        provider: rpcProviderUrl,
-      }, bundlerProvider.url, chainId),
       stateService: new StateService({
         storage: stateStorage,
       }),
@@ -98,7 +88,6 @@ export abstract class BaseAccountAPI {
     this.factoryUsed = factoryWallet;
 
     // super();
-    this.provider = params.provider;
     this.overheads = params.overheads;
     this.entryPointAddress = params.entryPointAddress;
     this.account = params.account;
@@ -147,7 +136,11 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.services.walletService.signMessage(message);
+    return this.walletClient.signMessage(
+      {
+        account: this.account,
+        message: message as Hex
+      });
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -169,17 +162,6 @@ export abstract class BaseAccountAPI {
       wallet: true,
       ...options,
     };
-
-    const { walletService } = this.services;
-
-    if (options.network && !walletService.chainId) {
-      throw new Exception('Unknown network');
-    }
-
-    if (options.wallet && !walletService.EOAAddress) {
-      throw new Exception('Require wallet');
-    }
-
   }
 
   getNetworkChainId(networkName: NetworkNames = null): number {
@@ -439,7 +421,6 @@ export abstract class BaseAccountAPI {
 
     let { maxFeePerGas, maxPriorityFeePerGas } = info;
     if (maxFeePerGas == null || maxPriorityFeePerGas == null) {
-      const provider = this.services.walletService.getWalletProvider();
       let feeData: any = {};
       try {
         feeData = await this.getViemFeeData();
@@ -569,6 +550,11 @@ export abstract class BaseAccountAPI {
   }
 
   async signTypedData(types: TypedDataField[], message: any) {
-    return this.services.walletService.signTypedData(types, message, this.accountAddress);
+    this.walletClient.signTypedData({
+      account: this.account,
+      types, 
+      message
+  });
+    //return this.services.walletService.signTypedData(types, message, this.accountAddress);
   }
 }
