@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
 import { getPublicClient, getViemAccount } from '../src/sdk/common/utils/viem-utils';
 import { Hex, http, parseEther, PublicClient } from 'viem';
+import { generateModularSDKInstance } from './helpers/sdk-helper';
 
 dotenv.config();
 
@@ -13,14 +14,15 @@ const value = '0.000001'; // transfer value
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
 async function main() {
-  // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
-    chainId: Number(process.env.CHAIN_ID),
-    account: getViemAccount(process.env.WALLET_PRIVATE_KEY),
-    bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-  })
+  // initializating sdk for index 0...
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY,
+    Number(process.env.CHAIN_ID),
+    bundlerApiKey
+  );// Testnets dont need apiKey on bundlerProvider
 
-  console.log('address: ', modularSdk.state.EOAAddress)
+
+  console.log('address: ', modularSdk.getEOAAddress());
 
   const publicClient = getPublicClient({
     chainId: Number(process.env.CHAIN_ID),

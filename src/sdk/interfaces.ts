@@ -1,6 +1,4 @@
 import { BundlerProviderLike } from './bundler';
-import { StateStorage } from './state';
-import { Account } from 'viem';
 
 export interface PaymasterApi {
   url: string;
@@ -13,9 +11,7 @@ export enum Factory {
 
 export interface SdkOptions {
   chainId: number;
-  account: Account;
   bundlerProvider?: BundlerProviderLike;
-  stateStorage?: StateStorage;
   rpcProviderUrl?: string;
   factoryWallet?: Factory;
   walletFactoryAddress?: string;

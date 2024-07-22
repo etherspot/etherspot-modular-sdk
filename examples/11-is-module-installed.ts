@@ -2,6 +2,7 @@ import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
 import { MODULE_TYPE } from '../src/sdk/common';
 import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { generateModularSDKInstance } from './helpers/sdk-helper';
 
 dotenv.config();
 
@@ -11,15 +12,14 @@ async function main() {
 
   console.log(`inside is-module-installed script:`);
 
-  // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY },
-    {
-      chainId: Number(process.env.CHAIN_ID),
-      account: getViemAccount(process.env.WALLET_PRIVATE_KEY),
-      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-    })
+  // initializating sdk for index 0...
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY,
+    Number(process.env.CHAIN_ID),
+    bundlerApiKey
+  );// Testnets dont need apiKey on bundlerProvider
 
-  console.log('address: ', modularSdk.state.EOAAddress);
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();

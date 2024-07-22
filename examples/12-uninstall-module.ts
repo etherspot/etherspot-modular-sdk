@@ -10,9 +10,14 @@ async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, { chainId: Number(process.env.CHAIN_ID),  account: getViemAccount(process.env.WALLET_PRIVATE_KEY), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
+  const modularSdk = new ModularSdk(
+    getViemAccount(process.env.WALLET_PRIVATE_KEY),
+    {
+      chainId: Number(process.env.CHAIN_ID),
+      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
+    })
 
-  console.log('address: ', modularSdk.state.EOAAddress);
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -28,14 +33,14 @@ async function main() {
   //generate deinit data...
   const deInitData = await modularSdk.generateModuleDeInitData(
       MODULE_TYPE.VALIDATOR,
-     '0xf47600D8dFef04269206255E53c8926519BA09a9', 
+     '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492', 
      deInitDataDefault);
 
   console.log(`deinitData: ${deInitData}`);
 
   // default : 0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B
   const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, 
-    '0xf47600D8dFef04269206255E53c8926519BA09a9', deInitData);
+    '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492', deInitData);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

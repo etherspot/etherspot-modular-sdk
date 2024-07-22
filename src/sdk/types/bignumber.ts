@@ -19,8 +19,8 @@ export interface Hexable {
 }
 
 import { isHex, isBytes } from "viem";
-import { hexlify } from "../common/utils/hexlify";
 import { Logger } from "./bignumber-logger";
+import { hexlifyValue } from "../common/utils/hexlify";
 
 const logger = new Logger(version);
 
@@ -264,7 +264,7 @@ export class BigNumber implements Hexable {
         }
 
         if (isBytes(anyValue)) {
-            return BigNumber.from(hexlify(anyValue));
+            return BigNumber.from(hexlifyValue(anyValue));
         }
 
         if (anyValue) {

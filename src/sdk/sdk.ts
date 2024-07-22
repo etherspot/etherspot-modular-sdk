@@ -1,16 +1,7 @@
-import { BehaviorSubject } from 'rxjs';
-import { State, StateService } from './state';
-import {
-  EthereumProvider,
-  isWalletConnectProvider,
-  isWalletProvider,
-  WalletConnect2WalletProvider,
-  WalletProviderLike
-} from './wallet';
 import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
-import { BatchUserOpsRequest, Exception, getGasFee, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
-import { TypedDataField, ethers, providers } from 'ethers';
+import { BatchUserOpsRequest, Exception, getGasFee, getViemAddress, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
+import { TypedDataField, providers } from 'ethers';
 import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
@@ -18,7 +9,7 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { Account, Hex, http, type PublicClient, type WalletClient } from 'viem';
+import { Account, formatEther, Hex, http, type PublicClient, type WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromAccount } from './common/utils/viem-utils';
 import { BigNumber, BigNumberish } from './types/bignumber';
 
@@ -40,26 +31,17 @@ export class ModularSdk {
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
-  constructor(walletProvider: WalletProviderLike, optionsLike: SdkOptions) {
-
-    let walletConnectProvider;
-    if (isWalletConnectProvider(walletProvider)) {
-      walletConnectProvider = new WalletConnect2WalletProvider(walletProvider as EthereumProvider);
-    } else if (!isWalletProvider(walletProvider)) {
-      throw new Exception('Invalid wallet provider');
-    }
-
+  constructor(viemAccount: Account, optionsLike: SdkOptions) {
     const {
       index,
       chainId,
       rpcProviderUrl,
       accountAddress,
-      account
     } = optionsLike;
 
-    if(!account) throw new Exception('Account object is required');
+    if (!viemAccount) throw new Exception('Account object is required');
 
-    this.account = account;
+    this.account = viemAccount;
     this.chainId = chainId;
     this.index = index ?? 0;
 
@@ -68,15 +50,11 @@ export class ModularSdk {
     }
 
     this.factoryUsed = optionsLike.factoryWallet ?? Factory.ETHERSPOT;
-
-    let provider;
     let viemClientUrl = '';
 
     if (rpcProviderUrl) {
-      provider = new providers.JsonRpcProvider(rpcProviderUrl);
       viemClientUrl = rpcProviderUrl;
     } else {
-      provider = new providers.JsonRpcProvider(optionsLike.bundlerProvider.url);
       viemClientUrl = optionsLike.bundlerProvider.url;
     }
 
@@ -106,29 +84,18 @@ export class ModularSdk {
 
     if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
     if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
-    this.account = optionsLike.account;
+    this.account = this.account;
     this.etherspotWallet = new EtherspotWalletAPI({
-      provider,
-      walletProvider: walletConnectProvider ?? walletProvider,
       optionsLike,
       entryPointAddress,
       factoryAddress: walletFactoryAddress,
       predefinedAccountAddress: accountAddress,
       index: this.index,
+      account: this.account,
       walletClient: this.walletClient,
       publicClient: this.publicClient,
     })
     this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId, this.walletClient, this.publicClient);
-  }
-
-
-  // exposes
-  get state(): StateService {
-    return this.etherspotWallet.services.stateService;
-  }
-
-  get state$(): BehaviorSubject<State> {
-    return this.etherspotWallet.services.stateService.state$;
   }
 
   get supportedNetworks(): Network[] {
@@ -160,6 +127,10 @@ export class ModularSdk {
       message: message as Hex,
       account: this.account
     });
+  }
+
+  getEOAAddress(): Hex {
+    return this.etherspotWallet.getEOAAddress();
   }
 
   async getCounterFactualAddress(): Promise<string> {
@@ -262,8 +233,8 @@ export class ModularSdk {
     if (!this.etherspotWallet.accountAddress) {
       await this.getCounterFactualAddress();
     }
-    const balance = await this.etherspotWallet.provider.getBalance(this.etherspotWallet.accountAddress);
-    return ethers.utils.formatEther(balance);
+    const balance = await this.publicClient.getBalance({ address: getViemAddress(this.etherspotWallet.accountAddress) });
+    return formatEther(balance);
   }
 
   async getUserOpReceipt(userOpHash: string) {
@@ -290,7 +261,7 @@ export class ModularSdk {
     this.userOpsBatch.data = [];
     this.userOpsBatch.value = [];
   }
-  
+
   async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string): Promise<boolean> {
     return this.etherspotWallet.isModuleInstalled(moduleTypeId, module);
   }
