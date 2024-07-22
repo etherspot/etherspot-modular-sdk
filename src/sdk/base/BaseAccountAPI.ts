@@ -1,5 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
-import { Provider } from '@ethersproject/providers';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
