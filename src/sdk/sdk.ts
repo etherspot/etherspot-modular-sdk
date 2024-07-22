@@ -109,6 +109,14 @@ export class ModularSdk {
     this.etherspotWallet.context.destroy();
   }
 
+  getWalletClient(): WalletClient {
+    return this.walletClient;
+  }
+
+  getPublicClient(): PublicClient {
+    return this.publicClient;
+  }
+
   // wallet
 
   /**

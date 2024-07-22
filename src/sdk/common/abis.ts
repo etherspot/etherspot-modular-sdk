@@ -31,4 +31,12 @@ export const factoryAbi = [
     'function uninstallModule(uint256 moduleTypeId,address module,bytes calldata deInitData)',
     'function isModuleInstalled(uint256 moduleTypeId,address module,bytes calldata additionalContext) returns (bool)',
     'function isOwner(address _address) returns (bool)'
-  ]
+  ];
+
+  export const sessionKeyValidatorAbi = [
+    'function enableSessionKey(bytes calldata _sessionData)',
+    'function disableSessionKey(address _session)',
+    'function rotateSessionKey(address _oldSessionKey,bytes calldata _newSessionData)',
+    'function getAssociatedSessionKeys() returns (address[] memory keys)'
+  ];
+  
