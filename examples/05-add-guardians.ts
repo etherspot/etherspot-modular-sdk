@@ -1,8 +1,10 @@
-import { ethers } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
+import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { encodeFunctionData, parseAbi } from 'viem';
+import { generateModularSDKInstance } from './helpers/sdk-helper';
 
 dotenv.config();
 
@@ -10,12 +12,14 @@ async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
   // initializating sdk...
-  const modularSdk = new ModularSdk(
-    { privateKey: process.env.WALLET_PRIVATE_KEY },
-    { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) },
-  );
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY,
+    Number(process.env.CHAIN_ID),
+    bundlerApiKey
+  );// Testnets dont need apiKey on bundlerProvider
 
-  console.log('address: ', modularSdk.state.EOAAddress);
+
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -29,12 +33,25 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const addGuardianInterface = new ethers.utils.Interface(['function addGuardian(address _newGuardian)']);
+  const addGuardianInterface = ['function addGuardian(address _newGuardian)'];
 
-  const addGuardianData1 = addGuardianInterface.encodeFunctionData('addGuardian', [guardianAddresses[0]]);
-  const addGuardianData2 = addGuardianInterface.encodeFunctionData('addGuardian', [guardianAddresses[1]]);
-  const addGuardianData3 = addGuardianInterface.encodeFunctionData('addGuardian', [guardianAddresses[2]]);
-
+  const addGuardianData1 =
+    encodeFunctionData({
+      functionName: 'addGuardian',
+      abi: parseAbi(addGuardianInterface),
+      args: [guardianAddresses[0]],
+    });
+  const addGuardianData2 =
+    encodeFunctionData({
+      functionName: 'addGuardian',
+      abi: parseAbi(addGuardianInterface),
+      args: [guardianAddresses[1]],
+    });
+  const addGuardianData3 = encodeFunctionData({
+    functionName: 'addGuardian',
+    abi: parseAbi(addGuardianInterface),
+    args: [guardianAddresses[2]],
+  });
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 

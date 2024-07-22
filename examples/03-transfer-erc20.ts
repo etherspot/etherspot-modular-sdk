@@ -1,9 +1,11 @@
-import { ethers } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import { ERC20_ABI } from '../src/sdk/helpers/abi/ERC20_ABI';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
+import { getPublicClient, getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { encodeFunctionData, http, parseAbi, parseUnits } from 'viem';
+import { generateModularSDKInstance } from './helpers/sdk-helper';
 
 dotenv.config();
 
@@ -15,24 +17,49 @@ const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxM
 
 async function main() {
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
+  const bundlerProvider = new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey);
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY,
+    Number(process.env.CHAIN_ID),
+    bundlerApiKey
+  );// Testnets dont need apiKey on bundlerProvider
 
-  console.log('address: ', modularSdk.state.EOAAddress)
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet...
   const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const provider = new ethers.providers.JsonRpcProvider(process.env.BUNDLER_URL)
+  //const provider = new ethers.providers.JsonRpcProvider(process.env.BUNDLER_URL)
   // get erc20 Contract Interface
-  const erc20Instance = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+  //const erc20Instance = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+
+  const publicClient = getPublicClient({
+    chainId: Number(process.env.CHAIN_ID),
+    transport: http(bundlerProvider.url)
+  });
+
+  const erc20Abi = [
+    'function decimals() view returns (uint8)',
+    'function transfer(address to, uint256 value) returns (bool)'
+  ];
 
   // get decimals from erc20 contract
-  const decimals = await erc20Instance.functions.decimals();
-
+  
+  const decimals = await publicClient.readContract({
+    address: tokenAddress as `0x${string}`,
+    abi: parseAbi(erc20Abi),
+    functionName: 'decimals',
+    args: []
+  })
+  
   // get transferFrom encoded data
-  const transactionData = erc20Instance.interface.encodeFunctionData('transfer', [recipient, ethers.utils.parseUnits(value, decimals)])
-
+  const transactionData = encodeFunctionData({
+    functionName: 'transfer',
+    abi: parseAbi(ERC20_ABI),
+    args: [recipient, parseUnits(value, decimals as number)]
+  });
+  
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 

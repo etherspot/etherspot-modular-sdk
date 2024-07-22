@@ -1,18 +1,23 @@
-import { ethers } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
 import { MODULE_TYPE, sleep } from '../src/sdk/common';
+import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
 
 dotenv.config();
 
-// npx ts-node examples/12-uninstall-module.ts
+// tsx examples/12-uninstall-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
+  const modularSdk = new ModularSdk(
+    getViemAccount(process.env.WALLET_PRIVATE_KEY),
+    {
+      chainId: Number(process.env.CHAIN_ID),
+      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
+    })
 
-  console.log('address: ', modularSdk.state.EOAAddress);
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -26,12 +31,16 @@ async function main() {
   const deInitDataDefault = '0x00';
 
   //generate deinit data...
-  const deInitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143', deInitDataDefault);
+  const deInitData = await modularSdk.generateModuleDeInitData(
+      MODULE_TYPE.VALIDATOR,
+     '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492', 
+     deInitDataDefault);
 
   console.log(`deinitData: ${deInitData}`);
 
-  // default : 0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143
-  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143', deInitData);
+  // default : 0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B
+  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, 
+    '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492', deInitData);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

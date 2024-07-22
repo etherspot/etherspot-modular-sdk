@@ -1,3 +1,4 @@
+import { Chain } from 'viem/chains';
 import { NetworkNames } from './constants';
 
 export interface Network {
@@ -7,6 +8,7 @@ export interface Network {
 
 export interface NetworkConfig {
   chainId: number;
+  chain: Chain;
   bundler: string;
   contracts: {
     entryPoint: string;

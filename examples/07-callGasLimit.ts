@@ -3,6 +3,9 @@ import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
+import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { parseEther } from 'viem';
+import { generateModularSDKInstance } from './helpers/sdk-helper';
 
 dotenv.config();
 
@@ -12,12 +15,14 @@ const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxM
 
 async function main() {
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
-    chainId: Number(process.env.CHAIN_ID),
-    bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-  })
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY,
+    Number(process.env.CHAIN_ID),
+    bundlerApiKey
+  );// Testnets dont need apiKey on bundlerProvider
 
-  console.log('address: ', modularSdk.state.EOAAddress)
+
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet...
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -27,7 +32,7 @@ async function main() {
   await modularSdk.clearUserOpsFromBatch();
 
   // add transactions to the batch
-  const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: ethers.utils.parseEther(value) });
+  const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: parseEther(value) });
   console.log('transactions: ', transactionBatch);
 
   // get balance of the account address

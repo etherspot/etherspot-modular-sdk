@@ -1,24 +1,28 @@
-import { ethers } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
+import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { parseEther } from 'viem';
+import { generateModularSDKInstance } from './helpers/sdk-helper';
 
 dotenv.config();
 
 const recipient = '0x80a1874E1046B1cc5deFdf4D3153838B72fF94Ac'; // recipient wallet address
-const value = '0.01'; // transfer value
+const value = '0.0000001'; // transfer value
 const apiKey = 'arka_public_key'; // Only testnets are available, if you need further assistance in setting up a paymaster service for your dapp, please reach out to us on discord or https://etherspot.fyi/arka/intro
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
-
+// tsx 
 async function main() {
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, {
-    chainId: Number(process.env.CHAIN_ID),
-    bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-  })
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY,
+    Number(process.env.CHAIN_ID),
+    bundlerApiKey
+  );// Testnets dont need apiKey on bundlerProvider
 
-  console.log('address: ', modularSdk.state.EOAAddress)
+
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet...
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -28,7 +32,7 @@ async function main() {
   await modularSdk.clearUserOpsFromBatch();
 
   // add transactions to the batch
-  const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: ethers.utils.parseEther(value) });
+  const transactionBatch = await modularSdk.addUserOpsToBatch({ to: recipient, value: parseEther(value) });
   console.log('transactions: ', transactionBatch);
 
   // get balance of the account address

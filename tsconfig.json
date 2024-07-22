@@ -1,27 +1,26 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "target": "es2017",
+    "allowSyntheticDefaultImports": true,
     "sourceMap": false,
+    "declaration": false,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2020",
+    "module": "esnext",
+    "lib": ["es2017", "dom", "es2019", "es2020", "esnext"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
     "baseUrl": "./",
     "rootDir": "./",
     "strict": false,
-    "downlevelIteration": true,
-    "lib": [
-      "DOM",
-      "ES5",
-      "es2015.collection",
-      "es2015.iterable"
-    ]
+    "downlevelIteration": true
   },
-  "include": [
-    "./examples/**/*.ts",
-    "./src/**/*.ts",
-    "./test/**/*.ts"
-  ]
+  "include": ["**/*.ts", "index.ts"],
+  "exclude": ["node_modules"]
 }
