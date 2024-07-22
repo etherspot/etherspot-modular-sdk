@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { resolveProperties } from './utils';
 import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
+import { toHex } from 'viem';
 
 export function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<any> {
   return resolveProperties(op).then((userOp) =>
@@ -8,7 +9,7 @@ export function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<any
       .map((key) => {
         let val = (userOp as any)[key];
         if (typeof val !== 'string' || !val.startsWith('0x')) {
-          val = ethers.utils.hexValue(val);
+          val = toHex(val);
         }
         return [key, val];
       })

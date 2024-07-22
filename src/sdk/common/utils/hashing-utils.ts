@@ -37,7 +37,7 @@ export function keccak256(data: BytesLike): string {
     return result;
   }
   
-  export function toHex(data: BytesLike): string {
+  export function toHexFromBytesLike(data: BytesLike): string {
     let result: string = null;
   
     if (data !== null) {
@@ -46,13 +46,13 @@ export function keccak256(data: BytesLike): string {
           if (isHex(data)) {
             result = data;
           } else {
-            result = toHex(stringToBytes(data));
+            result = toHexFromBytesLike(stringToBytes(data));
           }
           break;
   
         case 'object':
           try {
-            result = toHex(data as any);
+            result = toHexFromBytesLike(data as any);
           } catch (err) {
             result = null;
           }
