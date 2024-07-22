@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { resolveProperties } from './utils';
 import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 import { toHex } from 'viem';

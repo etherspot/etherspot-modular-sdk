@@ -382,6 +382,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       callData: datas[index]
     }));
 
+    //TODO-LibraryFix identify the syntax for viem to pass array of tuple
     const calldata = ethers.utils.defaultAbiCoder.encode(
       ["tuple(address target,uint256 value,bytes callData)[]"],
       [result]

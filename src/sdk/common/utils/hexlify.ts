@@ -1,11 +1,11 @@
 "use strict";
 
+import { Bytes, BytesLike } from "../types";
+
 ///////////////////////////////
 // Exported Types
 
-export type Bytes = ArrayLike<number>;
-
-export type BytesLike = Bytes | string;
+//export type BytesLike = Bytes | string;
 
 export type DataOptions = {
     allowMissingPrefix?: boolean;

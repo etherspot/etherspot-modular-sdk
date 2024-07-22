@@ -1,7 +1,6 @@
 import { encodePacked, Hex } from "viem";
 import { isAddress } from "./viem-utils";
 import { BytesLike } from "../types";
-import { utils } from "ethers";
 import { isHex as isAHex, stringToBytes} from 'viem';
 
 export function keccak256(data: BytesLike): string {
@@ -18,9 +17,12 @@ export function keccak256(data: BytesLike): string {
             result = keccak256(encodePacked(['string'], [data as Hex]));
           }
           break;
-        case 'object':
-          result = utils.solidityKeccak256(['bytes'], [data]);
+        case 'object': {
+          //result = utils.solidityKeccak256(['bytes'], [data]);
+          // TODO-LibraryFix - this needs debugging as its migrated from ethers
+          result = keccak256(encodePacked(['bytes'], [data.toString() as Hex]));
           break;
+        }
       }
     }
   

@@ -41,4 +41,6 @@ export interface TypedDataField {
   type: string;
 };
 
-export type BytesLike = Uint8Array | Hex
+export type Bytes = ArrayLike<number>;
+
+export type BytesLike = Uint8Array | Hex | Bytes | String

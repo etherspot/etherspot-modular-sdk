@@ -1,4 +1,4 @@
-import { BytesLike } from "ethers";
+import { BytesLike } from "../common/types";
 import { BigNumber, BigNumberish } from "./bignumber";
 
 export type PromiseOrValue<T> = T | Promise<T>;
