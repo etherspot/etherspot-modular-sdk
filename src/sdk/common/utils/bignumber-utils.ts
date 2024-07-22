@@ -18,5 +18,5 @@ export function isBigNumber(value: any): boolean {
 }
 
 export function fromBigInt(value: bigint): BigNumber {
-  return new BigNumber(value.toString());
+  return BigNumber.from(value.toString());
 }

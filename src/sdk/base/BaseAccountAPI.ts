@@ -70,7 +70,6 @@ export abstract class BaseAccountAPI {
 
     const {
       chainId, //
-      stateStorage,
       rpcProviderUrl,
       factoryWallet,
       bundlerProvider,
