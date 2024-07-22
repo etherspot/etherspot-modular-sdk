@@ -3,7 +3,7 @@ import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, getContract, createPublicClient, http, decodeAbiParameters } from 'viem';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, Hex } from 'viem';
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/utils/viem-utils';
@@ -54,6 +54,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   walletClient: WalletClient;
   publicClient: PublicClient;
   account: Account;
+  eoaAddress: Hex;
 
   constructor(params: EtherspotWalletApiParams) {
     super(params);
@@ -65,6 +66,11 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.publicClient = params.publicClient;
     this.walletClient = params.walletClient;
     this.account = params.account;
+    this.eoaAddress = this.account.address;
+  }
+
+  getEOAAddress(): Hex {
+    return this.account.address
   }
 
   async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<boolean> {
@@ -199,11 +205,12 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
 
   async checkAccountAddress(address: string): Promise<void> {
+    const eoaAddress = await this.getEOAAddress();
     const isOwner = await this.publicClient.readContract({
       address: address as `0x${string}`,
       abi: parseAbi(accountAbi),
       functionName: 'isOwner',
-      args: [this.services.walletService.EOAAddress]
+      args: [eoaAddress]
     }) as boolean;
     if (!isOwner) {
       throw new Error('the specified accountAddress does not belong to the given EOA provider')
@@ -223,10 +230,11 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       abi: parseAbi(bootstrapAbi),
       args: [validators, executors, hook, fallbacks],
     });
+    const eoaAddress = await this.getEOAAddress();
 
     const initCode = encodeAbiParameters(
       parseAbiParameters('address, address, bytes'),
-      [this.services.walletService.EOAAddress as `0x${string}`, this.bootstrapAddress as `0x${string}`, initMSAData]
+      [eoaAddress, this.bootstrapAddress as `0x${string}`, initMSAData]
     )
 
     return initCode;

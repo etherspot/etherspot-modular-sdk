@@ -1,5 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
-import { State, StateService } from './state';
 import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
 import { BatchUserOpsRequest, Exception, getGasFee, getViemAddress, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
@@ -86,27 +84,18 @@ export class ModularSdk {
 
     if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
     if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
-    this.account = optionsLike.account;
+    this.account = this.account;
     this.etherspotWallet = new EtherspotWalletAPI({
       optionsLike,
       entryPointAddress,
       factoryAddress: walletFactoryAddress,
       predefinedAccountAddress: accountAddress,
       index: this.index,
+      account: this.account,
       walletClient: this.walletClient,
       publicClient: this.publicClient,
     })
     this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId, this.walletClient, this.publicClient);
-  }
-
-
-  // exposes
-  get state(): StateService {
-    return this.etherspotWallet.services.stateService;
-  }
-
-  get state$(): BehaviorSubject<State> {
-    return this.etherspotWallet.services.stateService.state$;
   }
 
   get supportedNetworks(): Network[] {
@@ -138,6 +127,10 @@ export class ModularSdk {
       message: message as Hex,
       account: this.account
     });
+  }
+
+  getEOAAddress(): Hex {
+    return this.etherspotWallet.getEOAAddress();
   }
 
   async getCounterFactualAddress(): Promise<string> {

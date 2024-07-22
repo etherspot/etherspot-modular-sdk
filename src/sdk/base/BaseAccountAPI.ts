@@ -4,7 +4,7 @@ import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
 import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
-import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto } from '..';
+import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
 import { Account, Hex, parseAbi, parseAbiItem, PublicClient, WalletClient } from 'viem';
@@ -78,9 +78,6 @@ export abstract class BaseAccountAPI {
 
     this.services = {
       networkService: new NetworkService(chainId),
-      stateService: new StateService({
-        storage: stateStorage,
-      }),
     };
 
     this.context = new Context(this.services);
@@ -95,14 +92,6 @@ export abstract class BaseAccountAPI {
     this.factoryAddress = params.factoryAddress;
     this.walletClient = params.walletClient;
     this.publicClient = params.publicClient;
-  }
-
-  get state(): StateService {
-    return this.services.stateService;
-  }
-
-  get state$(): BehaviorSubject<State> {
-    return this.services.stateService.state$;
   }
 
   get error$(): ErrorSubject {
@@ -549,12 +538,13 @@ export abstract class BaseAccountAPI {
     return null;
   }
 
+  // TODO fix signTypedData
   async signTypedData(types: TypedDataField[], message: any) {
-    this.walletClient.signTypedData({
-      account: this.account,
-      types, 
-      message
-  });
+  //   this.walletClient.signTypedData({
+  //     account: this.account,
+  //     types, 
+  //     message
+  // });
     //return this.services.walletService.signTypedData(types, message, this.accountAddress);
   }
 }

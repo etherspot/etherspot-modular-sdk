@@ -13,7 +13,6 @@ export enum Factory {
 
 export interface SdkOptions {
   chainId: number;
-  account: Account;
   bundlerProvider?: BundlerProviderLike;
   stateStorage?: StateStorage;
   rpcProviderUrl?: string;
