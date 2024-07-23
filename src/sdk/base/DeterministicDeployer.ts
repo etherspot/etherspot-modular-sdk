@@ -1,9 +1,13 @@
-import { TransactionRequest } from '@ethersproject/abstract-provider'
-import { JsonRpcProvider } from '@ethersproject/providers'
-import { concat, keccak256, pad, toHex } from 'viem'
+import { Account, concat, Hex, keccak256, pad, PublicClient, toHex, WalletClient } from 'viem'
 import { BigNumber, BigNumberish } from '../types/bignumber'
 
-/**
+export type TransactionRequest = {
+  to: Hex,
+  data: Hex,
+  gasLimit?: number
+}
+
+/**x
  * wrapper class for Arachnid's deterministic deployer
  * (deterministic deployer used by 'hardhat-deployer'. generates the same addresses as "hardhat-deploy")
  */
@@ -13,7 +17,7 @@ export class DeterministicDeployer {
    * @param ctrCode constructor code to pass to CREATE2
    * @param salt optional salt. defaults to zero
    */
-  static async getAddress (ctrCode: string, salt: BigNumberish = 0): Promise<string> {
+  static async getAddress(ctrCode: string, salt: BigNumberish = 0): Promise<string> {
     return await DeterministicDeployer.instance.getDeterministicDeployAddress(ctrCode, salt)
   }
 
@@ -23,7 +27,7 @@ export class DeterministicDeployer {
    * @param salt optional salt. defaults to zero
    * @return the deployed address
    */
-  static async deploy (ctrCode: string, salt: BigNumberish = 0): Promise<string> {
+  static async deploy(ctrCode: string, salt: BigNumberish = 0): Promise<string> {
     return await DeterministicDeployer.instance.deterministicDeploy(ctrCode, salt)
   }
 
@@ -34,49 +38,62 @@ export class DeterministicDeployer {
   deploymentGasPrice = 100e9
   deploymentGasLimit = 100000
 
-  constructor (readonly provider: JsonRpcProvider) {
+  constructor(readonly walletClient: WalletClient, readonly account: Account, readonly publicClient: PublicClient) {
   }
 
-  async isContractDeployed (address: string): Promise<boolean> {
-    return await this.provider.getCode(address).then(code => code.length > 2)
+  async isContractDeployed(address: Hex): Promise<boolean> {
+    return await this.publicClient.getCode({ address: address }).then(code => code.length > 2);
   }
 
-  async isDeployerDeployed (): Promise<boolean> {
-    return await this.isContractDeployed(this.proxyAddress)
+  async isDeployerDeployed(): Promise<boolean> {
+    return await this.isContractDeployed(this.proxyAddress as Hex)
   }
 
-  async deployDeployer (): Promise<void> {
-    if (await this.isContractDeployed(this.proxyAddress)) {
+  async deployDeployer(): Promise<void> {
+    if (await this.isContractDeployed(this.proxyAddress as Hex)) {
       return
     }
-    const bal = await this.provider.getBalance(this.deploymentSignerAddress)
+    const bal: bigint = await this.publicClient.getBalance({ address: this.deploymentSignerAddress as Hex });
+    const balBig = BigNumber.from(bal);
     const neededBalance = BigNumber.from(this.deploymentGasLimit).mul(this.deploymentGasPrice)
-    const signer = this.provider.getSigner()
-    if (bal.lt(neededBalance)) {
-      await signer.sendTransaction({
-        to: this.deploymentSignerAddress,
+
+    if (balBig.lt(neededBalance)) {
+
+      if (!this.account) {
+        throw new Error('no account to send from');
+      }
+
+      const tx = await this.walletClient.sendTransaction({
+        account: this.account,
+        chain: this.publicClient.chain,
+        to: this.deploymentSignerAddress as Hex,
         value: neededBalance,
-        gasLimit: this.deploymentGasLimit
-      })
+        gasLimit: this.deploymentGasLimit,
+        kzg: undefined
+      });
     }
-    await this.provider.send('eth_sendRawTransaction', [this.deploymentTransaction])
-    if (!await this.isContractDeployed(this.proxyAddress)) {
+
+    await this.walletClient.sendRawTransaction(
+      { serializedTransaction: this.deploymentTransaction as Hex }
+    );
+
+    if (!await this.isContractDeployed(this.proxyAddress as Hex)) {
       throw new Error('raw TX didn\'t deploy deployer!')
     }
   }
 
-  async getDeployTransaction (ctrCode: string, salt: BigNumberish = 0): Promise<TransactionRequest> {
+  async getDeployTransaction(ctrCode: string, salt: BigNumberish = 0): Promise<TransactionRequest> {
     await this.deployDeployer()
-    const saltEncoded = pad(toHex(salt as `0x${string}`), {size: 32})
+    const saltEncoded = pad(toHex(salt as `0x${string}`), { size: 32 })
     return {
-      to: this.proxyAddress,
+      to: this.proxyAddress as Hex,
       data: concat([
         saltEncoded as `0x${string}`,
         ctrCode as `0x${string}`])
     }
   }
 
-  async getDeterministicDeployAddress (ctrCode: string, salt: BigNumberish = 0): Promise<string> {
+  async getDeterministicDeployAddress(ctrCode: string, salt: BigNumberish = 0): Promise<string> {
     // this method works only before the contract is already deployed:
     // return await this.provider.call(await this.getDeployTransaction(ctrCode, salt))
     const saltEncoded = pad(toHex(salt as `0x${string}`), { size: 32 })
@@ -89,22 +106,33 @@ export class DeterministicDeployer {
     ])).slice(-40)
   }
 
-  async deterministicDeploy (ctrCode: string, salt: BigNumberish = 0): Promise<string> {
+  async deterministicDeploy(ctrCode: string, salt: BigNumberish = 0): Promise<string> {
     const addr = await this.getDeterministicDeployAddress(ctrCode, salt)
-    if (!await this.isContractDeployed(addr)) {
-      await this.provider.getSigner().sendTransaction(
-        await this.getDeployTransaction(ctrCode, salt))
+    if (!await this.isContractDeployed(addr as Hex)) {
+
+      const transactionRequest = await this.getDeployTransaction(ctrCode, salt);
+
+      //await this.provider.getSigner().sendTransaction(transactionRequest)
+
+      await this.walletClient.sendTransaction({
+        account: this.account,
+        chain: this.publicClient.chain,
+        to: transactionRequest.to as Hex,
+        data: transactionRequest.data as Hex,
+        kzg: undefined
+      });
+
     }
     return addr
   }
 
   private static _instance?: DeterministicDeployer
 
-  static init (provider: JsonRpcProvider): void {
-    this._instance = new DeterministicDeployer(provider)
+  static init(walletClient: WalletClient, account: Account, publicClient: PublicClient): void {
+    this._instance = new DeterministicDeployer(walletClient, account, publicClient)
   }
 
-  static get instance (): DeterministicDeployer {
+  static get instance(): DeterministicDeployer {
     if (this._instance == null) {
       throw new Error('must call "DeterministicDeployer.init(ethers.provider)" first')
     }
