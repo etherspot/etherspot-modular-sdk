@@ -393,7 +393,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     //   [result]
     // );
 
-    // TODO fix the compilation error when setting a tuple-array in args for encodeAbiParameters
     const calldata = encodeAbiParameters(
       parseAbiParameters('(address target,uint256 value,bytes callData)[]'),
       [convertedResult]
