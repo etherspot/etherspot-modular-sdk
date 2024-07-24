@@ -1,11 +1,9 @@
-import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
-import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
-import { generateModularSDKInstance } from './helpers/sdk-helper';
+import { generateModularSDKInstance } from '../helpers/sdk-helper';
 
 dotenv.config();
 
-
+// tsx examples/basics/get-counterfactual-address.ts
 async function main() {
   const etherspotBundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
   // initializating sdk for index 0...

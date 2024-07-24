@@ -5,7 +5,6 @@ import { sleep } from "../../../src/sdk/common";
 import { generateModularSDKInstance } from "../../helpers/sdk-helper";
 import { getAddress, parseEther } from "viem";
 
-
 export default async function main(t: string, amt: string) {
   const modularSdk = generateModularSDKInstance(
     config.signingKey,

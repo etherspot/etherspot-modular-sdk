@@ -1,12 +1,11 @@
-import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
-import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
-import { generateModularSDKInstance } from './helpers/sdk-helper';
+import { generateModularSDKInstance } from '../helpers/sdk-helper';
 
 dotenv.config();
 
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
+// tsx examples/basics/get-multiple-accounts.ts
 async function main() {
   // initializating sdk for index 0...
   const modularSdk = generateModularSDKInstance(

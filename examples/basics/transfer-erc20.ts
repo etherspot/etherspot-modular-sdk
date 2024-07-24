@@ -1,12 +1,12 @@
-import { EtherspotBundler, ModularSdk } from '../src';
-import { printOp } from '../src/sdk/common/OperationUtils';
-import { ERC20_ABI } from '../src/sdk/helpers/abi/ERC20_ABI';
+import { EtherspotBundler, ModularSdk } from '../../src';
+import { printOp } from '../../src/sdk/common/OperationUtils';
+import { ERC20_ABI } from '../../src/sdk/helpers/abi/ERC20_ABI';
 import * as dotenv from 'dotenv';
-import { sleep } from '../src/sdk/common';
-import { getPublicClient, getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { sleep } from '../../src/sdk/common';
+import { getPublicClient, getViemAccount } from '../../src/sdk/common/utils/viem-utils';
 import { encodeFunctionData, http, parseAbi, parseUnits } from 'viem';
-import { generateModularSDKInstance } from './helpers/sdk-helper';
-import { erc20Abi } from '../src/sdk/common/abis';
+import { generateModularSDKInstance } from '../helpers/sdk-helper';
+import { erc20Abi } from '../../src/sdk/common/abis';
 
 dotenv.config();
 
@@ -16,6 +16,7 @@ const value = '0.1'; // transfer value
 const tokenAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
+// tsx examples/basics/transfer-erc20.ts
 async function main() {
   // initializating sdk...
   const bundlerProvider = new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey);

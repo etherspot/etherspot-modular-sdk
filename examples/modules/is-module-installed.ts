@@ -1,12 +1,10 @@
-import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
-import { MODULE_TYPE } from '../src/sdk/common';
-import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
-import { generateModularSDKInstance } from './helpers/sdk-helper';
+import { MODULE_TYPE } from '../../src/sdk/common';
+import { generateModularSDKInstance } from '../helpers/sdk-helper';
 
 dotenv.config();
 
-// tsx examples/11-is-module-installed.ts
+// tsx examples/modules/is-module-installed.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 

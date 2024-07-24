@@ -1,21 +1,23 @@
-import { EtherspotBundler, ModularSdk, SessionKeyValidator } from '../src';
+import { EtherspotBundler, ModularSdk, SessionKeyValidator } from '../../src';
 import * as dotenv from 'dotenv';
-import { sleep } from '../src/sdk/common';
-import { KeyStore } from '../src/sdk/SessionKeyValidator';
+import { getViemAccount, sleep } from '../../src/sdk/common';
+import { KeyStore } from '../../src/sdk/SessionKeyValidator';
 
 dotenv.config();
 
+// tsx examples/sessionkeys/enable-sessionkey-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY },
+  const modularSdk = new ModularSdk(
+    getViemAccount(process.env.WALLET_PRIVATE_KEY),
     {
       chainId: Number(process.env.CHAIN_ID),
       bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
     })
 
-  console.log('address: ', modularSdk.state.EOAAddress);
+  console.log('address: ', modularSdk.getEOAAddress());
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();

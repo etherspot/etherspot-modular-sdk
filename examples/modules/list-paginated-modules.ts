@@ -1,13 +1,13 @@
-import { NETWORK_NAME_TO_CHAIN_ID, NetworkNames } from '../src';
+import { NETWORK_NAME_TO_CHAIN_ID, NetworkNames } from '../../src';
 import * as dotenv from 'dotenv';
-import { Networks } from '../src/sdk/network/constants';
-import { getPublicClient, getViemAddress } from '../src/sdk/common/utils/viem-utils';
-import { getModulesPaginated } from '../src/sdk/common/getInstalledModules';
+import { Networks } from '../../src/sdk/network/constants';
+import { getPublicClient, getViemAddress } from '../../src/sdk/common/utils/viem-utils';
+import { getModulesPaginated } from '../../src/sdk/common/getInstalledModules';
 import { http, PublicClient } from 'viem';
 
 dotenv.config();
 
-// tsx examples/13-list-paginated-modules.ts
+// tsx examples/modules/list-paginated-modules.ts
 async function main() {
   const chainId: number = NETWORK_NAME_TO_CHAIN_ID[NetworkNames.Sepolia];
   const rpcProviderUrl = Networks[chainId].bundler;

@@ -1,11 +1,11 @@
-import { EtherspotBundler, ModularSdk } from '../src';
+import { EtherspotBundler, ModularSdk } from '../../src';
 import * as dotenv from 'dotenv';
-import { MODULE_TYPE, sleep } from '../src/sdk/common';
-import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { MODULE_TYPE, sleep } from '../../src/sdk/common';
+import { getViemAccount } from '../../src/sdk/common/utils/viem-utils';
 
 dotenv.config();
 
-// tsx examples/12-uninstall-module.ts
+// tsx examples/modules/install-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
@@ -17,30 +17,15 @@ async function main() {
       bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
     })
 
-  console.log('address: ', modularSdk.getEOAAddress());
+  const eoaAddress = await modularSdk.getEOAAddress();
+  console.log('\x1b[33m%s\x1b[0m', `EOA Address: ${eoaAddress}`);
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  //this should be previous node address of the module to be uninstalled and the deinit data
-  //deinit data is the data that is passed to the module to be uninstalled
-  // here we need to call the function which can find out the address of previous node of the module to be uninstalled
-  // and the deinit data can be 0x00 as default value
-  const deInitDataDefault = '0x00';
-
-  //generate deinit data...
-  const deInitData = await modularSdk.generateModuleDeInitData(
-      MODULE_TYPE.VALIDATOR,
-     '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492', 
-     deInitDataDefault);
-
-  console.log(`deinitData: ${deInitData}`);
-
-  // default : 0xD6dc0A5Ca1EC90D1283A6d13642e8186059fF63B
-  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.VALIDATOR, 
-    '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492', deInitData);
+  const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492');
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

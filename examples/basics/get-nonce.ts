@@ -1,11 +1,9 @@
-import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
-import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
-import { generateModularSDKInstance } from './helpers/sdk-helper';
+import { generateModularSDKInstance } from '../helpers/sdk-helper';
 
 dotenv.config();
 
-// npx ts-node examples/01-get-nonce.ts
+// tsx examples/basics/get-nonce.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
   const customBundlerUrl = '';
