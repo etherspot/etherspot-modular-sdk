@@ -31,10 +31,7 @@ async function main() {
   const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
 
   // get instance  of SessionKeyValidator
-  const sessionKeyModule = new SessionKeyValidator(
-    modularSdk,
-    new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-  )
+  const sessionKeyModule = new SessionKeyValidator(modularSdk)
 
   const response = await sessionKeyModule.rotateSessionKey(
     token,

@@ -84,25 +84,25 @@ export class DeterministicDeployer {
 
   async getDeployTransaction(ctrCode: string, salt: BigNumberish = 0): Promise<TransactionRequest> {
     await this.deployDeployer()
-    const saltEncoded = pad(toHex(salt as `0x${string}`), { size: 32 })
+    const saltEncoded = pad(toHex(salt as Hex), { size: 32 })
     return {
       to: this.proxyAddress as Hex,
       data: concat([
-        saltEncoded as `0x${string}`,
-        ctrCode as `0x${string}`])
+        saltEncoded as Hex,
+        ctrCode as Hex])
     }
   }
 
   async getDeterministicDeployAddress(ctrCode: string, salt: BigNumberish = 0): Promise<string> {
     // this method works only before the contract is already deployed:
     // return await this.provider.call(await this.getDeployTransaction(ctrCode, salt))
-    const saltEncoded = pad(toHex(salt as `0x${string}`), { size: 32 })
+    const saltEncoded = pad(toHex(salt as Hex), { size: 32 })
 
     return '0x' + keccak256(concat([
       '0xff',
-      this.proxyAddress as `0x${string}`,
-      saltEncoded as `0x${string}`,
-      keccak256(ctrCode as `0x${string}`) as `0x${string}`
+      this.proxyAddress as Hex,
+      saltEncoded as Hex,
+      keccak256(ctrCode as Hex) as Hex
     ])).slice(-40)
   }
 

@@ -47,31 +47,19 @@ export function packUserOp(op1: UserOperation | NotPromise<BaseAccountUserOperat
 
     const packedUserOp = encodeAbiParameters(
       parseAbiParameters('address, uint256, bytes32, bytes32, bytes32, uint256, bytes32, bytes32'),
-      [op.sender as `0x${string}`,
+      [op.sender as Hex,
       BigInt(op.nonce as Hex),
       keccak256(op.initCode as Hex),
       keccak256(op.callData as Hex),
-      op.accountGasLimits.toString() as `0x${string}`,
+      op.accountGasLimits.toString() as Hex,
       BigInt(op.preVerificationGas as Hex),
-      op.gasFees.toString() as `0x${string}`,
+      op.gasFees.toString() as Hex,
       keccak256(op.paymasterAndData as Hex)]
     );
 
     return packedUserOp;
-
-    // return defaultAbiCoder.encode(
-    //   ['address', 'uint256', 'bytes32', 'bytes32', 'bytes32', 'uint256', 'bytes32', 'bytes32'],
-    //   [op.sender, op.nonce, keccak256(op.initCode as `0x${string}`), keccak256(op.callData  as `0x${string}`),
-    //   op.accountGasLimits, op.preVerificationGas, op.gasFees,
-    //   keccak256(op.paymasterAndData  as `0x${string}`)])
   } else {
     // for the purpose of calculating gas cost encode also signature (and no keccak of bytes)
-    // const packedUserOp = defaultAbiCoder.encode(
-    //   ['address', 'uint256', 'bytes', 'bytes', 'bytes32', 'uint256', 'bytes32', 'bytes', 'bytes'],
-    //   [op.sender, op.nonce, op.initCode, op.callData,
-    //   op.accountGasLimits, op.preVerificationGas, op.gasFees,
-    //   op.paymasterAndData, op.signature])
-
     const packedUserOp = encodeAbiParameters(
       parseAbiParameters('address, uint256, bytes, bytes, bytes32, uint256, bytes32, bytes, bytes'),
       [op.sender as Hex,
@@ -90,16 +78,16 @@ export function packUserOp(op1: UserOperation | NotPromise<BaseAccountUserOperat
 }
 
 export function packUint(high128: BigNumberish, low128: BigNumberish): string {
-  return pad(BigNumber.from(high128).shl(128).add(low128).toHexString() as `0x${string}`, { size: 32 })
+  return pad(BigNumber.from(high128).shl(128).add(low128).toHexString() as Hex, { size: 32 })
 }
 
 // TODO - test this on sepolia
 export function packPaymasterData(paymaster: string, paymasterVerificationGasLimit: BigNumberish, postOpGasLimit: BigNumberish, paymasterData?: BytesLike): BytesLike {
   const paymasterAndData = paymasterData ? paymasterData : '0x';
   return concat([
-    paymaster as `0x${string}`,
-    packUint(paymasterVerificationGasLimit, postOpGasLimit) as `0x${string}`,
-    paymasterAndData as `0x${string}`
+    paymaster as Hex,
+    packUint(paymasterVerificationGasLimit, postOpGasLimit) as Hex,
+    paymasterAndData as Hex
   ])
 }
 
@@ -138,10 +126,10 @@ export function packUserOpData(op: any): NotPromise<BaseAccountUserOperationStru
  * @param chainId
  */
 export function getUserOpHash(op: UserOperation, entryPoint: string, chainId: number): string {
-  const userOpHash = keccak256(packUserOp(op, true) as `0x${string}`);
+  const userOpHash = keccak256(packUserOp(op, true) as Hex);
   //const enc = defaultAbiCoder.encode(['bytes32', 'address', 'uint256'], [userOpHash, entryPoint, chainId]);
   const enc = encodeAbiParameters(parseAbiParameters('bytes32, address, uint256'), [userOpHash, entryPoint as Hex, BigInt(chainId)]);
-  return keccak256(enc as `0x${string}`);
+  return keccak256(enc as Hex);
 }
 
 const ErrorSig = keccak256(Buffer.from('Error(string)')).slice(0, 10); // 0x08c379a0
@@ -192,7 +180,7 @@ export function rethrowError(e: any): any {
 
     if (decoded.opIndex != null) {
       // helper for chai: convert our FailedOp error into "Error(msg)"
-      const errorWithMsg = concat([ErrorSig as `0x${string}`, encodeAbiParameters(parseAbiParameters('string'), [decoded.message]) as `0x${string}`]);
+      const errorWithMsg = concat([ErrorSig as Hex, encodeAbiParameters(parseAbiParameters('string'), [decoded.message]) as Hex]);
       // modify in-place the error object:
       parent.data = errorWithMsg;
     }

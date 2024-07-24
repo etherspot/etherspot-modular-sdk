@@ -28,7 +28,7 @@ export const getPublicClient = ({ chainId, transport }: { chainId: number, trans
 
 export const getWalletClientFromPrivateKey = ({ rpcUrl, chainId, privateKey }: { rpcUrl: string,  chainId: number, privateKey: string }) => {
   return createWalletClient({
-    account: privateKeyToAccount(privateKey as `0x${string}`),
+    account: privateKeyToAccount(privateKey as Hex),
     chain: Networks[chainId].chain,
     transport: http(rpcUrl) as any, // Asserting to `any` to bypass the deep instantiation check
   });
@@ -42,12 +42,8 @@ export const getWalletClientFromAccount = ({ rpcUrl, chainId, account }: { rpcUr
   });
 }
 
-// export const toHex = (value: string | number): Hex => {
-//   return value as Hex;
-// }
-
 export const getViemAccount = (privateKey: string): Account => {
-  return privateKeyToAccount(privateKey as `0x${string}`);
+  return privateKeyToAccount(privateKey as Hex);
 }
 
 export const getViemAddress = (address: string): Address => {

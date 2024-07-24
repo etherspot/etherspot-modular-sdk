@@ -27,6 +27,7 @@ export class ModularSdk {
   private walletClient: WalletClient;
   private publicClient: PublicClient;
   private account: Account;
+  private providerUrl: string;
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
@@ -57,7 +58,8 @@ export class ModularSdk {
       viemClientUrl = optionsLike.bundlerProvider.url;
     }
 
-    // TODO wallet provider need not always be a string, this needs to be changed
+    this.providerUrl = viemClientUrl;
+
     this.walletClient = getWalletClientFromAccount({
       rpcUrl: viemClientUrl,
       chainId: chainId,
@@ -114,6 +116,10 @@ export class ModularSdk {
 
   getPublicClient(): PublicClient {
     return this.publicClient;
+  }
+
+  getProviderUrl(): string {
+    return this.providerUrl;
   }
 
   // wallet

@@ -76,7 +76,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('Account address not found');
     const response = await this.publicClient.readContract({
-      address: accountAddress as `0x${string}`,
+      address: accountAddress as Hex,
       abi: parseAbi(accountAbi),
       functionName: 'isModuleInstalled',
       args: [moduleTypeId, module, initData]
@@ -159,7 +159,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     // Prepare the deinit data
     const deInitDataGenerated = encodeAbiParameters(
       parseAbiParameters('address, bytes'),
-      [previousAddress as `0x${string}`, deinitDataBase as `0x${string}`]
+      [previousAddress as Hex, deinitDataBase as Hex]
     )
 
     return deInitDataGenerated;
@@ -173,12 +173,12 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   // function to get active hook
   async getActiveHook(): Promise<string> {
     const activeHook = await this.publicClient.readContract({
-      address: this.accountAddress as `0x${string}`,
+      address: this.accountAddress as Hex,
       abi: parseAbi(accountAbi),
       functionName: 'getActiveHook',
     });
 
-    return activeHook as `0x${string}`;
+    return activeHook as Hex;
   }
 
   async getFallbacks(): Promise<any[]> {
@@ -206,7 +206,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   async checkAccountAddress(address: string): Promise<void> {
     const eoaAddress = await this.getEOAAddress();
     const isOwner = await this.publicClient.readContract({
-      address: address as `0x${string}`,
+      address: address as Hex,
       abi: parseAbi(accountAbi),
       functionName: 'isOwner',
       args: [eoaAddress]
@@ -233,7 +233,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
     const initCode = encodeAbiParameters(
       parseAbiParameters('address, address, bytes'),
-      [eoaAddress, this.bootstrapAddress as `0x${string}`, initMSAData]
+      [eoaAddress, this.bootstrapAddress as Hex, initMSAData]
     )
 
     return initCode;
@@ -261,7 +261,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     })
 
     return concat([
-      this.factoryAddress as `0x${string}`,
+      this.factoryAddress as Hex,
       functionData,
     ]);
   }
@@ -276,11 +276,11 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
     if (!this.accountAddress) {
       this.accountAddress = (await this.publicClient.readContract({
-        address: this.factoryAddress as `0x${string}`,
+        address: this.factoryAddress as Hex,
         abi: parseAbi(factoryAbi),
         functionName: 'getAddress',
         args: [salt, initCode]
-      })) as `0x${string}`;
+      })) as Hex;
     }
     return this.accountAddress;
   }
@@ -291,16 +291,8 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       ? getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
       : getAddress(key.toHexString()) + "00000000";
 
-    // TODO fix this and entrypoint contract instance must be set as a private property which is initialized in the constructor
-    // const entryPoint = getContract({
-    //   address: this.entryPointAddress as `0x${string}`,
-    //   abi: EntryPointAbi,
-    //   client: this.publicClient
-    // })
-    // return entryPoint.read.getNonce([accountAddress, dummyKey])
-
     const nonceResponse = await this.publicClient.readContract({
-      address: this.entryPointAddress as `0x${string}`,
+      address: this.entryPointAddress as Hex,
       abi: parseAbi(entryPointAbi),
       functionName: 'getNonce',
       args: [accountAddress, BigInt(dummyKey)]
@@ -345,9 +337,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     }
 
     const calldata = concat([
-      target as `0x${string}`,
-      pad(toHex(valueToProcess), { size: 32 }) as `0x${string}`,
-      data as `0x${string}`
+      target as Hex,
+      pad(toHex(valueToProcess), { size: 32 }) as Hex,
+      data as Hex
     ]);
 
     return encodeFunctionData({
@@ -358,7 +350,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async signUserOpHash(userOpHash: string): Promise<string> {
-    const userOpHashHex = userOpHash as `0x${string}`;
+    const userOpHashHex = userOpHash as Hex;
     const signature = await this.walletClient.signMessage(
       {
         message: { raw: userOpHashHex },

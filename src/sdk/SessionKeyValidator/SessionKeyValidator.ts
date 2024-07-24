@@ -2,7 +2,7 @@ import { ModularSdk } from "../sdk";
 import { KeyStore, PERMISSIONS_URL } from "./constants";
 import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse } from "./interfaces";
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
-import { encodeFunctionData, parseAbi, PublicClient, SimulateContractReturnType, WalletClient } from "viem";
+import { encodeFunctionData, Hex, parseAbi, PublicClient, SimulateContractReturnType, WalletClient } from "viem";
 import { sessionKeyValidatorAbi } from "../common/abis";
 import { BigNumber } from "../types/bignumber";
 
@@ -18,7 +18,7 @@ export class SessionKeyValidator {
         this.modularSdk = modularSdk;
         this.walletClient = modularSdk.getWalletClient();
         this.publicClient = modularSdk.getPublicClient();
-        this.providerURL = '';
+        this.providerURL = modularSdk.getProviderUrl();
     }
 
     async enableSessionKey(
@@ -210,7 +210,8 @@ export class SessionKeyValidator {
         //return await erc20SessionKeyValidatorContract.callStatic.getAssociatedSessionKeys({ from: account });
 
         const response : SimulateContractReturnType = await this.publicClient.simulateContract({
-            address: erc20SessionKeyValidator as `0x${string}`,
+            account: account as Hex,
+            address: erc20SessionKeyValidator as Hex,
             abi: parseAbi(sessionKeyValidatorAbi),
             functionName: 'getAssociatedSessionKeys',
             args: []

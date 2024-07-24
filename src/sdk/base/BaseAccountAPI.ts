@@ -252,7 +252,7 @@ export abstract class BaseAccountAPI {
     try {
       //await this.entryPointView.callStatic.getSenderAddress(initCode);
       await this.publicClient.simulateContract({
-        address: this.entryPointAddress as `0x${string}`,
+        address: this.entryPointAddress as Hex,
         abi: parseAbi(entryPointAbi),
         functionName: 'getSenderAddress',
         args: [initCode]
@@ -516,9 +516,9 @@ export abstract class BaseAccountAPI {
     const endtime = Date.now() + timeout;
     while (Date.now() < endtime) {
       const filter = await this.publicClient.createEventFilter({
-        address: this.entryPointAddress as `0x${string}`,
+        address: this.entryPointAddress as Hex,
         args: {
-          userOpHash: userOpHash as `0x${string}`,
+          userOpHash: userOpHash as Hex,
         },
         event: parseAbiItem('event UserOperationEvent(bytes32 indexed userOpHash,address indexed sender,address indexed paymaster,uint256 nonce,bool success,uint256 actualGasCost,uint256 actualGasUsed)'),
       })

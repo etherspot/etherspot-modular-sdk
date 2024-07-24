@@ -4,7 +4,7 @@ import { ERC20_ABI } from '../../src/sdk/helpers/abi/ERC20_ABI';
 import * as dotenv from 'dotenv';
 import { sleep } from '../../src/sdk/common';
 import { getPublicClient, getViemAccount } from '../../src/sdk/common/utils/viem-utils';
-import { encodeFunctionData, http, parseAbi, parseUnits } from 'viem';
+import { encodeFunctionData, Hex, http, parseAbi, parseUnits } from 'viem';
 import { generateModularSDKInstance } from '../helpers/sdk-helper';
 import { erc20Abi } from '../../src/sdk/common/abis';
 
@@ -40,7 +40,7 @@ async function main() {
   // get decimals from erc20 contract
   
   const decimals = await publicClient.readContract({
-    address: tokenAddress as `0x${string}`,
+    address: tokenAddress as Hex,
     abi: parseAbi(erc20Abi),
     functionName: 'decimals',
     args: []
