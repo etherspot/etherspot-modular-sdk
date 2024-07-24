@@ -27,6 +27,7 @@ async function main() {
   const spendingLimit = '100000';
   const validAfter = new Date().getTime();
   const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
+  const oldSessionKey = '0x27d04DfA1630d8D0B9845e191CE55b4cD376a7ad';  // session key which you want to rotate
 
   // get instance  of SessionKeyValidator
   const sessionKeyModule = new SessionKeyValidator(
@@ -40,11 +41,12 @@ async function main() {
     spendingLimit,
     validAfter,
     validUntil,
+    oldSessionKey,
     KeyStore.AWS
   );
 
   console.log('\x1b[33m%s\x1b[0m', `UserOpHash: `, response.userOpHash);
-  console.log('\x1b[33m%s\x1b[0m', `SessionKey: `, response.sessionKey);
+  console.log('\x1b[33m%s\x1b[0m', `New SessionKey: `, response.sessionKey);
 
   // get transaction hash...
   console.log('Waiting for transaction...');

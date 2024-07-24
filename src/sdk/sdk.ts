@@ -19,7 +19,6 @@ import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { SessionKeyValidator } from './SessionKeyValidator';
 
 /**
  * Modular-Sdk
@@ -213,8 +212,8 @@ export class ModularSdk {
     return getGasFee(this.etherspotWallet.provider as providers.JsonRpcProvider);
   }
 
-  async send(userOp: any, sessionKeyModule?: SessionKeyValidator) {
-    const signedUserOp = await this.etherspotWallet.signUserOp(userOp, sessionKeyModule);
+  async send(userOp: any, isUserOpAlreadySigned = false) {
+    const signedUserOp = isUserOpAlreadySigned ? userOp : await this.etherspotWallet.signUserOp(userOp);
     return this.bundler.sendUserOpToBundler(signedUserOp);
   }
 

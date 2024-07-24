@@ -26,8 +26,9 @@ async function main() {
     modularSdk,
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )
+  const sessionKey = '0xb1D8541544f240C80d5c4489990bfADAa238b0b3'; // session key which you want to disable
 
-  const response = await sessionKeyModule.disableSessionKey();
+  const response = await sessionKeyModule.disableSessionKey(sessionKey);
 
   console.log('\x1b[33m%s\x1b[0m', `UserOpHash: `, response.userOpHash);
   console.log('\x1b[33m%s\x1b[0m', `SessionKey: `, response.sessionKey);

@@ -455,14 +455,13 @@ export interface ERC20SessionKeyValidator extends BaseContract {
             wallet: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<
-            [string, string, string, BigNumber, number, number, boolean] & {
+            [string, string, BigNumber, number, number, boolean] & {
                 token: string;
-                interfaceId: string;
                 funcSelector: string;
                 spendingLimit: BigNumber;
                 validAfter: number;
                 validUntil: number;
-                paused: boolean;
+                live: boolean;
             }
         >;
 
@@ -555,14 +554,13 @@ export interface ERC20SessionKeyValidator extends BaseContract {
         wallet: PromiseOrValue<string>,
         overrides?: CallOverrides
     ): Promise<
-        [string, string, string, BigNumber, number, number, boolean] & {
+        [string, string, BigNumber, number, number, boolean] & {
             token: string;
-            interfaceId: string;
             funcSelector: string;
             spendingLimit: BigNumber;
             validAfter: number;
             validUntil: number;
-            paused: boolean;
+            live: boolean;
         }
     >;
 
@@ -655,14 +653,13 @@ export interface ERC20SessionKeyValidator extends BaseContract {
             wallet: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<
-            [string, string, string, BigNumber, number, number, boolean] & {
+            [string, string, BigNumber, number, number, boolean] & {
                 token: string;
-                interfaceId: string;
                 funcSelector: string;
                 spendingLimit: BigNumber;
                 validAfter: number;
                 validUntil: number;
-                paused: boolean;
+                live: boolean;
             }
         >;
 
