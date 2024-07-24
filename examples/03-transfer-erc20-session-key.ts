@@ -22,8 +22,6 @@ async function main() {
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )
 
-  console.log('address: ', modularSdk.state.EOAAddress)
-
   // get address of EtherspotWallet...
   const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
@@ -47,12 +45,17 @@ async function main() {
 
   // estimate transactions added to the batch and get the fee data for the UserOp
   const op = await modularSdk.estimate({
-    key: BigNumber.from('0x90A5d7496C8D83f6389E60C0c26ea3928d9bb891')
+    key: BigNumber.from('0x60Da6Cc14d817a88DC354d6dB6314DCD41b7aA54')
   });
   console.log(`Estimate UserOp: ${await printOp(op)}`);
 
-  // sign the UserOp and sending to the bundler...
-  const uoHash = await modularSdk.send(op, sessionKeyModule);
+  // sign the UserOp using sessionKey
+  const sessionKey = '0xD74f84E5908139fD8B0E525b8F3eB6a6dDdC0fcA'; // session key which you want to use for sign the userOp
+
+  const signedUserOp = await sessionKeyModule.signUserOpWithSessionKey(sessionKey, op);
+
+  // sending to the bundler with isUserOpAlreadySigned true...
+  const uoHash = await modularSdk.send(signedUserOp, true);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

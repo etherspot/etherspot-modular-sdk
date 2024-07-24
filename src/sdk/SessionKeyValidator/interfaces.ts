@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 export interface GenerateSessionKeyResponse {
     sessionKey: string;
     enableSessionKeyData: string;
@@ -23,7 +25,11 @@ export interface GetNonceResponse {
     nonce: number;
 }
 
-export interface SignUserOpHashResponse {
-    signature: string;
-    sessionKey: string;
+export interface SessionData {
+    token: string;
+    funcSelector: string;
+    spendingLimit: BigNumber;
+    validAfter: number;
+    validUntil: number;
+    live: boolean;
 }

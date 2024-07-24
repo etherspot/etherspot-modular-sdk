@@ -58,6 +58,9 @@ async function main() {
 
   const sessionKeys = await sessionKeyModule.getAssociatedSessionKeys();
   console.log('\x1b[33m%s\x1b[0m', `AssociatedSessionKeys: `, sessionKeys);
+
+  const sessionData = await sessionKeyModule.sessionData(response.sessionKey);
+  console.log('\x1b[33m%s\x1b[0m', `SessionData: `, sessionData);
 }
 
 main()

@@ -8,7 +8,7 @@ import { resolveProperties } from 'ethers/lib/utils';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
 import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
-import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SessionKeyValidator, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
+import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
 
@@ -477,7 +477,7 @@ export abstract class BaseAccountAPI {
    * Sign the filled userOp.
    * @param userOp the UserOperation to sign (with signature field ignored)
    */
-  async signUserOp(userOp: UserOperation, sessionKeyModule?: SessionKeyValidator): Promise<UserOperation> {
+  async signUserOp(userOp: UserOperation): Promise<UserOperation> {
     if (this.paymasterAPI != null) {
       const paymasterData = await this.paymasterAPI.getPaymasterData(userOp);
       userOp.verificationGasLimit = paymasterData.result.verificationGasLimit;
@@ -488,11 +488,6 @@ export abstract class BaseAccountAPI {
       userOp.paymasterPostOpGasLimit = paymasterData.result.paymasterPostOpGasLimit;
     }
     const userOpHash = await this.getUserOpHash(userOp);
-
-    if (sessionKeyModule) {
-      const userOpData = await sessionKeyModule.signUserOpHash(userOpHash, userOp);
-      return userOpData;
-    }
 
     const signature = await this.signUserOpHash(userOpHash);
     return {
