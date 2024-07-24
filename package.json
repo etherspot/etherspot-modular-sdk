@@ -68,6 +68,7 @@
     "class-validator": "0.14.1",
     "commander": "10.0.1",
     "cross-fetch": "3.1.8",
+    "crypto": "^1.0.1",
     "ethers": "5.7.2",
     "prettier": "2.8.8",
     "reflect-metadata": "0.1.14",
@@ -75,7 +76,6 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "viem": "^2.16.3",
     "@types/node": "18.11.9",
     "@types/prettier": "2.7.3",
     "@typescript-eslint/eslint-plugin": "5.45.0",
@@ -87,6 +87,7 @@
     "npm": "9.6.4",
     "ts-node": "10.9.1",
     "typedoc": "^0.17.8",
-    "typescript": "5.5.3"
+    "typescript": "5.5.3",
+    "viem": "^2.16.3"
   }
 }

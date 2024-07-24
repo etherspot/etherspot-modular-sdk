@@ -50,7 +50,7 @@ async function main() {
   // get transaction hash...
   console.log('Waiting for transaction...');
   let userOpsReceipt = null;
-  const timeout = Date.now() + 60000; // 1 minute timeout
+  const timeout = Date.now() + 1200000; // 1 minute timeout
   while ((userOpsReceipt == null) && (Date.now() < timeout)) {
     await sleep(2);
     userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);

@@ -1,16 +1,20 @@
-import { ethers } from "ethers";
 // @ts-ignore
 import config from "../../config.json";
-import { ModularSdk } from "../../../src";
 import { printOp } from "../../../src/sdk/common/OperationUtils";
 import { sleep } from "../../../src/sdk/common";
+import { generateModularSDKInstance } from "../../helpers/sdk-helper";
+import { getAddress, parseEther } from "viem";
 
 
 export default async function main(t: string, amt: string) {
-  const modularSdk = new ModularSdk({ privateKey: config.signingKey }, { chainId: config.chainId, rpcProviderUrl: config.rpcProviderUrl })
+  const modularSdk = generateModularSDKInstance(
+    config.signingKey,
+    config.chainId,
+    config.rpcProviderUrl
+  );
 
-  const target = ethers.utils.getAddress(t);
-  const value = ethers.utils.parseEther(amt);
+  const target = getAddress(t);
+  const value = parseEther(amt);
 
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();

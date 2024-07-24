@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { utils } from 'ethers';
+import { isHex } from '../../common';
 
 export function IsHex(
   options: {
@@ -26,7 +26,7 @@ export function IsHex(
       constraints: [],
       validator: {
         validate(value: string): boolean {
-          let result = utils.isHexString(value);
+          let result = isHex(value);
 
           if (result && size > 0) {
             result = value.length === size * 2 + 2;

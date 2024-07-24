@@ -6,6 +6,7 @@ import { sleep } from '../src/sdk/common';
 import { getPublicClient, getViemAccount } from '../src/sdk/common/utils/viem-utils';
 import { encodeFunctionData, http, parseAbi, parseUnits } from 'viem';
 import { generateModularSDKInstance } from './helpers/sdk-helper';
+import { erc20Abi } from '../src/sdk/common/abis';
 
 dotenv.config();
 
@@ -30,19 +31,10 @@ async function main() {
   const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  //const provider = new ethers.providers.JsonRpcProvider(process.env.BUNDLER_URL)
-  // get erc20 Contract Interface
-  //const erc20Instance = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-
   const publicClient = getPublicClient({
     chainId: Number(process.env.CHAIN_ID),
     transport: http(bundlerProvider.url)
   });
-
-  const erc20Abi = [
-    'function decimals() view returns (uint8)',
-    'function transfer(address to, uint256 value) returns (bool)'
-  ];
 
   // get decimals from erc20 contract
   

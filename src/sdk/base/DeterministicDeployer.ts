@@ -134,7 +134,7 @@ export class DeterministicDeployer {
 
   static get instance(): DeterministicDeployer {
     if (this._instance == null) {
-      throw new Error('must call "DeterministicDeployer.init(ethers.provider)" first')
+      throw new Error('must call "DeterministicDeployer.init(walletClient, account, publicClient)"')
     }
     return this._instance
   }

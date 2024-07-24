@@ -1,3 +1,29 @@
+
+export const erc20Abi = [
+  'function approve(address spender, uint256 value) returns (bool)',
+  'function decimals() view returns (uint8)',
+  'function name() view returns (string)',
+  'function symbol() view returns (string)',
+  'function totalSupply() returns (uint256)',
+  'function balanceOf(address account) returns (uint256)',
+  'function allowance(address owner, address spender) returns (uint256)',
+  'function transfer(address to, uint256 value) returns (bool)',
+  'function transferFrom(address from, address to, uint256 value) returns (bool)'
+];
+
+export const erc721Abi = [
+  'function balanceOf(address owner) view returns (uint256)',
+  'function ownerOf(uint256 tokenId) view returns (address)',
+  'function approve(address to, uint256 tokenId)',
+  'function getApproved(uint256 tokenId) view returns (address)',
+  'function setApprovalForAll(address operator, bool approved)',
+  'function isApprovedForAll(address owner, address operator) view returns (bool)',
+  'function transferFrom(address from, address to, uint256 tokenId)',
+  'function safeTransferFrom(address from, address to, uint256 tokenId)',
+  'function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)'
+];
+
+
 export const factoryAbi = [
     'function createAccount(bytes32 salt,bytes calldata initCode) returns (address)',
     'function getAddress(bytes32 salt,bytes calldata initcode) view returns (address)'

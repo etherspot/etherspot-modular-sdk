@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
@@ -89,9 +88,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('Account address not found');
 
-    // if (await this.isModuleInstalled(moduleTypeId, module, initData)) {
-    //   throw new Error('the module is already installed');
-    // }
+    if (await this.isModuleInstalled(moduleTypeId, module, initData)) {
+      throw new Error('the module is already installed');
+    }
     return encodeFunctionData({
       functionName: 'installModule',
       abi: parseAbi(accountAbi),
@@ -377,22 +376,28 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     });
 
     const result = targets.map((target, index) => ({
-      target: target,
+      target: target as Hex,
       value: values[index],
-      callData: datas[index]
+      callData: datas[index] as Hex
     }));
 
-    //TODO-LibraryFix identify the syntax for viem to pass array of tuple
-    const calldata = ethers.utils.defaultAbiCoder.encode(
-      ["tuple(address target,uint256 value,bytes callData)[]"],
-      [result]
-    );
+    const convertedResult = result.map(item => ({
+      ...item,
+      // Convert `value` from BigNumberish to bigint
+      value: typeof item.value === 'bigint' ? item.value : BigInt(item.value.toString()),
+    }));
+
+    //TODO-Test-LibraryFix identify the syntax for viem to pass array of tuple
+    // const calldata = ethers.utils.defaultAbiCoder.encode(
+    //   ["tuple(address target,uint256 value,bytes callData)[]"],
+    //   [result]
+    // );
 
     // TODO fix the compilation error when setting a tuple-array in args for encodeAbiParameters
-    // const calldata = decodeAbiParameters(
-    //   parseAbiParameters('(address target,uint256 value,bytes callData)[]'),
-    //   [result]
-    // )
+    const calldata = encodeAbiParameters(
+      parseAbiParameters('(address target,uint256 value,bytes callData)[]'),
+      [convertedResult]
+    )
 
     return encodeFunctionData({
       functionName: 'execute',

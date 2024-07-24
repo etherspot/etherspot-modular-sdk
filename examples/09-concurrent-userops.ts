@@ -1,11 +1,10 @@
-import { BigNumber } from 'ethers';
-import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
-import { getPublicClient, getViemAccount } from '../src/sdk/common/utils/viem-utils';
+import { getPublicClient } from '../src/sdk/common/utils/viem-utils';
 import { Hex, http, parseEther, PublicClient } from 'viem';
 import { generateModularSDKInstance } from './helpers/sdk-helper';
+import { BigNumber } from '../src/sdk/types/bignumber';
 
 dotenv.config();
 

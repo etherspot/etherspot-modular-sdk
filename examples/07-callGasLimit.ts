@@ -1,9 +1,6 @@
-import { ethers } from 'ethers';
-import { EtherspotBundler, ModularSdk } from '../src';
 import { printOp } from '../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../src/sdk/common';
-import { getViemAccount } from '../src/sdk/common/utils/viem-utils';
 import { parseEther } from 'viem';
 import { generateModularSDKInstance } from './helpers/sdk-helper';
 
