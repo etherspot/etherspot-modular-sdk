@@ -20,9 +20,6 @@ async function main() {
     bundlerApiKey
   );// Testnets dont need apiKey on bundlerProvider
 
-
-  console.log('address: ', modularSdk.getEOAAddress());
-
   const publicClient = getPublicClient({
     chainId: Number(process.env.CHAIN_ID),
     transport: http(bundlerApiKey)

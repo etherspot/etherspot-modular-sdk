@@ -17,9 +17,6 @@ async function main() {
     bundlerApiKey
   );// Testnets dont need apiKey on bundlerProvider
 
-
-  console.log('address: ', modularSdk.getEOAAddress());
-
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
 

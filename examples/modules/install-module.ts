@@ -17,9 +17,6 @@ async function main() {
       bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
     })
 
-  const eoaAddress = await modularSdk.getEOAAddress();
-  console.log('\x1b[33m%s\x1b[0m', `EOA Address: ${eoaAddress}`);
-
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
 

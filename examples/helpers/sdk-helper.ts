@@ -12,8 +12,6 @@ export const generateModularSDKInstance = (privateKey: string, chainId: number, 
             index: index
         })
 
-    console.log('address: ', modularSdk.getEOAAddress());
-
     return modularSdk;
 }
 
