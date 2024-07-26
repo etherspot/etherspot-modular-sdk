@@ -36,10 +36,11 @@ export enum NetworkNames {
   Ancient8 = 'ancient8',
   Amoy = 'amoy',
   XDCTestnet = 'xdcTestnet',
+  XDCMainnet = 'xdcMainnet',
 }
 
 export const SupportedNetworks =
-  [1, 10, 14, 30, 31, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
+  [1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
 
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
@@ -77,6 +78,7 @@ export const NETWORK_NAME_TO_CHAIN_ID: {
   [NetworkNames.Ancient8]: 888888888,
   [NetworkNames.Amoy]: 80002,
   [NetworkNames.XDCTestnet]: 51,
+  [NetworkNames.XDCMainnet]: 50,
 };
 
 export const onRamperAllNetworks = ['OPTIMISM', 'POLYGON', 'ARBITRUM', 'FUSE', 'GNOSIS', 'ETHEREUM']
@@ -471,6 +473,18 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x68BA597bf6B9097b1D89b8E0D34646D30997f773',
       erc20SessionKeyValidator: '',
     },
+  },
+  [50]: {
+    chainId: 50,
+    chain: Chain.xdc,
+    bundler: 'https://rpc.etherspot.io/v2/50',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '0xf80D543Ca10B48AF07c65Ff508605c1737EFAF3F',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '0xb61723Bc251A2b556d48C420779Da805e2D4b7D6',
+    }
   }
 };
 
