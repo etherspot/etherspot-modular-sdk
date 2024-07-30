@@ -179,7 +179,7 @@ export class Logger {
             this.throwArgumentError("invalid log level name", "logLevel", logLevel);
         }
         if (_logLevel > LogLevels[level]) { return; }
-        console.log.apply(console, args);
+        console.log(...args);
     }
 
     debug(...args: Array<any>): void {

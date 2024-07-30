@@ -3,7 +3,7 @@ import { EtherspotBundler, ModularSdk } from "../../src";
 import { Hex, http, parseAbi } from "viem";
 import { erc20Abi } from "../../src/sdk/common/abis";
 
-export const generateModularSDKInstance = (privateKey: string, chainId: number, bundlerApiKey: string, index: number = 0) => {
+export const generateModularSDKInstance = (privateKey: string, chainId: number, bundlerApiKey: string, index = 0) => {
     const modularSdk = new ModularSdk(
         getViemAccount(privateKey),
         {

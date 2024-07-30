@@ -205,15 +205,15 @@ export class BigNumber implements Hexable {
         });
     }
 
-    toString(): string {
+    toString(...args: any): string {
         // Lots of people expect this, which we do not support, so check (See: #889)
-        if (arguments.length > 0) {
-            if (arguments[0] === 10) {
+        if (args.length > 0) {
+            if (args[0] === 10) {
                 if (!_warnedToStringRadix) {
                     _warnedToStringRadix = true;
                     logger.warn("BigNumber.toString does not accept any parameters; base-10 is assumed");
                 }
-            } else if (arguments[0] === 16) {
+            } else if (args[0] === 16) {
                 logger.throwError("BigNumber.toString does not accept any parameters; use bigNumber.toHexString()", Logger.errors.UNEXPECTED_ARGUMENT, { });
             } else {
                 logger.throwError("BigNumber.toString does not accept parameters", Logger.errors.UNEXPECTED_ARGUMENT, { });

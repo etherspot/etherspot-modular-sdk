@@ -42,13 +42,13 @@ dependencies:
     specifier: 0.1.14
     version: 0.1.14
   rimraf:
-    specifier: ^5.0.9
+    specifier: ^5.0.5
     version: 5.0.9
   rxjs:
     specifier: 6.6.7
     version: 6.6.7
   tslib:
-    specifier: ^2.6.3
+    specifier: ^2.6.2
     version: 2.6.3
 
 devDependencies:
@@ -95,7 +95,7 @@ devDependencies:
     specifier: 5.5.4
     version: 5.5.4
   viem:
-    specifier: ^2.18.5
+    specifier: ^2.17.10
     version: 2.18.5(typescript@5.5.4)
 
 packages:

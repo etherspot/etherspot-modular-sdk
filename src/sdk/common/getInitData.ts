@@ -47,9 +47,3 @@ import { bootstrapAbi, factoryAbi } from './abis'
     }
   }
   
-  export const getInitDataViaViem = () => {
-  
-  
-  
-  
-  }
