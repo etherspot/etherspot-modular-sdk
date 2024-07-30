@@ -42,8 +42,12 @@
     "format": "prettier --write \"{src,test,examples}/**/*.ts\"",
     "lint": "eslint \"{src,test,examples}/**/*.ts\"",
     "lint-fix": "npm run lint -- --fix",
-    "prebuild": "rimraf ./dist",
-    "build": "npm run compile",
+    "prepare": "pnpm build",
+    "build": "pnpm clean && pnpm build:cjs && pnpm build:esm && pnpm build:types",
+    "build:cjs": "tsc --project ./tsconfig.build.json --module commonjs --outDir ./src/_cjs --removeComments --verbatimModuleSyntax false && printf '{\"type\":\"commonjs\"}' > ./src/_cjs/package.json",
+    "build:esm": "tsc --project ./tsconfig.build.json --module es2015 --outDir ./src/_esm && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./src/_esm/package.json",
+    "build:types": "tsc --project ./tsconfig.build.json --module esnext --declarationDir ./src/_types --emitDeclarationOnly --declaration --declarationMap",
+    "clean": "rimraf src/_esm src/_cjs src/_types",
     "compile": "tsc -p ./tsconfig.build.json",
     "compile-watch": "npm run compile -- --watch",
     "init": "ts-node examples/scripts/init.ts",
@@ -64,6 +68,7 @@
     "@lifi/sdk": "2.5.0",
     "@thehubbleproject/bls": "0.5.1",
     "@walletconnect/universal-provider": "2.10.0",
+    "bn.js": "^5.2.1",
     "buffer": "^6.0.3",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.1",
@@ -72,10 +77,13 @@
     "crypto": "^1.0.1",
     "prettier": "2.8.8",
     "reflect-metadata": "0.1.14",
+    "rimraf": "^5.0.5",
     "rxjs": "6.6.7",
     "tslib": "^2.6.2"
   },
   "devDependencies": {
+    "@types/bn.js": "^5.1.5",
+    "@types/jest": "^29.5.12",
     "@types/node": "18.11.9",
     "@types/prettier": "2.7.3",
     "@typescript-eslint/eslint-plugin": "5.45.0",
@@ -87,7 +95,7 @@
     "npm": "9.6.4",
     "ts-node": "10.9.1",
     "typedoc": "^0.17.8",
-    "typescript": "5.5.3",
-    "viem": "^2.16.3"
+    "typescript": "5.5.4",
+    "viem": "^2.17.10"
   }
 }

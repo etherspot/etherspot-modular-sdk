@@ -1,26 +1,16 @@
 {
+  // This configuration is used for local development and type checking.
+  "extends": "./tsconfig.base.json",
+  "include": ["src", "test"],
+  "exclude": [],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": false,
-    "declaration": false,
-    "moduleResolution": "node",
+    "types": ["jest"],
     "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2020",
-    "module": "esnext",
-    "lib": ["es2017", "dom", "es2019", "es2020", "esnext"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": false,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true,
-    "baseUrl": "./",
-    "rootDir": "./",
-    "strict": false,
-    "downlevelIteration": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"],
+      "test/*": ["./test/*"],
+    },
   },
-  "include": ["**/*.ts", "index.ts"],
-  "exclude": ["node_modules"]
 }
