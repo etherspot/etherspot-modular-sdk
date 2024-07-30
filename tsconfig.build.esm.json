@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test-d.ts", "src/**/*.bench.ts"],
+  "compilerOptions": {
+    "module": "esnext",
+    "outDir": "./dist/esm",
+    "removeComments": true,
+    "verbatimModuleSyntax": false,
+    "declaration": true,
+    "declarationMap": true
+  }
+}

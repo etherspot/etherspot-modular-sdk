@@ -42,13 +42,13 @@ dependencies:
     specifier: 0.1.14
     version: 0.1.14
   rimraf:
-    specifier: ^5.0.5
+    specifier: ^5.0.9
     version: 5.0.9
   rxjs:
     specifier: 6.6.7
     version: 6.6.7
   tslib:
-    specifier: ^2.6.2
+    specifier: ^2.6.3
     version: 2.6.3
 
 devDependencies:
@@ -95,8 +95,8 @@ devDependencies:
     specifier: 5.5.4
     version: 5.5.4
   viem:
-    specifier: ^2.17.10
-    version: 2.18.4(typescript@5.5.4)
+    specifier: ^2.18.5
+    version: 2.18.5(typescript@5.5.4)
 
 packages:
 
@@ -3564,8 +3564,8 @@ packages:
     engines: {node: '>= 0.10'}
     dev: false
 
-  /viem@2.18.4(typescript@5.5.4):
-    resolution: {integrity: sha512-JGdN+PgBnZMbm7fc9o0SfHvL0CKyfrlhBUtaz27V+PeHO43Kgc9Zd4WyIbM8Brafq4TvVcnriRFW/FVGOzwEJw==}
+  /viem@2.18.5(typescript@5.5.4):
+    resolution: {integrity: sha512-hIV5+kzI1f6fOzmZWuycjH+9F/qcEQ3BOyF0/m1cc+pd2+PMdJ/yccL4MeKAUDc1mun5KGjub9HhJsu+9Ndd3Q==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
