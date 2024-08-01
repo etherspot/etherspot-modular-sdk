@@ -5,6 +5,7 @@ import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../networ
 import { encodeFunctionData, Hex, parseAbi, PublicClient, SimulateContractReturnType, WalletClient } from "viem";
 import { sessionKeyValidatorAbi } from "../common/abis";
 import { BigNumber } from "../types/bignumber";
+import { UserOperation } from "../common";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
@@ -379,4 +380,13 @@ export class SessionKeyValidator {
             throw new Error(err.message)
         }
     }
+
+    private async signUserOpData(
+        account: string,
+        chainId: number,
+        apiKey: string, userOp: UserOperation): Promise<string> {
+
+            return '';
+        }
+
 }
