@@ -1,10 +1,10 @@
-import { ethers } from "ethers";
-import { ERC20_ABI } from '../../../src/sdk/helpers/abi/ERC20_ABI';
 // @ts-ignore
 import config from "../../config.json";
-import { ModularSdk } from '../../../src';
 import { printOp } from "../../../src/sdk/common/OperationUtils";
 import { sleep } from "../../../src/sdk/common";
+import { generateModularSDKInstance } from "../../helpers/sdk-helper";
+import { encodeFunctionData, getAddress, Hex, parseAbi, parseUnits, PublicClient } from "viem";
+import { erc20Abi } from "../../../src/sdk/common/abis";
 
 // This example requires several layers of calls:
 // EntryPoint
@@ -17,40 +17,59 @@ export default async function main(
   t: Array<string>,
   amt: string,
 ) {
-  const modularSdk = new ModularSdk({ privateKey: config.signingKey }, { chainId: config.chainId })
+  const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+  // initializating sdk...
+  const modularSdk = generateModularSDKInstance(
+    config.signingKey,
+    config.chainId,
+    bundlerApiKey
+  );
 
   const address = await modularSdk.getCounterFactualAddress();
   console.log(`Etherspot address: ${address}`)
 
-  const provider = new ethers.providers.JsonRpcProvider(config.rpcProviderUrl);
-  const token = ethers.utils.getAddress(tkn);
-  const erc20 = new ethers.Contract(token, ERC20_ABI, provider);
-  const [symbol, decimals] = await Promise.all([
-    erc20.symbol(),
-    erc20.decimals(),
-  ]);
-  const amount = ethers.utils.parseUnits(amt, decimals);
+  const token = getAddress(tkn);
+
+  const publicClient: PublicClient = modularSdk.getPublicClient();
+
+  const symbol = await publicClient.readContract({
+    address: token as Hex,
+    abi: parseAbi(erc20Abi),
+    functionName: 'symbol',
+    args: []
+  })
+
+  const decimals = await publicClient.readContract({
+    address: token as Hex,
+    abi: parseAbi(erc20Abi),
+    functionName: 'decimals',
+    args: []
+  })
+
+  const amount = parseUnits(amt, decimals as number);
+
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 
   let dest: Array<string> = [];
   let data: Array<string> = [];
   t.map((addr) => addr.trim()).forEach((addr) => {
-    dest = [...dest, erc20.address];
+    dest = [...dest, token];
     data = [
       ...data,
-      erc20.interface.encodeFunctionData("transfer", [
-        ethers.utils.getAddress(addr),
-        amount,
-      ]),
+      encodeFunctionData({
+        functionName: 'transfer',
+        abi: parseAbi(erc20Abi),
+        args: [getAddress(addr), amount],
+      })
     ];
   });
   console.log(
     `Batch transferring ${amt} ${symbol} to ${dest.length} recipients...`
   );
 
-  for (let i=0;i<dest.length;i++) {
-    await modularSdk.addUserOpsToBatch({to: dest[i], data: data[i]})
+  for (let i = 0; i < dest.length; i++) {
+    await modularSdk.addUserOpsToBatch({ to: dest[i], data: data[i] })
   }
 
   const op = await modularSdk.estimate();
@@ -64,7 +83,7 @@ export default async function main(
   console.log('Waiting for transaction...');
   let userOpsReceipt = null;
   const timeout = Date.now() + 60000; // 1 minute timeout
-  while((userOpsReceipt == null) && (Date.now() < timeout)) {
+  while ((userOpsReceipt == null) && (Date.now() < timeout)) {
     await sleep(2);
     userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
   }

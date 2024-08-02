@@ -25,6 +25,42 @@ Etherspot Modular is a fully open source SDK which let's dapp developers easily 
 
 The SDK makes it incredibly easy to get up and running with Account Abstraction. From social logins to transaction batching, using an Etherspot smart wallet can give your dapp a web2 like interface to ensure the user has a seamless experience.
 
+## Build the project
+
+1. ensure to be on node version of 20.x.x or more
+```
+nvm use v20.3.0
+```
+
+2. ensure to install pnpm
+
+
+3. ensure to have latest typescript version installed
+
+```sh
+pnpm 
+```
+
+
+4. clean the project distribution and other build directories
+
+```sh
+pnpm run clean
+```
+
+5. In project root directory run 
+
+```sh
+pnpm i
+```
+
+6. run build
+
+```sh
+pnpm run build
+```
+
+
 ## ⚙ Get started
 
 You can either get started by installing the packages yourself here:

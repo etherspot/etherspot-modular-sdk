@@ -1,34 +1,40 @@
-import { ethers } from "ethers";
-import { ERC20_ABI } from '../../../src/sdk/helpers/abi/ERC20_ABI';
 // @ts-ignore
 import config from "../../config.json";
-import { ModularSdk } from "../../../src";
 import { printOp } from "../../../src/sdk/common/OperationUtils";
 import { sleep } from "../../../src/sdk/common";
+import { generateModularSDKInstance, getTokenMetaData } from "../../helpers/sdk-helper";
+import { encodeFunctionData, getAddress, parseAbi, parseUnits } from "viem";
+import { erc20Abi } from "../../../src/sdk/common/abis";
 
 export default async function main(
   tkn: string,
   s: string,
   amt: string,
 ) {
-  const modularSdk = new ModularSdk({ privateKey: config.signingKey }, { chainId: config.chainId, rpcProviderUrl: config.rpcProviderUrl })
+  // initializating sdk...
+  const modularSdk = generateModularSDKInstance(
+    config.signingKey,
+    config.chainId,
+    config.rpcProviderUrl
+  );
   const address = await modularSdk.getCounterFactualAddress();
   console.log(`Etherspot address: ${address}`)
-  const provider = new ethers.providers.JsonRpcProvider(config.rpcProviderUrl);
-  const token = ethers.utils.getAddress(tkn);
-  const spender = ethers.utils.getAddress(s);
-  const erc20 = new ethers.Contract(token, ERC20_ABI, provider);
-  const [symbol, decimals] = await Promise.all([
-    erc20.symbol(),
-    erc20.decimals(),
-  ]);
-  const amount = ethers.utils.parseUnits(amt, decimals);
-  const approveData = erc20.interface.encodeFunctionData("approve", [spender, amount]);
-  console.log(`Approving ${amt} ${symbol}...`);
+  
+  const tokenMetadata = await getTokenMetaData(config.rpcProviderUrl, tkn);
+  const amount = parseUnits(amt, tokenMetadata.decimal);
+  const approveData = encodeFunctionData(
+    {
+      functionName: 'approve',
+      abi: parseAbi(erc20Abi),
+      args: [getAddress(s), amount]
+    });
+
+
+  console.log(`Approving ${amt} ${tokenMetadata.symbol}...`);
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 
-  await modularSdk.addUserOpsToBatch({to: erc20.address, data: approveData});
+  await modularSdk.addUserOpsToBatch({to: tkn, data: approveData});
   console.log(`Added transaction to batch`);
 
   const op = await modularSdk.estimate();

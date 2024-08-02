@@ -1,7 +1,5 @@
 import { ErrorSubject, Service } from './common';
 import { NetworkService } from './network';
-import { StateService } from './state';
-import { WalletService } from './wallet';
 
 export class Context {
   readonly error$ = new ErrorSubject();
@@ -10,8 +8,6 @@ export class Context {
 
   constructor(
     readonly services: {
-      stateService: StateService;
-      walletService: WalletService;
       networkService: NetworkService;
     },
   ) {

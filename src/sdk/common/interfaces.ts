@@ -1,4 +1,4 @@
-import { BigNumberish } from "ethers";
+import { BigNumberish } from "../types/bignumber";
 
 export interface BatchUserOpsRequest {
   to: string[];

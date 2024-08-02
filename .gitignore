@@ -40,3 +40,4 @@ examples/config.json
 
 # contracts exposed
 src/contracts/factories/contracts-exposed/
+src/_cjs/

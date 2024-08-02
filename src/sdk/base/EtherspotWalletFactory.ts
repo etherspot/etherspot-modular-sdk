@@ -1,4 +1,4 @@
-import { Contract } from 'ethers';
+import { encodeFunctionData, parseAbi } from 'viem';
 
 export class EtherspotWalletFactoryAPI {
   static createAccount(
@@ -7,15 +7,14 @@ export class EtherspotWalletFactoryAPI {
     owner: string,
     salt: number,
   ): string {
-    const walletFactory = new Contract(factoryAddress, [
-      'function createAccount(IEntryPoint _entryPoint, address, _registry, address owner, uint256 salt) returns(address)',
-    ]);
-
-    const encodedData = walletFactory.interface.encodeFunctionData('createAccount', [
-      registry,
-      owner,
-      salt,
-    ]);
+    const abi = ['function createAccount(address, _registry, address owner, uint256 salt) returns(address)'];
+    const encodedData = encodeFunctionData({
+      functionName: 'createAccount',
+      abi: parseAbi(abi),
+      args: [registry,
+        owner,
+        salt,],
+    });
     return encodedData;
   }
 }
