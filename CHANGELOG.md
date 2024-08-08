@@ -1,4 +1,8 @@
 # Changelog
+## [1.3.0] - 2024-08-08
+### Breaking Changes
+- Changed to a new wallet factory contract address
+
 ## [1.1.2] - 2024-07-10
 ### New
 - Added `SessionKeyValidator` module for ERC20 SessionKeyValidator.
