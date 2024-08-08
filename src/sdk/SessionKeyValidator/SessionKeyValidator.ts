@@ -1,20 +1,25 @@
-import { ERC20SessionKeyValidator__factory } from "../contracts/factories/src/ERC7579/modules/validator";
-import { BigNumber, providers } from "ethers";
 import { ModularSdk } from "../sdk";
 import { KeyStore, PERMISSIONS_URL } from "./constants";
 import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse } from "./interfaces";
-import { BundlerProvider } from "../bundler";
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
+import { encodeFunctionData, Hex, parseAbi, PublicClient, SimulateContractReturnType, WalletClient } from "viem";
+import { sessionKeyValidatorAbi } from "../common/abis";
+import { BigNumber } from "../types/bignumber";
+import { UserOperation } from "../common";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
-    private provider: providers.JsonRpcProvider;
+    private providerURL: string;
     private erc20SessionKeyValidator?: string;
     private chainId?: number;
+    private walletClient: WalletClient;
+    private publicClient: PublicClient;
 
-    constructor(modularSdk: ModularSdk, provider: BundlerProvider) {
+    constructor(modularSdk: ModularSdk) {
         this.modularSdk = modularSdk;
-        this.provider = new providers.JsonRpcProvider(provider.url);
+        this.walletClient = modularSdk.getWalletClient();
+        this.publicClient = modularSdk.getPublicClient();
+        this.providerURL = modularSdk.getProviderUrl();
     }
 
     async enableSessionKey(
@@ -29,7 +34,7 @@ export class SessionKeyValidator {
             const account = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
             const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             const data = await this.generateSessionKeyData(
@@ -45,12 +50,16 @@ export class SessionKeyValidator {
                 keyStore ? keyStore : null,
             )
 
-            const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-                erc20SessionKeyValidator,
-                this.provider
-            );
+            // const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
+            //     erc20SessionKeyValidator,
+            //     this.provider
+            // );
 
-            const enableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('enableSessionKey', [data.enableSessionKeyData]);
+            const enableSessionKeyData = encodeFunctionData({
+                functionName: 'enableSessionKey',
+                abi: parseAbi(sessionKeyValidatorAbi),
+                args: [data.enableSessionKeyData],
+            });
 
             this.modularSdk.clearUserOpsFromBatch();
 
@@ -83,7 +92,7 @@ export class SessionKeyValidator {
             const account = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
             const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             const data = await this.generateSessionKeyData(
@@ -99,14 +108,15 @@ export class SessionKeyValidator {
                 keyStore ? keyStore : null,
             )
 
-            const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-                erc20SessionKeyValidator,
-                this.provider
-            );
+            // const rotateSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('rotateSessionKey',
+            //     [data.oldSessionKey, data.enableSessionKeyData]
+            // );
 
-            const rotateSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('rotateSessionKey',
-                [data.oldSessionKey, data.enableSessionKeyData]
-            );
+            const rotateSessionKeyData = encodeFunctionData({
+                functionName: 'rotateSessionKey',
+                abi: parseAbi(sessionKeyValidatorAbi),
+                args: [data.oldSessionKey, data.enableSessionKeyData],
+            });
 
             this.modularSdk.clearUserOpsFromBatch();
 
@@ -132,7 +142,7 @@ export class SessionKeyValidator {
             const account = await this.modularSdk.getCounterFactualAddress();
             const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
             const chainId = await this.getChainId();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             const getSessionKeyData = await this.getSessionKey(
@@ -141,14 +151,15 @@ export class SessionKeyValidator {
                 apiKey,
             )
 
-            const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-                erc20SessionKeyValidator,
-                this.provider
-            );
+            // const disableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('disableSessionKey',
+            //     [getSessionKeyData.sessionKey]
+            // );
 
-            const disableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('disableSessionKey',
-                [getSessionKeyData.sessionKey]
-            );
+            const disableSessionKeyData = encodeFunctionData({
+                functionName: 'disableSessionKey',
+                abi: parseAbi(sessionKeyValidatorAbi),
+                args: [getSessionKeyData.sessionKey],
+            });
 
             this.modularSdk.clearUserOpsFromBatch();
 
@@ -177,7 +188,7 @@ export class SessionKeyValidator {
         try {
             const account = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             const data = await this.getNonceData(
@@ -197,12 +208,17 @@ export class SessionKeyValidator {
 
         const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
 
-        const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-            erc20SessionKeyValidator,
-            this.provider
-        );
+        //return await erc20SessionKeyValidatorContract.callStatic.getAssociatedSessionKeys({ from: account });
 
-        return await erc20SessionKeyValidatorContract.callStatic.getAssociatedSessionKeys({ from: account });
+        const response : SimulateContractReturnType = await this.publicClient.simulateContract({
+            account: account as Hex,
+            address: erc20SessionKeyValidator as Hex,
+            abi: parseAbi(sessionKeyValidatorAbi),
+            functionName: 'getAssociatedSessionKeys',
+            args: []
+        });
+
+        return response.result as string[];
     }
 
     private async getERC20SessionKeyValidator(): Promise<string> {
@@ -218,7 +234,7 @@ export class SessionKeyValidator {
 
     private async getChainId(): Promise<number> {
         if (!this.chainId) {
-            this.chainId = (await this.provider.getNetwork()).chainId;
+            this.chainId = this.publicClient.chain.id;
         }
         return this.chainId;
     }
@@ -364,4 +380,13 @@ export class SessionKeyValidator {
             throw new Error(err.message)
         }
     }
+
+    private async signUserOpData(
+        account: string,
+        chainId: number,
+        apiKey: string, userOp: UserOperation): Promise<string> {
+
+            return '';
+        }
+
 }

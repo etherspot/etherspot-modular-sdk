@@ -1,4 +1,11 @@
 # Changelog
+
+## [1.2.0] - 2024-07-25
+### New
+- Migrated from `ethers` to `viem`
+- Added helper functions to use `viem`
+- Added support for XDC Mainnet.
+
 ## [1.1.2] - 2024-07-10
 ### New
 - Added `SessionKeyValidator` module for ERC20 SessionKeyValidator.

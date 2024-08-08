@@ -1,35 +1,36 @@
-import { ethers } from "ethers";
-import { ERC20_ABI } from '../../../src/sdk/helpers/abi/ERC20_ABI';
 // @ts-ignore
 import config from "../../config.json";
-import { ModularSdk } from "../../../src";
 import { printOp } from "../../../src/sdk/common/OperationUtils";
 import { sleep } from "../../../src/sdk/common";
+import { generateModularSDKInstance, getTokenMetaData } from "../../helpers/sdk-helper";
+import { encodeFunctionData, getAddress, parseAbi, parseUnits } from "viem";
+import { erc20Abi } from "../../../src/sdk/common/abis";
 
 export default async function main(
-  tkn: string,
-  t: string,
-  amt: string,
+  tokenAddress: string,
+  recipientAddress: string,
+  transferAmount: string,
 ) {
-  const modularSdk = new ModularSdk({ privateKey: config.signingKey }, { chainId: config.chainId, rpcProviderUrl: config.rpcProviderUrl })
+  const modularSdk = generateModularSDKInstance(
+    config.signingKey,
+    config.chainId,
+    config.rpcProviderUrl
+  );
 
-  const provider = new ethers.providers.JsonRpcProvider(config.rpcProviderUrl);
-  const token = ethers.utils.getAddress(tkn);
-  const to = ethers.utils.getAddress(t);
-  const erc20 = new ethers.Contract(token, ERC20_ABI, provider);
-  const [symbol, decimals] = await Promise.all([
-    erc20.symbol(),
-    erc20.decimals(),
-  ]);
-  const amount = ethers.utils.parseUnits(amt, decimals);
-  console.log(`Transferring ${amt} ${symbol}...`);
+  const tokenMetadata = await getTokenMetaData(config.rpcProviderUrl, tokenAddress);
 
-  const transferData = erc20.interface.encodeFunctionData("transfer", [to, amount])
+  const amount = parseUnits(transferAmount, tokenMetadata.decimal);
+  console.log(`Transferring ${transferAmount} ${tokenMetadata.symbol}...`);
+  const transferData = encodeFunctionData({
+    functionName: 'transfer',
+    abi: parseAbi(erc20Abi),
+    args: [getAddress(recipientAddress), amount]
+  });
 
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 
-  await modularSdk.addUserOpsToBatch({to: erc20.address, data: transferData});
+  await modularSdk.addUserOpsToBatch({to: tokenAddress, data: transferData});
   console.log(`Added transaction to batch`);
 
   const op = await modularSdk.estimate();

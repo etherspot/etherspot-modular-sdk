@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber } from '../../types/bignumber';
 import { deepCompare } from './deep-compare';
 
 describe('deepCompare()', () => {
