@@ -488,6 +488,7 @@ export abstract class BaseAccountAPI {
       userOp.paymasterPostOpGasLimit = paymasterData.result.paymasterPostOpGasLimit;
     }
     const userOpHash = await this.getUserOpHash(userOp);
+
     const signature = await this.signUserOpHash(userOpHash);
     return {
       ...userOp,

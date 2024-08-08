@@ -1,4 +1,12 @@
 # Changelog
+
+## [1.1.3] - 2024-07-24
+### New
+- Added `signUserOpWithSessionKey` function into SessionKeyValidator for sign the userOP using session key.
+- Added `sessionData` function into SessionKeyValidator to fetch session Data of particular sessionKey.
+### Breaking Changes
+- Updated `enableSessionKey`, `rotateSessionKey` and `disableSessionKey` functions for the multiple session keys per apiKey and walletAddress.
+
 ## [1.1.2] - 2024-07-10
 ### New
 - Added `SessionKeyValidator` module for ERC20 SessionKeyValidator.
