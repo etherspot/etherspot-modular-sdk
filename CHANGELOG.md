@@ -1,5 +1,5 @@
 # Changelog
-## [1.3.0] - 2024-08-08
+## [2.0.0] - 2024-08-08
 ### Breaking Changes
 - Changed to a new wallet factory contract address
 
