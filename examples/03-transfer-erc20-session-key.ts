@@ -44,7 +44,6 @@ async function main() {
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
 
-
   // add transactions to the batch
   const userOpsBatch = await modularSdk.addUserOpsToBatch({ to: tokenAddress, data: transactionData });
   console.log('transactions: ', userOpsBatch);
@@ -65,6 +64,8 @@ async function main() {
   console.log(`etherspot-modular-sdk -> Signed UserOp: ${signedUserOp.signature}`);
 
   console.log(`Signed UserOp: ${await printOp(signedUserOp)}`);
+
+  console.log(`UserOpNonce is: ${BigNumber.from(signedUserOp.nonce)}`);
 
   const userOpHashFromSignedUserOp = await modularSdk.getUserOpHash(signedUserOp);
   console.log(`UserOpHash from Signed UserOp: ${userOpHashFromSignedUserOp}`);
