@@ -25,6 +25,7 @@ async function main() {
   const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
   const functionSelector = '0xa9059cbb';
   const spendingLimit = '100000';
+  const validAfter = new Date().getTime();
   const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
   const oldSessionKey = '0x27d04DfA1630d8D0B9845e191CE55b4cD376a7ad';  // session key which you want to rotate
 
@@ -38,6 +39,7 @@ async function main() {
     token,
     functionSelector,
     spendingLimit,
+    validAfter,
     validUntil,
     oldSessionKey,
     KeyStore.AWS

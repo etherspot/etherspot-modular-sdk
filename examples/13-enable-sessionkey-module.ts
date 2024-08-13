@@ -25,6 +25,7 @@ async function main() {
   const token = process.env.TOKEN_ADDRESS as string;
   const functionSelector = process.env.FUNCTION_SELECTOR as string;
   const spendingLimit = '1000000000000000000000';
+  const validAfter = new Date().getTime();
   const validUntil = new Date().getTime() + 1000 * 60 * 60 * 1000;
 
   // get instance  of SessionKeyValidator
@@ -37,6 +38,7 @@ async function main() {
     token,
     functionSelector,
     spendingLimit,
+    validAfter,
     validUntil,
     KeyStore.AWS
   );

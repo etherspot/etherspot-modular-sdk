@@ -1,5 +1,4 @@
-import { ERC20SessionKeyValidator__factory } from "../contracts/factories/src/ERC7579/modules/validator";
-import { providers } from "ethers";
+import { Contract, providers } from "ethers";
 import { ModularSdk } from "../sdk";
 import { KeyStore, PERMISSIONS_URL } from "./constants";
 import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SessionData } from "./interfaces";
@@ -7,6 +6,7 @@ import { BundlerProvider } from "../bundler";
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
 import { UserOperation, deepHexlify } from "../common";
 import { resolveProperties } from "ethers/lib/utils";
+import * as ERC20SessionKeyValidatorABI from "../abi/ERC20SessionKeyValidator.json";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
@@ -23,15 +23,44 @@ export class SessionKeyValidator {
         token: string,
         functionSelector: string,
         spendingLimit: string,
+        validAfter: number,
         validUntil: number,
         keyStore?: KeyStore,
     ): Promise<SessionKeyResponse> {
         try {
             const account = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
-            const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
+            const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
             const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
+
+            if(erc20SessionKeyValidatorAddress == null) {
+                throw new Error('ERC20SessionKeyValidator contract address is required');
+            }
+
+            if(account == null) {
+                throw new Error('Account is required');
+            }
+
+            if(apiKey == null) {
+                throw new Error('API Key is required');
+            }
+
+            if(validAfter > 0 && validAfter < Date.now()) {
+                throw new Error('validAfter must be greater than current time');
+            }
+
+            if(validUntil == 0 || validUntil < validAfter || validUntil < Date.now()) {
+                throw new Error('validUntil must be greater than validAfter and current time');
+            }
+
+            if(!token || token == null || token == '') {
+                throw new Error('Token is required');
+            } 
+
+            if(!functionSelector || functionSelector == null || functionSelector == '') {
+                throw new Error('Function Selector is required');
+            }
 
             const data = await this.generateSessionKeyData(
                 account,
@@ -39,22 +68,19 @@ export class SessionKeyValidator {
                 token,
                 functionSelector,
                 spendingLimit,
+                validAfter,
                 validUntil,
                 apiKey,
                 false,
                 keyStore ? keyStore : null,
             )
 
-            const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-                erc20SessionKeyValidator,
-                this.provider
-            );
-
+            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
             const enableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('enableSessionKey', [data.enableSessionKeyData]);
 
             this.modularSdk.clearUserOpsFromBatch();
 
-            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidator, data: enableSessionKeyData });
+            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidatorAddress, data: enableSessionKeyData });
 
             try {
                 const op = await this.modularSdk.estimate();
@@ -80,6 +106,7 @@ export class SessionKeyValidator {
         token: string,
         functionSelector: string,
         spendingLimit: string,
+        validAfter: number,
         validUntil: number,
         oldSessionKey: string,
         keyStore?: KeyStore,
@@ -87,7 +114,7 @@ export class SessionKeyValidator {
         try {
             const account = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
-            const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
+            const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
             const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
@@ -97,6 +124,7 @@ export class SessionKeyValidator {
                 token,
                 functionSelector,
                 spendingLimit,
+                validAfter,
                 validUntil,
                 apiKey,
                 true,
@@ -104,10 +132,7 @@ export class SessionKeyValidator {
                 oldSessionKey,
             )
 
-            const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-                erc20SessionKeyValidator,
-                this.provider
-            );
+            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
 
             const rotateSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('rotateSessionKey',
                 [data.oldSessionKey, data.enableSessionKeyData]
@@ -115,7 +140,7 @@ export class SessionKeyValidator {
 
             this.modularSdk.clearUserOpsFromBatch();
 
-            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidator, data: rotateSessionKeyData });
+            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidatorAddress, data: rotateSessionKeyData });
 
             try {
                 const op = await this.modularSdk.estimate();
@@ -145,7 +170,7 @@ export class SessionKeyValidator {
     async disableSessionKey(sessionKey: string): Promise<SessionKeyResponse> {
         try {
             const account = await this.modularSdk.getCounterFactualAddress();
-            const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
+            const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
             const chainId = await this.getChainId();
             const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
@@ -157,10 +182,7 @@ export class SessionKeyValidator {
                 sessionKey,
             )
 
-            const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-                erc20SessionKeyValidator,
-                this.provider
-            );
+            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
 
             const disableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('disableSessionKey',
                 [getSessionKeyData.sessionKey]
@@ -168,7 +190,7 @@ export class SessionKeyValidator {
 
             this.modularSdk.clearUserOpsFromBatch();
 
-            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidator, data: disableSessionKeyData });
+            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidatorAddress, data: disableSessionKeyData });
 
             const op = await this.modularSdk.estimate();
 
@@ -231,12 +253,8 @@ export class SessionKeyValidator {
     async getAssociatedSessionKeys(): Promise<string[]> {
         const account = await this.modularSdk.getCounterFactualAddress();
 
-        const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
-
-        const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-            erc20SessionKeyValidator,
-            this.provider
-        );
+        const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
+        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
 
         return await erc20SessionKeyValidatorContract.callStatic.getAssociatedSessionKeys({ from: account });
     }
@@ -244,12 +262,8 @@ export class SessionKeyValidator {
     async sessionData(sessionKey: string): Promise<SessionData> {
         const account = await this.modularSdk.getCounterFactualAddress();
 
-        const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
-
-        const erc20SessionKeyValidatorContract = ERC20SessionKeyValidator__factory.connect(
-            erc20SessionKeyValidator,
-            this.provider
-        );
+        const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
+        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
 
         const data = await erc20SessionKeyValidatorContract.callStatic.sessionData(sessionKey, account);
 
@@ -289,6 +303,7 @@ export class SessionKeyValidator {
         token: string,
         functionSelector: string,
         spendingLimit: string,
+        validAfter: number,
         validUntil: number,
         apiKey: string,
         rotateKey: boolean,
@@ -297,8 +312,35 @@ export class SessionKeyValidator {
     ): Promise<GenerateSessionKeyResponse> {
         let response = null;
         try {
-            let url = `${PERMISSIONS_URL}/account/generateSessionKeyData`;
-            if (apiKey) url += `?apiKey=${apiKey}`;
+            if(!apiKey || apiKey == null) {
+                throw new Error('API Key is required');
+            }
+
+            let url = `${PERMISSIONS_URL}/account/generateSessionKeyData?apiKey=${apiKey}`;
+
+            if(account == null) {
+                throw new Error('Account is required');
+            }
+
+            if(validAfter > 0 && validAfter < Date.now()) {
+                throw new Error('validAfter must be greater than current time');
+            }
+
+            if(validUntil == 0 || validUntil < validAfter || validUntil < Date.now()) {
+                throw new Error('validUntil must be greater than validAfter and current time');
+            }
+
+            if(!token || token == null || token == '') {
+                throw new Error('Token is required');
+            } 
+
+            if(!functionSelector || functionSelector == null || functionSelector == '') {
+                throw new Error('Function Selector is required');
+            }
+
+            if(!spendingLimit || spendingLimit == null || spendingLimit == '') {
+                throw new Error('Spending Limit is required');
+            }
 
             const requestBody = {
                 account,
@@ -308,6 +350,7 @@ export class SessionKeyValidator {
                 token,
                 functionSelector,
                 spendingLimit,
+                validAfter,
                 validUntil,
                 oldSessionKey,
             };

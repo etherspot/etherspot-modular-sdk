@@ -12,6 +12,7 @@
     "rootDir": "./",
     "strict": false,
     "downlevelIteration": true,
+    "resolveJsonModule": true,
     "lib": [
       "DOM",
       "ES5",
