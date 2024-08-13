@@ -9,18 +9,25 @@ dotenv.config();
 
 // add/change these values
 const recipient = '0xdE79F0eF8A1268DAd0Df02a8e527819A3Cd99d40'; // recipient wallet address
-const value = '0.1'; // transfer value
-const tokenAddress = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
+const value = '1'; // transfer value
+const tokenAddress = process.env.TOKEN_ADDRESS as string; // token address
+const decimals = 18;
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+const erc20SessionKeyValidator = '0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c'; 
 
+// npx ts-node examples/03-transfer-erc20-session-key.ts
 async function main() {
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
+  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, 
+    { chainId: Number(process.env.CHAIN_ID), 
+      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
 
   const sessionKeyModule = new SessionKeyValidator(
     modularSdk,
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )
+
+  console.log(`sessionKey SDK initialized`);
 
   // get address of EtherspotWallet...
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -30,29 +37,37 @@ async function main() {
   // get erc20 Contract Interface
   const erc20Instance = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
 
-  // get decimals from erc20 contract
-  const decimals = await erc20Instance.functions.decimals();
-
   // get transferFrom encoded data
-  const transactionData = erc20Instance.interface.encodeFunctionData('transfer', [recipient, ethers.utils.parseUnits(value, decimals)])
+  const transactionData = erc20Instance.interface.encodeFunctionData('transfer', 
+    [recipient, ethers.utils.parseUnits(value, decimals)])
 
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();
+
 
   // add transactions to the batch
   const userOpsBatch = await modularSdk.addUserOpsToBatch({ to: tokenAddress, data: transactionData });
   console.log('transactions: ', userOpsBatch);
 
+  console.log(`erc20SessionKeyValidator ${erc20SessionKeyValidator} as BigNumber is: ${BigNumber.from(erc20SessionKeyValidator)}`);
+
   // estimate transactions added to the batch and get the fee data for the UserOp
   const op = await modularSdk.estimate({
-    key: BigNumber.from('0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c')
+    key: BigNumber.from(erc20SessionKeyValidator)
   });
   console.log(`Estimate UserOp: ${await printOp(op)}`);
 
   // sign the UserOp using sessionKey
-  const sessionKey = '0xD74f84E5908139fD8B0E525b8F3eB6a6dDdC0fcA'; // session key which you want to use for sign the userOp
+  const sessionKey = process.env.SESSION_KEY as string;
+  console.log(`sessionKey: ${sessionKey}`);
 
   const signedUserOp = await sessionKeyModule.signUserOpWithSessionKey(sessionKey, op);
+  console.log(`etherspot-modular-sdk -> Signed UserOp: ${signedUserOp.signature}`);
+
+  console.log(`Signed UserOp: ${await printOp(signedUserOp)}`);
+
+  const userOpHashFromSignedUserOp = await modularSdk.getUserOpHash(signedUserOp);
+  console.log(`UserOpHash from Signed UserOp: ${userOpHashFromSignedUserOp}`);
 
   // sending to the bundler with isUserOpAlreadySigned true...
   const uoHash = await modularSdk.send(signedUserOp, true);

@@ -5,9 +5,9 @@ import { KeyStore } from '../src/sdk/SessionKeyValidator';
 
 dotenv.config();
 
+// npx ts-node examples/13-enable-sessionkey-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
-
   // initializating sdk...
   const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY },
     {
@@ -22,9 +22,9 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
-  const functionSelector = '0xa9059cbb';
-  const spendingLimit = '100000';
+  const token = process.env.TOKEN_ADDRESS as string;
+  const functionSelector = process.env.FUNCTION_SELECTOR as string;
+  const spendingLimit = '1000000000000000000000';
   const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
 
   // get instance  of SessionKeyValidator

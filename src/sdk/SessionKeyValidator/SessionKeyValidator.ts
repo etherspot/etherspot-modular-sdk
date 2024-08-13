@@ -312,6 +312,7 @@ export class SessionKeyValidator {
                 oldSessionKey,
             };
 
+            console.log(`requestBody: ${JSON.stringify(requestBody)}`);
             response = await fetch(url, {
                 method: 'POST',
                 headers: {
