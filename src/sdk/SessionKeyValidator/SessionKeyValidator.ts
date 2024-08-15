@@ -210,7 +210,7 @@ export class SessionKeyValidator {
 
         //return await erc20SessionKeyValidatorContract.callStatic.getAssociatedSessionKeys({ from: account });
 
-        const response : SimulateContractReturnType = await this.publicClient.simulateContract({
+        const response = await this.publicClient.simulateContract({
             account: account as Hex,
             address: erc20SessionKeyValidator as Hex,
             abi: parseAbi(sessionKeyValidatorAbi),
