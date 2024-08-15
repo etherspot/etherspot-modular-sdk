@@ -9,10 +9,11 @@ dotenv.config();
 
 // add/change these values
 const recipient = '0x80a1874E1046B1cc5deFdf4D3153838B72fF94Ac'; // recipient wallet address
-const value = '0.1'; // transfer value
-const tokenAddress = '0x326C977E6efc84E512bB9C30f76E30c160eD06FB';
+const value = '1'; // transfer value
+const tokenAddress = process.env.TOKEN_ADDRESS as string; // token address
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
+// npx ts-node examples/03-transfer-erc20.ts
 async function main() {
   // initializating sdk...
   const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
@@ -23,7 +24,7 @@ async function main() {
   const address: string = await modularSdk.getCounterFactualAddress();
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const provider = new ethers.providers.JsonRpcProvider(process.env.BUNDLER_URL)
+  const provider = new ethers.providers.JsonRpcProvider('https://polygon-amoy.drpc.org')
   // get erc20 Contract Interface
   const erc20Instance = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
 

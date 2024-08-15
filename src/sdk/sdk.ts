@@ -212,8 +212,8 @@ export class ModularSdk {
     return getGasFee(this.etherspotWallet.provider as providers.JsonRpcProvider);
   }
 
-  async send(userOp: any) {
-    const signedUserOp = await this.etherspotWallet.signUserOp(userOp);
+  async send(userOp: any, isUserOpAlreadySigned = false) {
+    const signedUserOp = isUserOpAlreadySigned ? userOp : await this.etherspotWallet.signUserOp(userOp);
     return this.bundler.sendUserOpToBundler(signedUserOp);
   }
 

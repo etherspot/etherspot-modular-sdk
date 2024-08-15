@@ -5,9 +5,11 @@ import { KeyStore } from '../src/sdk/SessionKeyValidator';
 
 dotenv.config();
 
+const secondsInAMonth = 30 * 24 * 60 * 60; // 2592000 seconds
+
+// npx ts-node examples/13-enable-sessionkey-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
-
   // initializating sdk...
   const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY },
     {
@@ -22,11 +24,13 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
-  const functionSelector = '0xa9059cbb';
-  const spendingLimit = '100000';
-  const validAfter = new Date().getTime();
-  const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
+  const token = process.env.TOKEN_ADDRESS as string;
+  const functionSelector = process.env.FUNCTION_SELECTOR as string;
+  const spendingLimit = '1000000000000000000000';
+  const validAfter = getEpochTimeInSeconds() + 31; // 10 seconds from now
+  const validUntil = getEpochTimeInSeconds() + secondsInAMonth;
+
+  console.log(`validAfter: ${validAfter} validUntil: ${validUntil}`);
 
   // get instance  of SessionKeyValidator
   const sessionKeyModule = new SessionKeyValidator(
@@ -58,7 +62,13 @@ async function main() {
 
   const sessionKeys = await sessionKeyModule.getAssociatedSessionKeys();
   console.log('\x1b[33m%s\x1b[0m', `AssociatedSessionKeys: `, sessionKeys);
+
+  const sessionData = await sessionKeyModule.sessionData(response.sessionKey);
+  console.log('\x1b[33m%s\x1b[0m', `SessionData: `, sessionData);
 }
+
+const getEpochTimeInSeconds = () => Math.floor(new Date().getTime() / 1000);
+
 
 main()
   .catch(console.error)

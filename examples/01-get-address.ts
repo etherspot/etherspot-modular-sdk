@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { EtherspotBundler, ModularSdk } from '../src';
 import * as dotenv from 'dotenv';
 

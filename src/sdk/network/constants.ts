@@ -99,7 +99,7 @@ export const Networks: {
       walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
-      erc20SessionKeyValidator: '0x90A5d7496C8D83f6389E60C0c26ea3928d9bb891',
+      erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
     },
   },
   [10]: {
@@ -407,7 +407,7 @@ export const Networks: {
       walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
-      erc20SessionKeyValidator: '',
+      erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
     },
   },
   [421614]: {
@@ -434,7 +434,7 @@ export const Networks: {
   }
 };
 
-export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = "0x90A5d7496C8D83f6389E60C0c26ea3928d9bb891";
+export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = "0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c";
 export const DEFAULT_BOOTSTRAP_ADDRESS = "0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066";
 export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = "0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9";
 export const DEFAULT_QUERY_PAGE_SIZE = 50;
