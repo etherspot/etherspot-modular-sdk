@@ -46,14 +46,6 @@ export class SessionKeyValidator {
                 throw new Error('API Key is required');
             }
 
-            if(validAfter > 0 && validAfter < Date.now()) {
-                throw new Error('validAfter must be greater than current time');
-            }
-
-            if(validUntil == 0 || validUntil < validAfter || validUntil < Date.now()) {
-                throw new Error('validUntil must be greater than validAfter and current time');
-            }
-
             if(!token || token == null || token == '') {
                 throw new Error('Token is required');
             } 
@@ -75,7 +67,16 @@ export class SessionKeyValidator {
                 keyStore ? keyStore : null,
             )
 
-            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
+            // Convert the imported ABI object to an array if necessary
+            //const parsedABI = Array.isArray(ERC20SessionKeyValidatorABI) ? ERC20SessionKeyValidatorABI : Object.values(ERC20SessionKeyValidatorABI);
+
+            //console.log(`abis is: ${JSON.stringify(parsedABI)}`);
+
+            if (!Array.isArray(ERC20SessionKeyValidatorABI.abi)) {
+                throw new Error("ABI should be an array of JSON objects");
+            }
+
+            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
             const enableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('enableSessionKey', [data.enableSessionKeyData]);
 
             this.modularSdk.clearUserOpsFromBatch();
@@ -132,7 +133,7 @@ export class SessionKeyValidator {
                 oldSessionKey,
             )
 
-            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
+            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
 
             const rotateSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('rotateSessionKey',
                 [data.oldSessionKey, data.enableSessionKeyData]
@@ -182,7 +183,7 @@ export class SessionKeyValidator {
                 sessionKey,
             )
 
-            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
+            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
 
             const disableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('disableSessionKey',
                 [getSessionKeyData.sessionKey]
@@ -254,7 +255,7 @@ export class SessionKeyValidator {
         const account = await this.modularSdk.getCounterFactualAddress();
 
         const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
-        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
+        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
 
         return await erc20SessionKeyValidatorContract.callStatic.getAssociatedSessionKeys({ from: account });
     }
@@ -263,7 +264,7 @@ export class SessionKeyValidator {
         const account = await this.modularSdk.getCounterFactualAddress();
 
         const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
-        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI, this.provider);
+        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
 
         const data = await erc20SessionKeyValidatorContract.callStatic.sessionData(sessionKey, account);
 
@@ -322,11 +323,14 @@ export class SessionKeyValidator {
                 throw new Error('Account is required');
             }
 
-            if(validAfter > 0 && validAfter < Date.now()) {
-                throw new Error('validAfter must be greater than current time');
+            
+            const now = Math.floor(Date.now() / 1000);
+
+            if(validAfter < now + 29) {
+                throw new Error('validAfter must be greater than current time by at least 30 seconds');
             }
 
-            if(validUntil == 0 || validUntil < validAfter || validUntil < Date.now()) {
+            if(validUntil == 0 || validUntil < validAfter || validUntil < now) {
                 throw new Error('validUntil must be greater than validAfter and current time');
             }
 

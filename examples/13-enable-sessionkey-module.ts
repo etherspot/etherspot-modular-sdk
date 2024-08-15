@@ -5,6 +5,8 @@ import { KeyStore } from '../src/sdk/SessionKeyValidator';
 
 dotenv.config();
 
+const secondsInAMonth = 30 * 24 * 60 * 60; // 2592000 seconds
+
 // npx ts-node examples/13-enable-sessionkey-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
@@ -25,8 +27,10 @@ async function main() {
   const token = process.env.TOKEN_ADDRESS as string;
   const functionSelector = process.env.FUNCTION_SELECTOR as string;
   const spendingLimit = '1000000000000000000000';
-  const validAfter = new Date().getTime();
-  const validUntil = new Date().getTime() + 1000 * 60 * 60 * 1000;
+  const validAfter = getEpochTimeInSeconds() + 31; // 10 seconds from now
+  const validUntil = getEpochTimeInSeconds() + secondsInAMonth;
+
+  console.log(`validAfter: ${validAfter} validUntil: ${validUntil}`);
 
   // get instance  of SessionKeyValidator
   const sessionKeyModule = new SessionKeyValidator(
@@ -62,6 +66,9 @@ async function main() {
   const sessionData = await sessionKeyModule.sessionData(response.sessionKey);
   console.log('\x1b[33m%s\x1b[0m', `SessionData: `, sessionData);
 }
+
+const getEpochTimeInSeconds = () => Math.floor(new Date().getTime() / 1000);
+
 
 main()
   .catch(console.error)

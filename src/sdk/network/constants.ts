@@ -99,7 +99,7 @@ export const Networks: {
       walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
-      erc20SessionKeyValidator: '0x5C661169084EA82254c8200a6134507Ef88f6b23',
+      erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
     },
   },
   [10]: {
@@ -407,7 +407,7 @@ export const Networks: {
       walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
       multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
-      erc20SessionKeyValidator: '0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c',
+      erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
     },
   },
   [421614]: {

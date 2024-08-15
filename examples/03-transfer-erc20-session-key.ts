@@ -13,7 +13,7 @@ const value = '1'; // transfer value
 const tokenAddress = process.env.TOKEN_ADDRESS as string; // token address
 const decimals = 18;
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
-const erc20SessionKeyValidator = '0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c'; 
+const erc20SessionKeyValidator = '0x22A55192a663591586241D42E603221eac49ed09'; 
 
 // npx ts-node examples/03-transfer-erc20-session-key.ts
 async function main() {
@@ -54,6 +54,10 @@ async function main() {
   const op = await modularSdk.estimate({
     key: BigNumber.from(erc20SessionKeyValidator)
   });
+
+ const nonceBig = BigNumber.from(op.nonce);
+ console.log(`Nonce: ${nonceBig}`);
+
   console.log(`Estimate UserOp: ${await printOp(op)}`);
 
   // sign the UserOp using sessionKey
