@@ -44,27 +44,18 @@ export type FallbackInfo = {
  * - execute method is "execFromEntryPoint()"
  */
 export class EtherspotWalletAPI extends BaseAccountAPI {
-  factoryAddress?: string;
   index: number;
-  accountAddress?: string;
   predefinedAccountAddress?: string;
   bootstrapAddress?: string;
   multipleOwnerECDSAValidatorAddress?: string;
-  walletClient: WalletClient;
-  publicClient: PublicClient;
-  account: Account;
   eoaAddress: Hex;
 
   constructor(params: EtherspotWalletApiParams) {
     super(params);
-    this.factoryAddress = params.factoryAddress;
     this.index = params.index ?? 0;
     this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
     this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
     this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
-    this.publicClient = params.publicClient;
-    this.walletClient = params.walletClient;
-    this.account = params.account;
     this.eoaAddress = this.account.address;
   }
 

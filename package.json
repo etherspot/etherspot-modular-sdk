@@ -43,7 +43,9 @@
     "lint": "eslint \"{src,test,examples}/**/*.ts\"",
     "lint-fix": "npm run lint -- --fix",
     "prebuild": "rimraf ./dist",
-    "build": "npm run compile",
+    "build:cjs": "tsup src --format cjs --out-dir dist/cjs",
+    "build:esm": "tsup src --format esm --out-dir dist/esm",
+    "build": "npm run build:cjs && npm run build:esm",
     "compile": "tsc -p ./tsconfig.build.json",
     "compile-watch": "npm run compile -- --watch",
     "init": "ts-node examples/scripts/init.ts",
@@ -86,6 +88,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "npm": "9.6.4",
     "ts-node": "10.9.1",
+    "tsup": "^8.2.4",
     "typedoc": "^0.17.8",
     "typescript": "5.5.3",
     "viem": "^2.16.3"
