@@ -1,6 +1,6 @@
 {
-  "name": "@etherspot/modular-sdk",
-  "version": "1.2.0",
+  "name": "@etherspot/etherspot-modular-sdk",
+  "version": "1.0.0",
   "description": "Etherspot Modular SDK - build with ERC-7579 smart accounts modules",
   "keywords": [
     "ether",
@@ -17,12 +17,12 @@
   ],
   "license": "MIT",
   "homepage": "https://etherspot.io",
-  "main": "./dist/node.js",
+  "main": "./dist/cjs/index.js",
   "browser": {
     "./dist/browser.js": "./dist/browser.js",
     "child_process": false
   },
-  "types": "./dist/index.d.ts",
+  "types": "./dist/cjs/index.d.ts",
   "scripts": {
     "start": "exit 1",
     "get-address": "tsx ./examples/basics/get-address",
