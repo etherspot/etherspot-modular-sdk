@@ -1,3 +1,5 @@
+import { BigNumber } from "../types/bignumber";
+
 export interface GenerateSessionKeyResponse {
     sessionKey: string;
     enableSessionKeyData: string;
@@ -21,4 +23,13 @@ export interface SessionKeyResponse {
 
 export interface GetNonceResponse {
     nonce: number;
+}
+
+export interface SessionData {
+    token: string;
+    funcSelector: string;
+    spendingLimit: BigNumber;
+    validAfter: number;
+    validUntil: number;
+    live: boolean;
 }

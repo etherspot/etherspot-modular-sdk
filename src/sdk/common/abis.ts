@@ -63,6 +63,7 @@ export const factoryAbi = [
     'function enableSessionKey(bytes calldata _sessionData)',
     'function disableSessionKey(address _session)',
     'function rotateSessionKey(address _oldSessionKey,bytes calldata _newSessionData)',
-    'function getAssociatedSessionKeys() returns (address[] memory keys)'
+    'function getAssociatedSessionKeys() returns (address[] memory keys)',
+    'function sessionData(address _sessionKey, address _account) returns (address token,bytes4 funcSelector,uint256 spendingLimit,uint48 validAfter,uint48 validUntil,bool live)'
   ];
   

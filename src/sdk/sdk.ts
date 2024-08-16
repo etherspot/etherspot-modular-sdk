@@ -11,6 +11,7 @@ import { ModuleInfo } from './base/EtherspotWalletAPI';
 import { Account, formatEther, Hex, http, TypedDataParameter, type PublicClient, type WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromAccount } from './common/utils/viem-utils';
 import { BigNumber, BigNumberish } from './types/bignumber';
+import { printOp } from './common/OperationUtils';
 
 /**
  * Modular-Sdk
@@ -230,8 +231,8 @@ export class ModularSdk {
     return getGasFee(this.publicClient);
   }
 
-  async send(userOp: any) {
-    const signedUserOp = await this.etherspotWallet.signUserOp(userOp);
+  async send(userOp: any, isUserOpAlreadySigned = false) {
+    const signedUserOp = isUserOpAlreadySigned ? userOp : await this.etherspotWallet.signUserOp(userOp);
     return this.bundler.sendUserOpToBundler(signedUserOp);
   }
 

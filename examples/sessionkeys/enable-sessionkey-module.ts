@@ -4,6 +4,7 @@ import { getViemAccount, sleep } from '../../src/sdk/common';
 import { KeyStore } from '../../src/sdk/SessionKeyValidator';
 
 dotenv.config();
+const secondsInAMonth = 30 * 24 * 60 * 60; // 2592000 seconds
 
 // tsx examples/sessionkeys/enable-sessionkey-module.ts
 async function main() {
@@ -22,11 +23,11 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
-  const functionSelector = '0xa9059cbb';
-  const spendingLimit = '100000';
-  const validAfter = new Date().getTime();
-  const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
+  const token = process.env.TOKEN_ADDRESS as string;
+  const functionSelector = process.env.FUNCTION_SELECTOR as string;
+  const spendingLimit = '1000000000000000000000';
+  const validAfter = getEpochTimeInSeconds() + 31; // 10 seconds from now
+  const validUntil = getEpochTimeInSeconds() + secondsInAMonth;
 
   // get instance  of SessionKeyValidator
   const sessionKeyModule = new SessionKeyValidator(modularSdk)
@@ -60,3 +61,5 @@ async function main() {
 main()
   .catch(console.error)
   .finally(() => process.exit());
+
+  const getEpochTimeInSeconds = () => Math.floor(new Date().getTime() / 1000);

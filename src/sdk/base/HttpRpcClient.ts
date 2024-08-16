@@ -101,6 +101,7 @@ export class HttpRpcClient {
         params: [hexifiedUserOp, this.entryPointAddress]
       });
     } catch (err) {
+      console.log(`error inside sendUserOpToBundler: ${JSON.stringify(err)}`);
       this.handleRPCError(err);
     }
   }

@@ -1,4 +1,4 @@
-export const PERMISSIONS_URL = 'https://rpc.etherspot.io/permissions';
+export const PERMISSIONS_URL = 'https://qa-permissions.etherspot.io';
 
 export enum KeyStore {
     AWS = 'AWS',

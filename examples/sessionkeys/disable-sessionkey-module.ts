@@ -4,6 +4,8 @@ import { getViemAccount, sleep } from '../../src/sdk/common';
 
 dotenv.config();
 
+const sessionKey = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
+
 // tsx examples/sessionkeys/disable-sessionkey-module.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
@@ -24,7 +26,7 @@ async function main() {
   // get instance  of SessionKeyValidator
   const sessionKeyModule = new SessionKeyValidator(modularSdk)
 
-  const response = await sessionKeyModule.disableSessionKey();
+  const response = await sessionKeyModule.disableSessionKey(sessionKey);
 
   console.log('\x1b[33m%s\x1b[0m', `UserOpHash: `, response.userOpHash);
   console.log('\x1b[33m%s\x1b[0m', `SessionKey: `, response.sessionKey);
