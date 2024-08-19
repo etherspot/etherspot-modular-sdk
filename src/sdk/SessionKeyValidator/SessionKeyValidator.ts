@@ -2,23 +2,19 @@ import { ModularSdk } from "../sdk";
 import { KeyStore, PERMISSIONS_URL } from "./constants";
 import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SessionData } from "./interfaces";
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
-import { encodeFunctionData, Hex, parseAbi, PublicClient, SimulateContractReturnType, WalletClient } from "viem";
+import { encodeFunctionData, Hex, parseAbi, PublicClient } from "viem";
 import { sessionKeyValidatorAbi } from "../common/abis";
-import { BigNumber } from "../types/bignumber";
 import { deepHexlify, resolveProperties, UserOperation } from "../common";
-import { printOp } from "../common/OperationUtils";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
     private providerURL: string;
     private erc20SessionKeyValidator?: string;
     private chainId?: number;
-    private walletClient: WalletClient;
     private publicClient: PublicClient;
 
     constructor(modularSdk: ModularSdk) {
         this.modularSdk = modularSdk;
-        this.walletClient = modularSdk.getWalletClient();
         this.publicClient = modularSdk.getPublicClient();
         this.providerURL = modularSdk.getProviderUrl();
     }
