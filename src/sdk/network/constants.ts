@@ -468,23 +468,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/51',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
+      walletFactory: '0xB7361924B4F56af570680d56A03895A16bC54Be0',
       bootstrap: '0x805650ce74561C85baA44a8Bd13E19633Fd0F79d',
       multipleOwnerECDSAValidator: '0x68BA597bf6B9097b1D89b8E0D34646D30997f773',
       erc20SessionKeyValidator: '',
     },
-  },
-  [50]: {
-    chainId: 50,
-    chain: Chain.xdc,
-    bundler: 'https://rpc.etherspot.io/v2/50',
-    contracts: {
-      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
-      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
-      multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
-      erc20SessionKeyValidator: '0xb61723Bc251A2b556d48C420779Da805e2D4b7D6',
-    }
   }
 };
 

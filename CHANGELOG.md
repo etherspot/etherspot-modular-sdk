@@ -4,10 +4,6 @@
 ### Breaking Changes
 - Migrate from ethers to viem library
 
-## [2.0.0] - 2024-08-16
-### New
-- Added support for XDC Mainnet
-
 ## [2.0.0] - 2024-08-08
 ### Breaking Changes
 - Changed to a new wallet factory contract address
