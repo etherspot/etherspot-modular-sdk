@@ -1,6 +1,6 @@
 {
   "name": "@etherspot/etherspot-modular-sdk",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "description": "Etherspot Modular SDK - build with ERC-7579 smart accounts modules",
   "keywords": [
     "ether",
