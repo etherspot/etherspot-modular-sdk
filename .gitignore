@@ -40,3 +40,5 @@ examples/config.json
 
 # contracts exposed
 src/contracts/factories/contracts-exposed/
+
+tsconfig.build.tsbuildinfo

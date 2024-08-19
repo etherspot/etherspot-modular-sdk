@@ -1,7 +1,6 @@
-import { BigNumber } from 'ethers';
 import { Transform, TransformationType } from 'class-transformer';
 import { isBigNumber } from '../utils';
-
+import { BigNumber } from '../../types/bignumber';
 /**
  * @ignore
  */

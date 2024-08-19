@@ -1,22 +1,22 @@
-import { Contract, providers } from "ethers";
 import { ModularSdk } from "../sdk";
 import { KeyStore, PERMISSIONS_URL } from "./constants";
 import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SessionData } from "./interfaces";
-import { BundlerProvider } from "../bundler";
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
-import { UserOperation, deepHexlify } from "../common";
-import { resolveProperties } from "ethers/lib/utils";
-import * as ERC20SessionKeyValidatorABI from "../abi/ERC20SessionKeyValidator.json";
+import { encodeFunctionData, Hex, parseAbi, PublicClient } from "viem";
+import { sessionKeyValidatorAbi } from "../common/abis";
+import { deepHexlify, resolveProperties, UserOperation } from "../common";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
-    private provider: providers.JsonRpcProvider;
+    private providerURL: string;
     private erc20SessionKeyValidator?: string;
     private chainId?: number;
+    private publicClient: PublicClient;
 
-    constructor(modularSdk: ModularSdk, provider: BundlerProvider) {
+    constructor(modularSdk: ModularSdk) {
         this.modularSdk = modularSdk;
-        this.provider = new providers.JsonRpcProvider(provider.url);
+        this.publicClient = modularSdk.getPublicClient();
+        this.providerURL = modularSdk.getProviderUrl();
     }
 
     async enableSessionKey(
@@ -28,34 +28,34 @@ export class SessionKeyValidator {
         keyStore?: KeyStore,
     ): Promise<SessionKeyResponse> {
         try {
-            const account = await this.modularSdk.getCounterFactualAddress();
+            const etherspotWalletAddress = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
             const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
-            if(erc20SessionKeyValidatorAddress == null) {
+            if (erc20SessionKeyValidatorAddress == null) {
                 throw new Error('ERC20SessionKeyValidator contract address is required');
             }
 
-            if(account == null) {
-                throw new Error('Account is required');
+            if (etherspotWalletAddress == null) {
+                throw new Error('etherspotWalletAddress is required');
             }
 
-            if(apiKey == null) {
+            if (apiKey == null) {
                 throw new Error('API Key is required');
             }
 
-            if(!token || token == null || token == '') {
+            if (!token || token == null || token == '') {
                 throw new Error('Token is required');
-            } 
+            }
 
-            if(!functionSelector || functionSelector == null || functionSelector == '') {
+            if (!functionSelector || functionSelector == null || functionSelector == '') {
                 throw new Error('Function Selector is required');
             }
 
             const data = await this.generateSessionKeyData(
-                account,
+                etherspotWalletAddress,
                 chainId,
                 token,
                 functionSelector,
@@ -67,17 +67,11 @@ export class SessionKeyValidator {
                 keyStore ? keyStore : null,
             )
 
-            // Convert the imported ABI object to an array if necessary
-            //const parsedABI = Array.isArray(ERC20SessionKeyValidatorABI) ? ERC20SessionKeyValidatorABI : Object.values(ERC20SessionKeyValidatorABI);
-
-            //console.log(`abis is: ${JSON.stringify(parsedABI)}`);
-
-            if (!Array.isArray(ERC20SessionKeyValidatorABI.abi)) {
-                throw new Error("ABI should be an array of JSON objects");
-            }
-
-            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
-            const enableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('enableSessionKey', [data.enableSessionKeyData]);
+            const enableSessionKeyData = encodeFunctionData({
+                functionName: 'enableSessionKey',
+                abi: parseAbi(sessionKeyValidatorAbi),
+                args: [data.enableSessionKeyData],
+            });
 
             this.modularSdk.clearUserOpsFromBatch();
 
@@ -85,23 +79,22 @@ export class SessionKeyValidator {
 
             try {
                 const op = await this.modularSdk.estimate();
-
-                const uoHash = await this.modularSdk.send(op);
-
-                if (!uoHash) await this.deleteSessionKey(account, chainId, apiKey, data.sessionKey);
+                const uoHash = await this.modularSdk.send(op)
+                if (!uoHash) await this.deleteSessionKey(etherspotWalletAddress, chainId, apiKey, data.sessionKey);
 
                 return {
                     userOpHash: uoHash,
                     sessionKey: data.sessionKey,
                 }
             } catch (error) {
-                await this.deleteSessionKey(account, chainId, apiKey, data.sessionKey);
+                await this.deleteSessionKey(etherspotWalletAddress, chainId, apiKey, data.sessionKey);
                 throw error;
             }
         } catch (error) {
             throw error;
         }
     }
+
 
     async rotateSessionKey(
         token: string,
@@ -116,7 +109,7 @@ export class SessionKeyValidator {
             const account = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
             const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             const data = await this.generateSessionKeyData(
@@ -133,11 +126,11 @@ export class SessionKeyValidator {
                 oldSessionKey,
             )
 
-            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
-
-            const rotateSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('rotateSessionKey',
-                [data.oldSessionKey, data.enableSessionKeyData]
-            );
+            const rotateSessionKeyData = encodeFunctionData({
+                functionName: 'rotateSessionKey',
+                abi: parseAbi(sessionKeyValidatorAbi),
+                args: [data.oldSessionKey, data.enableSessionKeyData],
+            });
 
             this.modularSdk.clearUserOpsFromBatch();
 
@@ -171,9 +164,9 @@ export class SessionKeyValidator {
     async disableSessionKey(sessionKey: string): Promise<SessionKeyResponse> {
         try {
             const account = await this.modularSdk.getCounterFactualAddress();
-            const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
+            const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
             const chainId = await this.getChainId();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             const getSessionKeyData = await this.getSessionKey(
@@ -183,15 +176,15 @@ export class SessionKeyValidator {
                 sessionKey,
             )
 
-            const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
-
-            const disableSessionKeyData = erc20SessionKeyValidatorContract.interface.encodeFunctionData('disableSessionKey',
-                [getSessionKeyData.sessionKey]
-            );
+            const disableSessionKeyData = encodeFunctionData({
+                functionName: 'disableSessionKey',
+                abi: parseAbi(sessionKeyValidatorAbi),
+                args: [getSessionKeyData.sessionKey],
+            });
 
             this.modularSdk.clearUserOpsFromBatch();
 
-            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidatorAddress, data: disableSessionKeyData });
+            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidator, data: disableSessionKeyData });
 
             const op = await this.modularSdk.estimate();
 
@@ -210,39 +203,18 @@ export class SessionKeyValidator {
         }
     }
 
-    async signUserOpWithSessionKey(sessionKey: string, userOp: UserOperation): Promise<UserOperation> {
-        try {
-            const account = await this.modularSdk.getCounterFactualAddress();
-            const chainId = await this.getChainId();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
-            const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
-
-            const data: UserOperation = await this.getSignUserOp(
-                account,
-                chainId,
-                apiKey,
-                sessionKey,
-                userOp,
-            )
-
-            return data;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async getNonce(sessionKey: string): Promise<GetNonceResponse> {
         try {
             const account = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
-            const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             const data = await this.getNonceData(
                 account,
                 chainId,
                 apiKey,
-                sessionKey,
+                sessionKey
             )
 
             return data;
@@ -254,21 +226,37 @@ export class SessionKeyValidator {
     async getAssociatedSessionKeys(): Promise<string[]> {
         const account = await this.modularSdk.getCounterFactualAddress();
 
-        const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
-        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
+        const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
 
-        return await erc20SessionKeyValidatorContract.callStatic.getAssociatedSessionKeys({ from: account });
+        const response = await this.publicClient.simulateContract({
+            account: account as Hex,
+            address: erc20SessionKeyValidator as Hex,
+            abi: parseAbi(sessionKeyValidatorAbi),
+            functionName: 'getAssociatedSessionKeys',
+            args: []
+        });
+
+        return response.result as string[];
     }
 
     async sessionData(sessionKey: string): Promise<SessionData> {
         const account = await this.modularSdk.getCounterFactualAddress();
 
         const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
-        const erc20SessionKeyValidatorContract = new Contract(erc20SessionKeyValidatorAddress, ERC20SessionKeyValidatorABI.abi, this.provider);
 
-        const data = await erc20SessionKeyValidatorContract.callStatic.sessionData(sessionKey, account);
+        const data = await this.publicClient.simulateContract({
+            account: account as Hex,
+            address: erc20SessionKeyValidatorAddress as Hex,
+            abi: parseAbi(sessionKeyValidatorAbi),
+            functionName: 'sessionData',
+            args: [sessionKey, account]
+        });
 
-        const { token, funcSelector, spendingLimit, validAfter, validUntil, live } = data;
+        if(!data.result  || data.result == null) {
+            throw new Error('Session data not found');
+        }
+
+        const { token, funcSelector, spendingLimit, validAfter, validUntil, live } = data.result;
 
         return {
             token,
@@ -293,7 +281,7 @@ export class SessionKeyValidator {
 
     private async getChainId(): Promise<number> {
         if (!this.chainId) {
-            this.chainId = (await this.provider.getNetwork()).chainId;
+            this.chainId = this.publicClient.chain.id;
         }
         return this.chainId;
     }
@@ -313,36 +301,36 @@ export class SessionKeyValidator {
     ): Promise<GenerateSessionKeyResponse> {
         let response = null;
         try {
-            if(!apiKey || apiKey == null) {
+            if (!apiKey || apiKey == null) {
                 throw new Error('API Key is required');
             }
 
             let url = `${PERMISSIONS_URL}/account/generateSessionKeyData?apiKey=${apiKey}`;
 
-            if(account == null) {
+            if (account == null) {
                 throw new Error('Account is required');
             }
 
-            
+
             const now = Math.floor(Date.now() / 1000);
 
-            if(validAfter < now + 29) {
+            if (validAfter < now + 29) {
                 throw new Error('validAfter must be greater than current time by at least 30 seconds');
             }
 
-            if(validUntil == 0 || validUntil < validAfter || validUntil < now) {
+            if (validUntil == 0 || validUntil < validAfter || validUntil < now) {
                 throw new Error('validUntil must be greater than validAfter and current time');
             }
 
-            if(!token || token == null || token == '') {
+            if (!token || token == null || token == '') {
                 throw new Error('Token is required');
-            } 
+            }
 
-            if(!functionSelector || functionSelector == null || functionSelector == '') {
+            if (!functionSelector || functionSelector == null || functionSelector == '') {
                 throw new Error('Function Selector is required');
             }
 
-            if(!spendingLimit || spendingLimit == null || spendingLimit == '') {
+            if (!spendingLimit || spendingLimit == null || spendingLimit == '') {
                 throw new Error('Spending Limit is required');
             }
 
@@ -359,7 +347,6 @@ export class SessionKeyValidator {
                 oldSessionKey,
             };
 
-            console.log(`requestBody: ${JSON.stringify(requestBody)}`);
             response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -509,4 +496,34 @@ export class SessionKeyValidator {
             throw new Error(err.message)
         }
     }
+
+    async signUserOpWithSessionKey(sessionKey: string, userOp: UserOperation): Promise<UserOperation> {
+        try {
+            const account = await this.modularSdk.getCounterFactualAddress();
+            const chainId = await this.getChainId();
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
+            const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
+
+            const data: UserOperation = await this.getSignUserOp(
+                account,
+                chainId,
+                apiKey,
+                sessionKey,
+                userOp,
+            )
+
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    private async signUserOpData(
+        account: string,
+        chainId: number,
+        apiKey: string, userOp: UserOperation): Promise<string> {
+
+        return '';
+    }
+
 }

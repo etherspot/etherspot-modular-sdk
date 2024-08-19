@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber } from '../../types/bignumber';
 import { registerDecorator, ValidationOptions } from 'class-validator';
 
 export function IsBigNumberish(

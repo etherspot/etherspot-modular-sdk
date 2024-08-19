@@ -1,4 +1,7 @@
+import { bsc, gnosis } from "viem/chains";
 import { NetworkConfig } from ".";
+import * as Chain from "viem/chains";
+import { ancient8, base, optimism, optimismSepolia, ancient8Sepolia } from "./ViemChainConfig";
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -33,11 +36,12 @@ export enum NetworkNames {
   Ancient8 = 'ancient8',
   Amoy = 'amoy',
   XDCTestnet = 'xdcTestnet',
-  XDCMainnet = 'xdcMainnet'
+  XDCMainnet = 'xdcMainnet',
 }
 
 export const SupportedNetworks =
   [1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
+
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
   [key: string]: number;
@@ -84,6 +88,8 @@ export const Networks: {
 } = {
   [84532]: {
     chainId: 84532,
+    // TODO fix to identify this chainId
+    chain: null,
     bundler: 'https://testnet-rpc.etherspot.io/v2/84532',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -95,6 +101,7 @@ export const Networks: {
   },
   [11155111]: {
     chainId: 11155111,
+    chain: Chain.sepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155111',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -106,6 +113,8 @@ export const Networks: {
   },
   [10]: {
     chainId: 10,
+    // compilation issue for optimism mainnet, using custom config
+    chain: optimism,
     bundler: 'https://rpc.etherspot.io/v2/10',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -117,6 +126,7 @@ export const Networks: {
   },
   [137]: {
     chainId: 137,
+    chain: Chain.polygon,
     bundler: 'https://rpc.etherspot.io/v2/137',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -128,6 +138,7 @@ export const Networks: {
   },
   [42161]: {
     chainId: 42161,
+    chain: Chain.arbitrum,
     bundler: 'https://rpc.etherspot.io/v2/42161',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -139,6 +150,7 @@ export const Networks: {
   },
   [1]: {
     chainId: 1,
+    chain: Chain.mainnet,
     bundler: 'https://rpc.etherspot.io/v2/1',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -150,6 +162,7 @@ export const Networks: {
   },
   [10200]: {
     chainId: 10200,
+    chain: null,
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -161,6 +174,7 @@ export const Networks: {
   },
   [122]: {
     chainId: 122,
+    chain: Chain.fuse,
     bundler: 'https://rpc.etherspot.io/v2/122',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -172,6 +186,8 @@ export const Networks: {
   },
   [123]: {
     chainId: 123,
+    // TODO no-support for ultron mainnet
+    chain: null,
     bundler: 'https://testnet-rpc.etherspot.io/v2/123',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -183,6 +199,7 @@ export const Networks: {
   },
   [100]: {
     chainId: 100,
+    chain: gnosis,
     bundler: 'https://rpc.etherspot.io/v2/100',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -194,6 +211,7 @@ export const Networks: {
   },
   [2357]: {
     chainId: 2357,
+    chain: null,
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -205,6 +223,7 @@ export const Networks: {
   },
   [30]: {
     chainId: 30,
+    chain: Chain.rootstock,
     bundler: 'https://rpc.etherspot.io/v2/30',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -216,6 +235,7 @@ export const Networks: {
   },
   [31]: {
     chainId: 31,
+    chain: Chain.rootstockTestnet,
     bundler: 'https://testnet-rpc.etherspot.io/v2/31',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -227,6 +247,7 @@ export const Networks: {
   },
   [5000]: {
     chainId: 5000,
+    chain: Chain.mantle,
     bundler: 'https://rpc.etherspot.io/v2/5000',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -238,6 +259,7 @@ export const Networks: {
   },
   [5003]: {
     chainId: 5003,
+    chain: Chain.mantleSepoliaTestnet,
     bundler: 'https://testnet-rpc.etherspot.io/v2/5003',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -249,6 +271,7 @@ export const Networks: {
   },
   [43114]: {
     chainId: 43114,
+    chain: Chain.avalanche,
     bundler: 'https://rpc.etherspot.io/v2/43114',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -260,6 +283,7 @@ export const Networks: {
   },
   [8453]: {
     chainId: 8453,
+    chain: base,
     bundler: 'https://rpc.etherspot.io/v2/8453',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -271,6 +295,7 @@ export const Networks: {
   },
   [56]: {
     chainId: 56,
+    chain: bsc,
     bundler: 'https://rpc.etherspot.io/v2/56',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -282,6 +307,7 @@ export const Networks: {
   },
   [97]: {
     chainId: 97,
+    chain: Chain.bscTestnet,
     bundler: 'https://testnet-rpc.etherspot.io/v2/97',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -293,6 +319,7 @@ export const Networks: {
   },
   [43113]: {
     chainId: 43113,
+    chain: Chain.avalancheFuji,
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -304,6 +331,7 @@ export const Networks: {
   },
   [59144]: {
     chainId: 59144,
+    chain: Chain.linea,
     bundler: 'https://rpc.etherspot.io/v2/59144',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -315,6 +343,7 @@ export const Networks: {
   },
   [59140]: {
     chainId: 59140,
+    chain: Chain.lineaGoerli,
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -326,6 +355,7 @@ export const Networks: {
   },
   [114]: {
     chainId: 114,
+    chain: Chain.flareTestnet,
     bundler: 'https://testnet-rpc.etherspot.io/v2/114',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -337,6 +367,7 @@ export const Networks: {
   },
   [14]: {
     chainId: 14,
+    chain: Chain.flare,
     bundler: 'https://rpc.etherspot.io/v2/14',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -348,6 +379,7 @@ export const Networks: {
   },
   [534351]: {
     chainId: 534351,
+    chain: Chain.scrollSepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/534351',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -359,6 +391,7 @@ export const Networks: {
   },
   [534352]: {
     chainId: 534352,
+    chain: Chain.scroll,
     bundler: 'https://rpc.etherspot.io/v2/534352',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -370,6 +403,8 @@ export const Networks: {
   },
   [11155420]: {
     chainId: 11155420,
+    // TODO check compilation issue
+    chain: optimismSepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155420',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -381,6 +416,7 @@ export const Networks: {
   },
   [28122024]: {
     chainId: 28122024,
+    chain: ancient8Sepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/28122024',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -392,6 +428,7 @@ export const Networks: {
   },
   [888888888]: {
     chainId: 888888888,
+    chain: ancient8,
     bundler: 'https://rpc.etherspot.io/v2/888888888',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -403,6 +440,7 @@ export const Networks: {
   },
   [80002]: {
     chainId: 80002,
+    chain: Chain.polygonAmoy,
     bundler: 'https://testnet-rpc.etherspot.io/v2/80002',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -414,6 +452,7 @@ export const Networks: {
   },
   [421614]: {
     chainId: 421614,
+    chain: Chain.arbitrumSepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/421614',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -425,10 +464,11 @@ export const Networks: {
   },
   [51]: {
     chainId: 51,
+    chain: Chain.xdcTestnet,
     bundler: 'https://testnet-rpc.etherspot.io/v2/51',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0xB7361924B4F56af570680d56A03895A16bC54Be0',
+      walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
       bootstrap: '0x805650ce74561C85baA44a8Bd13E19633Fd0F79d',
       multipleOwnerECDSAValidator: '0x68BA597bf6B9097b1D89b8E0D34646D30997f773',
       erc20SessionKeyValidator: '',
@@ -436,18 +476,19 @@ export const Networks: {
   },
   [50]: {
     chainId: 50,
+    chain: Chain.xdc,
     bundler: 'https://rpc.etherspot.io/v2/50',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0xcaDBADcFeD5530A49762DFc9d1d712CcD6b09b25',
-      bootstrap: '0xDb89D61c6609C79bd5A693397a9BDa700f4fdAEB',
-      multipleOwnerECDSAValidator: '0x8350355c08aDAC387b443782124A30A8942BeC2e',
-      erc20SessionKeyValidator: '',
-    },
+      walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
+      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
+      multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      erc20SessionKeyValidator: '0xb61723Bc251A2b556d48C420779Da805e2D4b7D6',
+    }
   }
 };
 
-export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = "0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c";
+export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = "0x22A55192a663591586241D42E603221eac49ed09";
 export const DEFAULT_BOOTSTRAP_ADDRESS = "0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066";
 export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = "0x609d3ED5F7D1707806327D198Cb480B93dD6E6b9";
 export const DEFAULT_QUERY_PAGE_SIZE = 50;
