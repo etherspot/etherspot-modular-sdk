@@ -439,9 +439,9 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/50',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0xcaDBADcFeD5530A49762DFc9d1d712CcD6b09b25',
-      bootstrap: '0xDb89D61c6609C79bd5A693397a9BDa700f4fdAEB',
-      multipleOwnerECDSAValidator: '0x8350355c08aDAC387b443782124A30A8942BeC2e',
+      walletFactory: '0x8039EeBC990ab85730489c6054F83Ff850aD87Dc',
+      bootstrap: '0xEC2EE24E79C73DB13Dd9bC782856a5296626b7eb',
+      multipleOwnerECDSAValidator: '0xDF64D7bFedf0100177D9276f83cF2C330Ddb7B29',
       erc20SessionKeyValidator: '',
     },
   }
