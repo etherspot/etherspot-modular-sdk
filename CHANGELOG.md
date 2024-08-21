@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.2] - 2024-08-21
+### New
+- Updated XDC Mainnet factory address
+
 ## [2.0.0] - 2024-08-16
 ### New
 - Added support for XDC Mainnet
