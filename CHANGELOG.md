@@ -1,8 +1,16 @@
 # Changelog
 
-## [2.0.1] - 2024-08-19
+## [2.0.3] - 2024-08-23
 ### Breaking Changes
 - Migrate from ethers to viem library
+
+## [2.0.2] - 2024-08-21
+### New
+- Updated XDC Mainnet factory address
+
+## [2.0.0] - 2024-08-16
+### New
+- Added support for XDC Mainnet
 
 ## [2.0.0] - 2024-08-08
 ### Breaking Changes
