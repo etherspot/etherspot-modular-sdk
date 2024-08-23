@@ -473,6 +473,18 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x68BA597bf6B9097b1D89b8E0D34646D30997f773',
       erc20SessionKeyValidator: '',
     },
+  },
+  [50]: {
+    chainId: 50,
+    chain: Chain.xdc,
+    bundler: 'https://rpc.etherspot.io/v2/50',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '0x8039EeBC990ab85730489c6054F83Ff850aD87Dc',
+      bootstrap: '0xEC2EE24E79C73DB13Dd9bC782856a5296626b7eb',
+      multipleOwnerECDSAValidator: '0xDF64D7bFedf0100177D9276f83cF2C330Ddb7B29',
+      erc20SessionKeyValidator: '',
+    },
   }
 };
 
