@@ -33,10 +33,10 @@ async function main() {
   console.log(`validAfter: ${validAfter} validUntil: ${validUntil}`);
 
   // get instance  of SessionKeyValidator
-  const sessionKeyModule = new SessionKeyValidator(
+  const sessionKeyModule = await SessionKeyValidator.create(
     modularSdk,
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-  )
+  );
 
   const response = await sessionKeyModule.enableSessionKey(
     token,

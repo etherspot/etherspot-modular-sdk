@@ -22,11 +22,11 @@ async function main() {
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
   // get instance  of SessionKeyValidator
-  const sessionKeyModule = new SessionKeyValidator(
+  const sessionKeyModule = await SessionKeyValidator.create(
     modularSdk,
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )
-  const sessionKey = '0xb1D8541544f240C80d5c4489990bfADAa238b0b3'; // session key which you want to disable
+  const sessionKey = '0xb1E6011B161893177A90Bf0975f5486b463DA688'; // session key which you want to disable
 
   const response = await sessionKeyModule.disableSessionKey(sessionKey);
 
