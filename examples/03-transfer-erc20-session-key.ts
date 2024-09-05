@@ -22,7 +22,7 @@ async function main() {
     { chainId: Number(process.env.CHAIN_ID), 
       bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
 
-  const sessionKeyModule = new SessionKeyValidator(
+  const sessionKeyModule = await SessionKeyValidator.create(
     modularSdk,
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )

@@ -22,15 +22,16 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
-  const functionSelector = '0xa9059cbb';
+  const token = process.env.TOKEN_ADDRESS;
+  const functionSelector = process.env.FUNCTION_SELECTOR;
   const spendingLimit = '100000';
   const validAfter = new Date().getTime();
   const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
-  const oldSessionKey = '0x27d04DfA1630d8D0B9845e191CE55b4cD376a7ad';  // session key which you want to rotate
+  const oldSessionKey = '0xA9c5a669204EB6d96244c822D45c3441065D1148';  // session key which you want to rotate
 
   // get instance  of SessionKeyValidator
-  const sessionKeyModule = new SessionKeyValidator(
+
+  const sessionKeyModule = await SessionKeyValidator.create(
     modularSdk,
     new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
   )
