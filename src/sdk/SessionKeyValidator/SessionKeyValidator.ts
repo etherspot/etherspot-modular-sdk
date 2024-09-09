@@ -4,7 +4,7 @@ import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSe
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
 import { encodeFunctionData, Hex, parseAbi, PublicClient } from "viem";
 import { sessionKeyValidatorAbi } from "../common/abis";
-import { deepHexlify, resolveProperties, UserOperation } from "../common";
+import { MODULE_TYPE, deepHexlify, resolveProperties, UserOperation } from "../common";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
@@ -17,6 +17,20 @@ export class SessionKeyValidator {
         this.modularSdk = modularSdk;
         this.publicClient = modularSdk.getPublicClient();
         this.providerURL = modularSdk.getProviderUrl();
+    }
+
+    static async create(modularSdk: ModularSdk) {
+        const sessionKeyValidator = new SessionKeyValidator(modularSdk);
+        await sessionKeyValidator.initialize(modularSdk);
+        return sessionKeyValidator;
+    }
+
+    private async initialize(modularSdk: ModularSdk): Promise<void> {
+        const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
+        const installed = await modularSdk.isModuleInstalled(MODULE_TYPE.VALIDATOR, erc20SessionKeyValidator);
+        if(!installed) {
+            throw new Error(`Module: ${erc20SessionKeyValidator} not installed, cannot initialize session key validator`);
+        }
     }
 
     async enableSessionKey(
