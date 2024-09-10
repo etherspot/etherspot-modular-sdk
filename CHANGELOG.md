@@ -1,4 +1,12 @@
 # Changelog
+## [2.0.4] - 2024-09-04
+### Breaking Changes
+- Static method `create` to initialize `SessionKeyValidator`
+- Removed `getNonce` method from `SessionKeyValidator`
+
+## [2.0.3] - 2024-08-23
+### Breaking Changes
+- Fix for `deleteSessionKey` API request failure
 
 ## [2.0.3] - 2024-08-23
 ### Breaking Changes
