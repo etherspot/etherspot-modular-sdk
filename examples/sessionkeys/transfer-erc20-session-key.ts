@@ -27,8 +27,7 @@ async function main() {
     })
 
   // get instance  of SessionKeyValidator
-  const sessionKeyModule = new SessionKeyValidator(modularSdk)
-
+  const sessionKeyModule = await SessionKeyValidator.create(modularSdk);
   console.log(`sessionKey SDK initialized`);
 
   // get address of EtherspotWallet...

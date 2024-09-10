@@ -13,7 +13,7 @@ export class SessionKeyValidator {
     private chainId?: number;
     private publicClient: PublicClient;
 
-    constructor(modularSdk: ModularSdk) {
+    private constructor(modularSdk: ModularSdk) {
         this.modularSdk = modularSdk;
         this.publicClient = modularSdk.getPublicClient();
         this.providerURL = modularSdk.getProviderUrl();

@@ -24,7 +24,7 @@ async function main() {
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
   // get instance  of SessionKeyValidator
-  const sessionKeyModule = new SessionKeyValidator(modularSdk)
+  const sessionKeyModule = await SessionKeyValidator.create(modularSdk);
 
   const response = await sessionKeyModule.disableSessionKey(sessionKey);
 

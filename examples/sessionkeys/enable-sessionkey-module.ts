@@ -30,7 +30,7 @@ async function main() {
   const validUntil = getEpochTimeInSeconds() + secondsInAMonth;
 
   // get instance  of SessionKeyValidator
-  const sessionKeyModule = new SessionKeyValidator(modularSdk)
+  const sessionKeyModule = await SessionKeyValidator.create(modularSdk);
 
   const response = await sessionKeyModule.enableSessionKey(
     token,
