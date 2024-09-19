@@ -67,7 +67,7 @@ export class SessionKeyValidator {
                 throw new Error('Function Selector is required');
             }
 
-            const isAValidTokenIndicator = this.isAValidToken(token);
+            const isAValidTokenIndicator = await this.isAValidToken(token);
 
             if (!isAValidTokenIndicator) {
                 throw new Error(`Token: ${token} is does not exist or is invalid`);
@@ -136,7 +136,7 @@ export class SessionKeyValidator {
             const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
-            const isAValidTokenIndicator = this.isAValidToken(token);
+            const isAValidTokenIndicator = await this.isAValidToken(token);
 
             if (!isAValidTokenIndicator) {
                 throw new Error(`Token: ${token} is does not exist or is invalid`);
