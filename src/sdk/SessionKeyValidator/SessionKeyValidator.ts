@@ -1,4 +1,4 @@
-import { Contract, providers } from "ethers";
+import { Contract, ethers, providers } from "ethers";
 import { ModularSdk } from "../sdk";
 import { KeyStore, PERMISSIONS_URL } from "./constants";
 import { SessionKeyResponse, GenerateSessionKeyResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SessionData } from "./interfaces";
@@ -7,6 +7,7 @@ import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../networ
 import { MODULE_TYPE, UserOperation, deepHexlify } from "../common";
 import { resolveProperties } from "ethers/lib/utils";
 import * as ERC20SessionKeyValidatorABI from "../abi/ERC20SessionKeyValidator.json";
+import { ERC20_ABI } from "../helpers/abi/ERC20_ABI";
 
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
@@ -64,6 +65,12 @@ export class SessionKeyValidator {
 
             if(!functionSelector || functionSelector == null || functionSelector == '') {
                 throw new Error('Function Selector is required');
+            }
+
+            const isAValidTokenIndicator = this.isAValidToken(token);
+
+            if (!isAValidTokenIndicator) {
+                throw new Error(`Token: ${token} is does not exist or is invalid`);
             }
 
             const data = await this.generateSessionKeyData(
@@ -128,6 +135,12 @@ export class SessionKeyValidator {
             const account = await this.modularSdk.getCounterFactualAddress();
             const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
+
+            const isAValidTokenIndicator = this.isAValidToken(token);
+
+            if (!isAValidTokenIndicator) {
+                throw new Error(`Token: ${token} is does not exist or is invalid`);
+            }
 
             const data = await this.generateSessionKeyData(
                 account,
@@ -459,5 +472,15 @@ export class SessionKeyValidator {
         } catch (err) {
             throw new Error(err.message)
         }
+    }
+
+    async isAValidToken(token: string): Promise<boolean> {
+
+        const erc20 = new Contract(token, ERC20_ABI, this.provider);
+        const decimals = await erc20.decimals();
+        if (!decimals || decimals == null || decimals as number == 0) {
+            return false;
+        }
+        return true;
     }
 }
