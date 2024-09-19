@@ -68,10 +68,10 @@ export class SessionKeyValidator {
                 throw new Error('Function Selector is required');
             }
 
-            const isAValidTokenIndicator = this.isAValidToken(token);
+            const isAValidTokenIndicator = await this.isAValidToken(token);
 
             if (!isAValidTokenIndicator) {
-                throw new Error(`Token: ${token} is does not exist or is invalid`);
+                throw new Error(`Token: ${token} does not exist or is invalid`);
             }
 
             const data = await this.generateSessionKeyData(
@@ -132,7 +132,7 @@ export class SessionKeyValidator {
             const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
-            const isAValidTokenIndicator = this.isAValidToken(token);
+            const isAValidTokenIndicator = await this.isAValidToken(token);
 
             if (!isAValidTokenIndicator) {
                 throw new Error(`Token: ${token} is does not exist or is invalid`);
@@ -546,12 +546,19 @@ export class SessionKeyValidator {
 
     async isAValidToken(token: string): Promise<boolean> {
 
-        const decimals = await this.publicClient.readContract({
-            address: token as Hex,
-            abi: parseAbi(erc20Abi),
-            functionName: 'decimals',
-            args: []
-        });
+        let decimals = null;
+
+        try {
+            decimals = await this.publicClient.readContract({
+                address: token as Hex,
+                abi: parseAbi(erc20Abi),
+                functionName: 'decimals',
+                args: []
+            });
+        } catch (error) {
+            console.error(`Token: ${token} is does not exist or is invalid`);
+            return false;
+        }
 
         if (!decimals || decimals == null || decimals as number == 0) {
             return false;
