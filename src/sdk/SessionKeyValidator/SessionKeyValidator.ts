@@ -3,7 +3,7 @@ import { KeyStore, PERMISSIONS_URL } from "./constants";
 import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SessionData } from "./interfaces";
 import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
 import { encodeFunctionData, Hex, parseAbi, PublicClient } from "viem";
-import { sessionKeyValidatorAbi } from "../common/abis";
+import { erc20Abi, sessionKeyValidatorAbi } from "../common/abis";
 import { MODULE_TYPE, deepHexlify, resolveProperties, UserOperation } from "../common";
 
 export class SessionKeyValidator {
@@ -66,6 +66,17 @@ export class SessionKeyValidator {
 
             if (!functionSelector || functionSelector == null || functionSelector == '') {
                 throw new Error('Function Selector is required');
+            }
+
+            const decimals = await this.publicClient.readContract({
+                address: token as Hex,
+                abi: parseAbi(erc20Abi),
+                functionName: 'decimals',
+                args: []
+              });
+
+            if (!decimals || decimals == null || decimals == 0) {
+                throw new Error(`Token: ${token} is does not exist or is invalid`);
             }
 
             const data = await this.generateSessionKeyData(
