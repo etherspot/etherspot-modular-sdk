@@ -68,14 +68,9 @@ export class SessionKeyValidator {
                 throw new Error('Function Selector is required');
             }
 
-            const decimals = await this.publicClient.readContract({
-                address: token as Hex,
-                abi: parseAbi(erc20Abi),
-                functionName: 'decimals',
-                args: []
-              });
+            const isAValidTokenIndicator = this.isAValidToken(token);
 
-            if (!decimals || decimals == null || decimals == 0) {
+            if (!isAValidTokenIndicator) {
                 throw new Error(`Token: ${token} is does not exist or is invalid`);
             }
 
@@ -136,6 +131,12 @@ export class SessionKeyValidator {
             const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
             const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
+
+            const isAValidTokenIndicator = this.isAValidToken(token);
+
+            if (!isAValidTokenIndicator) {
+                throw new Error(`Token: ${token} is does not exist or is invalid`);
+            }
 
             const data = await this.generateSessionKeyData(
                 account,
@@ -543,12 +544,19 @@ export class SessionKeyValidator {
         }
     }
 
-    private async signUserOpData(
-        account: string,
-        chainId: number,
-        apiKey: string, userOp: UserOperation): Promise<string> {
+    async isAValidToken(token: string): Promise<boolean> {
 
-        return '';
+        const decimals = await this.publicClient.readContract({
+            address: token as Hex,
+            abi: parseAbi(erc20Abi),
+            functionName: 'decimals',
+            args: []
+        });
+
+        if (!decimals || decimals == null || decimals as number == 0) {
+            return false;
+        }
+
+        return true;
     }
-
 }
