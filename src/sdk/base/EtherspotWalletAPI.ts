@@ -2,7 +2,7 @@ import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, Hex } from 'viem';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, Hex, isAddress } from 'viem';
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/utils/viem-utils';
@@ -278,9 +278,33 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
   async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
     const accountAddress = await this.getAccountAddress();
-    const dummyKey = key.eq(0)
-      ? getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
-      : getAddress(key.toHexString()) + "00000000";
+
+    const nonceKey =  key.eq(0) ? this.multipleOwnerECDSAValidatorAddress : key.toHexString();
+
+    console.log(`nonceKey: ${nonceKey}`);
+
+    let isAddressIndicator = false;
+
+    try {
+      isAddressIndicator = isAddress(getAddress(nonceKey), { strict: true });
+      console.log(`isAddressIndicator: ${isAddressIndicator}`);
+      if (!isAddressIndicator) {
+        throw new Error(`Invalid Validator Address: ${nonceKey}`);
+      }
+      else {
+        const isModuleInstalled = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceKey);
+        if(!isModuleInstalled) {
+          throw new Error(`Validator Address: ${nonceKey} is not installed in the wallet`);
+        }
+      }
+
+    } catch (e) {
+      console.error(`Error caught : ${e}`);
+      throw new Error(`Invalid Validator Address: ${nonceKey}`);
+    }
+
+
+    const dummyKey = getAddress(nonceKey) + "00000000"
 
     const nonceResponse = await this.publicClient.readContract({
       address: this.entryPointAddress as Hex,
