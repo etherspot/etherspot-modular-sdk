@@ -294,7 +294,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       else {
         const isModuleInstalled = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceKey);
         if(!isModuleInstalled) {
-          throw new Error(`Validator Address: ${nonceKey} is not installed in the wallet`);
+          throw new Error(`Validator: ${nonceKey} is not installed in the wallet`);
         }
       }
 
