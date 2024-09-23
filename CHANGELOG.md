@@ -1,4 +1,9 @@
 # Changelog
+## [2.0.5] - 2024-09-23
+### Breaking Changes
+- validate the tokenAddress for `enableSessionKey` on `SessionKeyValidator` SDK instance
+- validate the validatorAddress being set in tne `key` during `estimate` call on ModularSDK
+
 ## [2.0.4] - 2024-09-04
 ### Breaking Changes
 - Static method `create` to initialize `SessionKeyValidator`
