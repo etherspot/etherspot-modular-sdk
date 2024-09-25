@@ -67,9 +67,9 @@ export class SessionKeyValidator {
                 throw new Error('Function Selector is required');
             }
 
-            const isAValidTokenIndicator = await this.isAValidToken(token);
+            const isValidTokenIndicator = await this.isValidToken(token);
 
-            if (!isAValidTokenIndicator) {
+            if (!isValidTokenIndicator) {
                 throw new Error(`Token: ${token} is does not exist or is invalid`);
             }
 
@@ -136,9 +136,9 @@ export class SessionKeyValidator {
             const apiKeyMatch = this.provider.connection.url.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
-            const isAValidTokenIndicator = await this.isAValidToken(token);
+            const isValidTokenIndicator = await this.isValidToken(token);
 
-            if (!isAValidTokenIndicator) {
+            if (!isValidTokenIndicator) {
                 throw new Error(`Token: ${token} is does not exist or is invalid`);
             }
 
@@ -474,7 +474,7 @@ export class SessionKeyValidator {
         }
     }
 
-    async isAValidToken(token: string): Promise<boolean> {
+    async isValidToken(token: string): Promise<boolean> {
 
         const erc20 = new Contract(token, ERC20_ABI, this.provider);
         const decimals = await erc20.decimals();
