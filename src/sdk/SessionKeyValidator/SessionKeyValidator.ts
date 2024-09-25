@@ -478,7 +478,7 @@ export class SessionKeyValidator {
 
         const erc20 = new Contract(token, ERC20_ABI, this.provider);
         const decimals = await erc20.decimals();
-        if (!decimals || decimals == null || decimals as number == 0) {
+        if (!decimals || decimals as number == 0) {
             return false;
         }
         return true;
