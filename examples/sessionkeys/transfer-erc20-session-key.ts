@@ -5,6 +5,7 @@ import { getViemAccount, sleep } from 'src/sdk/common';
 import { ERC20_ABI } from '../../src/sdk/helpers/abi/ERC20_ABI';
 import { ModularSdk, EtherspotBundler, SessionKeyValidator } from 'src';
 import { encodeFunctionData, parseAbi, parseUnits } from 'viem';
+import { generateModularSDKInstance } from '../helpers/sdk-helper';
 
 dotenv.config();
 
@@ -18,13 +19,10 @@ const erc20SessionKeyValidator = '0x22A55192a663591586241D42E603221eac49ed09';
 
 // tsx examples/sessionkeys/transfer-erc20-session-key.ts
 async function main() {
-  // initializating sdk...
-  const modularSdk = new ModularSdk(
-    getViemAccount(process.env.WALLET_PRIVATE_KEY as string),
-    {
-      chainId: Number(process.env.CHAIN_ID),
-      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-    })
+  // initializating sdk...  
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY as string,
+     Number(process.env.CHAIN_ID), bundlerApiKey);
 
   // get instance  of SessionKeyValidator
   const sessionKeyModule = await SessionKeyValidator.create(modularSdk);

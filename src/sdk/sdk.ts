@@ -1,6 +1,6 @@
 import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
-import { BatchUserOpsRequest, Exception, getGasFee, getViemAddress, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
+import { BatchUserOpsRequest, Exception, getGasFee, getViemAccount, getViemAddress, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
 import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
@@ -32,7 +32,7 @@ export class ModularSdk {
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
-  constructor(viemAccount: Account, optionsLike: SdkOptions) {
+  constructor({ privateKey } : { privateKey: string}, optionsLike: SdkOptions) {
     const {
       index,
       chainId,
@@ -40,9 +40,9 @@ export class ModularSdk {
       accountAddress,
     } = optionsLike;
 
-    if (!viemAccount) throw new Exception('Account object is required');
+    if (!privateKey) throw new Exception('privateKey is required');
 
-    this.account = viemAccount;
+    this.account = getViemAccount(process.env.WALLET_PRIVATE_KEY as string);
     this.chainId = chainId;
     this.index = index ?? 0;
 
