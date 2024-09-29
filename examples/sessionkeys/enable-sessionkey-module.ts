@@ -2,6 +2,7 @@ import { EtherspotBundler, ModularSdk, SessionKeyValidator } from '../../src';
 import * as dotenv from 'dotenv';
 import { getViemAccount, sleep } from '../../src/sdk/common';
 import { KeyStore } from '../../src/sdk/SessionKeyValidator';
+import { generateModularSDKInstance } from '../helpers/sdk-helper';
 
 dotenv.config();
 const secondsInAMonth = 30 * 24 * 60 * 60; // 2592000 seconds
@@ -11,19 +12,17 @@ async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
   // initializating sdk...
-  const modularSdk = new ModularSdk(
-    getViemAccount(process.env.WALLET_PRIVATE_KEY),
-    {
-      chainId: Number(process.env.CHAIN_ID),
-      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
-    })
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY as string,
+     Number(process.env.CHAIN_ID), bundlerApiKey);
+
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = process.env.TOKEN_ADDRESS as string;
+  const token = '0xc2132d05d31c914a87c6611c10748aeb04b58e8f';
   const functionSelector = process.env.FUNCTION_SELECTOR as string;
   const spendingLimit = '1000000000000000000000';
   const validAfter = getEpochTimeInSeconds() + 31; // 10 seconds from now

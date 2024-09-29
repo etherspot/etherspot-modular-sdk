@@ -9,11 +9,9 @@ async function main() {
   const customBundlerUrl = '';
 
   // initializating sdk...
-    const modularSdk = generateModularSDKInstance(
-      process.env.WALLET_PRIVATE_KEY,
-      Number(process.env.CHAIN_ID),
-      bundlerApiKey
-    );// Testnets dont need apiKey on bundlerProvider
+  const modularSdk = generateModularSDKInstance(
+    process.env.WALLET_PRIVATE_KEY as string,
+     Number(process.env.CHAIN_ID), bundlerApiKey);
 
   // get EtherspotWallet address...
   const address: string = await modularSdk.getCounterFactualAddress();

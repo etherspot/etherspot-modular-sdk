@@ -10,10 +10,8 @@ async function main() {
 
   // initializating sdk...
   const modularSdk = generateModularSDKInstance(
-    process.env.WALLET_PRIVATE_KEY,
-    Number(process.env.CHAIN_ID),
-    bundlerApiKey
-  );// Testnets dont need apiKey on bundlerProvider
+    process.env.WALLET_PRIVATE_KEY as string,
+     Number(process.env.CHAIN_ID), bundlerApiKey);
 
   // get EtherspotWallet address...
   const gasFees: any = await modularSdk.getGasFee();

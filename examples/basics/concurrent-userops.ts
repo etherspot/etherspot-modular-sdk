@@ -15,10 +15,8 @@ const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxM
 async function main() {
   // initializating sdk for index 0...
   const modularSdk = generateModularSDKInstance(
-    process.env.WALLET_PRIVATE_KEY,
-    Number(process.env.CHAIN_ID),
-    bundlerApiKey
-  );// Testnets dont need apiKey on bundlerProvider
+    process.env.WALLET_PRIVATE_KEY as string,
+     Number(process.env.CHAIN_ID), bundlerApiKey);
 
   const publicClient = getPublicClient({
     chainId: Number(process.env.CHAIN_ID),
