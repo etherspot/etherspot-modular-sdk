@@ -42,7 +42,7 @@ export class ModularSdk {
 
     if (!privateKey) throw new Exception('privateKey is required');
 
-    this.account = getViemAccount(process.env.WALLET_PRIVATE_KEY as string);
+    this.account = getViemAccount(privateKey);
     this.chainId = chainId;
     this.index = index ?? 0;
 
