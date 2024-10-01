@@ -289,10 +289,20 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
   async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
     const accountAddress = await this.getAccountAddress();
-    const dummyKey = key.eq(0)
-      ? ethers.utils.getAddress(this.multipleOwnerECDSAValidatorAddress) + "00000000"
-      : ethers.utils.getAddress(key.toHexString()) + "00000000";
+    const nonceAddressPrefix =  key.eq(0) ? this.multipleOwnerECDSAValidatorAddress : key.toHexString();
 
+    // validate if the nonceAddressPrefix is a valid Address based on its size and also valid sequence of characters in it
+    if (!ethers.utils.isAddress(nonceAddressPrefix)) {
+      throw new Error(`Invalid Validator Address: ${nonceAddressPrefix}`);
+    }
+
+    const isValidatorInstalled : boolean = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceAddressPrefix);
+
+    if(!isValidatorInstalled) {
+      throw new Error(`Validator: ${nonceAddressPrefix} is not installed in the wallet`);
+    }
+
+    const dummyKey = ethers.utils.getAddress(nonceAddressPrefix) + "00000000";
     return await this.entryPointView.getNonce(accountAddress, BigInt(dummyKey));
   }
 
