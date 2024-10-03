@@ -78,7 +78,7 @@ jobs:
                 jq -r '.dependencies."@etherspot/modular-sdk" |= "file:../etherspot-modular-sdk"' temp.json > package.json
                 rm temp.json
                 npm i
-                npm run test-testnet-ether
+                NODE_OPTIONS=--max-old-space-size=8192 npm run test-testnet-ether
           - run:
               name: Move test report
               command: |
