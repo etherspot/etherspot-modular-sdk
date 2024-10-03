@@ -6,6 +6,7 @@ import { encodeFunctionData, Hex, parseAbi, PublicClient } from "viem";
 import { erc20Abi, sessionKeyValidatorAbi } from "../common/abis";
 import { MODULE_TYPE, deepHexlify, resolveProperties, UserOperation } from "../common";
 
+
 export class SessionKeyValidator {
     private modularSdk: ModularSdk;
     private providerURL: string;
