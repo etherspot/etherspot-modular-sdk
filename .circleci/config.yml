@@ -11,6 +11,8 @@ jobs:
     working_directory: ~/etherspot-modular-sdk
     docker:
       - image: cimg/node:18.16.1
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -39,6 +41,8 @@ jobs:
     working_directory: ~/etherspot-modular-sdk
     docker:
       - image: cimg/node:18.16.1
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -78,7 +82,7 @@ jobs:
                 jq -r '.dependencies."@etherspot/modular-sdk" |= "file:../etherspot-modular-sdk"' temp.json > package.json
                 rm temp.json
                 npm i
-                NODE_OPTIONS=--max-old-space-size=8192 npm run test-testnet-ether
+                npm run test-testnet-ether
           - run:
               name: Move test report
               command: |
