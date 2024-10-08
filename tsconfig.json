@@ -1,18 +1,20 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "resolveJsonModule": true,
+    "module": "NodeNext",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "target": "es2017",
+    "target": "ES2020",
     "sourceMap": false,
     "baseUrl": "./",
     "rootDir": "./",
     "strict": false,
     "downlevelIteration": true,
-    "resolveJsonModule": true,
+    "moduleResolution": "NodeNext",
+    "skipLibCheck": true,
     "lib": [
       "DOM",
       "ES5",

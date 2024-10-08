@@ -14,6 +14,8 @@ jobs:
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - checkout
       - run:
@@ -42,6 +44,8 @@ jobs:
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - checkout
       - when:
