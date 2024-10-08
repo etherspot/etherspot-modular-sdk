@@ -20,11 +20,12 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
-  const functionSelector = '0xa9059cbb';
-  const spendingLimit = '100000';
+  const token = process.env.TOKEN_ADDRESS as string; // token address
+  const functionSelector = process.env.FUNCTION_SELECTOR as string;
+  const spendingLimit = '1000000000000000000000';
   const validAfter = new Date().getTime();
   const validUntil = new Date().getTime() + 24 * 60 * 60 * 1000;
+  const oldSessionKey = '0xa2d5Fd2DE86221EEFB616325ff976EF85E7a64aB';
 
   // get instance  of SessionKeyValidator
   const sessionKeyModule = await SessionKeyValidator.create(modularSdk);
@@ -35,6 +36,7 @@ async function main() {
     spendingLimit,
     validAfter,
     validUntil,
+    oldSessionKey,
     KeyStore.AWS
   );
 

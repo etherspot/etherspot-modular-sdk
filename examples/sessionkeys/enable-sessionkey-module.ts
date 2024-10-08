@@ -22,7 +22,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const token = '0xc2132d05d31c914a87c6611c10748aeb04b58e8f';
+  const token = process.env.TOKEN_ADDRESS as string; // token address
   const functionSelector = process.env.FUNCTION_SELECTOR as string;
   const spendingLimit = '1000000000000000000000';
   const validAfter = getEpochTimeInSeconds() + 31; // 10 seconds from now

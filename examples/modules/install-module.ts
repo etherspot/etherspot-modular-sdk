@@ -18,7 +18,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, '0x22A55192a663591586241D42E603221eac49ed09');
+  const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, '0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c');
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

@@ -15,7 +15,7 @@ async function main() {
 
   // get EtherspotWallet address...
   const gasFees: any = await modularSdk.getGasFee();
-  console.log(`gasFees is: ${gasFees}`);
+  console.log(`gasFees is: ${JSON.stringify(gasFees)}`);
 }
 
 main()

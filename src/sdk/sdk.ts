@@ -11,7 +11,6 @@ import { ModuleInfo } from './base/EtherspotWalletAPI';
 import { Account, formatEther, Hex, http, TypedDataParameter, type PublicClient, type WalletClient } from 'viem';
 import { getPublicClient, getWalletClientFromAccount } from './common/utils/viem-utils';
 import { BigNumber, BigNumberish } from './types/bignumber';
-import { printOp } from './common/OperationUtils';
 
 /**
  * Modular-Sdk
@@ -32,7 +31,7 @@ export class ModularSdk {
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
-  constructor({ privateKey } : { privateKey: string}, optionsLike: SdkOptions) {
+  constructor({ privateKey } : {privateKey: string}, optionsLike: SdkOptions) {
     const {
       index,
       chainId,
