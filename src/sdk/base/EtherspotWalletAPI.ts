@@ -296,10 +296,14 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       throw new Error(`Invalid Validator Address: ${nonceAddressPrefix}`);
     }
 
-    const isValidatorInstalled : boolean = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceAddressPrefix);
+    const isAnExistingModularAccount = (await this.provider.getCode(accountAddress) !== '0x');
 
-    if(!isValidatorInstalled) {
-      throw new Error(`Validator: ${nonceAddressPrefix} is not installed in the wallet`);
+    if(isAnExistingModularAccount) {
+      const isValidatorInstalled : boolean = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceAddressPrefix);
+
+      if(!isValidatorInstalled) {
+        throw new Error(`Validator: ${nonceAddressPrefix} is not installed in the wallet`);
+      }
     }
 
     const dummyKey = ethers.utils.getAddress(nonceAddressPrefix) + "00000000";
