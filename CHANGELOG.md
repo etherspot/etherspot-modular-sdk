@@ -1,7 +1,7 @@
 # Changelog
 
 ## [2.0.6] - 2024-10-14
-### Breaking Changes
+### fix
 - `getNonce` function to validate for the installed module check only for the existing modular wallet
 - `getNonce` function to skip validation check on installed module for to be created modular wallet
 
