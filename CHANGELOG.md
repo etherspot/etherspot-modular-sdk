@@ -1,4 +1,10 @@
 # Changelog
+
+## [2.0.6] - 2024-10-14
+### Breaking Changes
+- `getNonce` function to validate for the installed module check only for the existing modular wallet
+- `getNonce` function to skip validation check on installed module for to be created modular wallet
+
 ## [2.0.5] - 2024-09-26
 ### fix
 - validate the tokenAddress for `enableSessionKey` on `SessionKeyValidator` SDK instance
