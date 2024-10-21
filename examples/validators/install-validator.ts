@@ -20,7 +20,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const validatorAddress = '0xAdE95aC98209150219F363053F3D126883a148b4';
+  const validatorAddress = '0x5e805F8d9cEb897122361ef343522D4dad5Ad8f2';
 
   const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, validatorAddress);
   console.log(`UserOpHash: ${uoHash}`);
