@@ -13,7 +13,9 @@ const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxM
 // npx ts-node examples/02-transfer-funds.ts
 async function main() {
   // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, { chainId: Number(process.env.CHAIN_ID), bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
+  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY }, 
+    { chainId: Number(process.env.CHAIN_ID),
+       bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
 
   console.log('address: ', modularSdk.state.EOAAddress)
 

@@ -27,7 +27,7 @@ async function main() {
   const token = process.env.TOKEN_ADDRESS as string;
   const functionSelector = process.env.FUNCTION_SELECTOR as string;
   const spendingLimit = '1000000000000000000000';
-  const validAfter = getEpochTimeInSeconds() + 31; // 10 seconds from now
+  const validAfter = getEpochTimeInSeconds() + 32; // 10 seconds from now
   const validUntil = getEpochTimeInSeconds() + secondsInAMonth;
 
   console.log(`validAfter: ${validAfter} validUntil: ${validUntil}`);
