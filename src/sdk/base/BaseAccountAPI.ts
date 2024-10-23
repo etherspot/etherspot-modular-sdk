@@ -1,16 +1,17 @@
-import { ethers, BigNumber, BigNumberish, TypedDataField } from 'ethers';
+import { ethers, BigNumber, BigNumberish } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Provider } from '@ethersproject/providers';
 import { IEntryPoint, EntryPoint__factory } from '../contracts';
 import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
-import { resolveProperties } from 'ethers/lib/utils';
+import { Deferrable, resolveProperties } from 'ethers/lib/utils';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
 import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
-import { Factory, isWalletProvider, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, validateDto, WalletProviderLike, WalletService } from '..';
+import { Factory, isWalletProvider, MessagePayload, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, TransactionRequest, TransactionResponse, validateDto, WalletProviderLike, WalletService } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
+import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
 
 export interface BaseApiParams {
   provider: Provider;
@@ -58,6 +59,7 @@ export abstract class BaseAccountAPI {
   paymasterAPI?: PaymasterAPI;
   factoryUsed: Factory;
   factoryAddress?: string;
+  validatorAddress?: string;
 
   /**
    * base constructor.
@@ -99,6 +101,8 @@ export abstract class BaseAccountAPI {
     this.entryPointAddress = params.entryPointAddress;
     this.accountAddress = params.accountAddress;
     this.factoryAddress = params.factoryAddress;
+
+    this.validatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
 
     // factory "connect" define the contract address. the contract "connect" defines the "from" address.
     this.entryPointView = EntryPoint__factory.connect(params.entryPointAddress, params.provider).connect(
@@ -145,7 +149,7 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.services.walletService.signMessage(message);
+    return this.services.walletService.signMessage(message, this.validatorAddress, this.accountAddress);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -523,7 +527,23 @@ export abstract class BaseAccountAPI {
     return null;
   }
 
-  async signTypedData(types: TypedDataField[], message: any) {
-    return this.services.walletService.signTypedData(types, message, this.accountAddress);
+  async signTypedData(message: MessagePayload) {
+    return this.services.walletService.signTypedData(message, this.accountAddress);
+  }
+
+  async eth_requestAccounts(): Promise<string[]> {
+    return this.services.walletService.eth_requestAccounts(this.accountAddress)
+  }
+
+  async eth_accounts(): Promise<string[]> {
+    return this.services.walletService.eth_requestAccounts(this.accountAddress)
+  }
+
+  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+    return this.services.walletService.eth_sendTransaction(transaction);
+  }
+
+  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
+    return this.services.walletService.eth_signTransaction(transaction);
   }
 }

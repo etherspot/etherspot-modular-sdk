@@ -1,6 +1,8 @@
-import { BytesLike, TypedDataField } from 'ethers';
-import { toHex } from '../../common';
+import { BytesLike } from 'ethers';
+import { Deferrable, hashMessage, toUtf8Bytes } from 'ethers/lib/utils';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
+import { MessagePayload, TransactionRequest, TransactionResponse } from './interfaces';
+import { toHex } from '../../common';
 
 declare const window: Window & {
   ethereum: {
@@ -50,51 +52,48 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     super('MetaMask');
   }
 
-  async signMessage(message: BytesLike): Promise<string> {
+  async signMessage(message: BytesLike, validatorAddress?: string, accountAddress?: string): Promise<string> {
+    const msg = toUtf8Bytes(hashMessage(toUtf8Bytes(message.toString())))
+    const signature = await this.sendRequest('personal_sign', [
+      msg,
+      accountAddress ?? this.address, //
+    ]);
+    return validatorAddress + signature.slice(2);
+  }
+
+  async signUserOp(message: BytesLike): Promise<string> {
     return this.sendRequest('personal_sign', [
       toHex(message),
-      this.address, //
+      this.address
+    ])
+  }
+
+  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
+    const signature = await this.sendRequest('eth_signTypedData_v4', [
+      accountAddress ?? this.address,
+      msg
+    ])
+    return signature
+  }
+
+  async eth_requestAccounts(address: string): Promise<string[]> {
+    return [address];
+  }
+
+  async eth_accounts(address: string): Promise<string[]> {
+    return [address];
+  }
+
+  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+    return this.sendRequest('eth_sendTransaction', [
+      transaction
     ]);
   }
 
-  async signTypedData(typedData: TypedDataField[], message: any, accountAddress: string): Promise<string> {
-    const chainId = await this.sendRequest<string>('eth_chainId');
-    const domainSeparator = {
-      name: "EtherspotWallet",
-      version: "2.0.0",
-      chainId: chainId,
-      verifyingContract: accountAddress
-    };
-    const signature = await this.sendRequest('eth_signTypedData_v4', [
-      this.address,
-      {
-        "types": {
-          "EIP712Domain": [
-            {
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "name": "version",
-              "type": "string"
-            },
-            {
-              "name": "chainId",
-              "type": "uint256"
-            },
-            {
-              "name": "verifyingContract",
-              "type": "address"
-            }
-          ],
-          "message": typedData
-        },
-        "primaryType": "message",
-        "domain": domainSeparator,
-        "message": message
-      }
-    ])
-    return signature;
+  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
+    return this.sendRequest('eth_signTransaction', [
+      transaction
+    ]);
   }
 
   protected async connect(): Promise<void> {

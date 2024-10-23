@@ -1,16 +1,20 @@
 import { BehaviorSubject } from 'rxjs';
+import { BigNumber, BigNumberish, Contract, ethers, providers } from 'ethers';
+import { Deferrable } from 'ethers/lib/utils';
 import { State, StateService } from './state';
 import {
   EthereumProvider,
   isWalletConnectProvider,
   isWalletProvider,
+  MessagePayload,
+  TransactionRequest,
+  TransactionResponse,
   WalletConnect2WalletProvider,
   WalletProviderLike
 } from './wallet';
 import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
 import { BatchUserOpsRequest, Exception, getGasFee, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
-import { BigNumber, BigNumberish, Contract, TypedDataField, ethers, providers } from 'ethers';
 import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
@@ -218,10 +222,25 @@ export class ModularSdk {
   }
 
   async signTypedData(
-    DataFields: TypedDataField[],
-    message: any
+    message: MessagePayload
   ) {
-    return this.etherspotWallet.signTypedData(DataFields, message);
+    return this.etherspotWallet.signTypedData(message);
+  }
+
+  async eth_requestAccounts(): Promise<string[]>{
+    return this.etherspotWallet.eth_requestAccounts();
+  }
+
+  async eth_accounts(): Promise<string[]> {
+    return this.etherspotWallet.eth_accounts();
+  }
+
+  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+    return this.etherspotWallet.eth_sendTransaction(transaction);
+  }
+
+  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
+    return this.etherspotWallet.eth_signTransaction(transaction);
   }
 
   async getNativeBalance() {
