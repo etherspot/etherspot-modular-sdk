@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.7] - 2024-10-23
+### Breaking Changes
+- `signMessage` fn now adds accountAddress on personal_sign methods
+
 ## [2.0.6] - 2024-10-14
 ### fix
 - `getNonce` function to validate for the installed module check only for the existing modular wallet
