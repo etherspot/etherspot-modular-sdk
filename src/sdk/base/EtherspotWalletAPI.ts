@@ -72,7 +72,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {
-    const accountAddress = await this.getAccountAddress();
     const accountContract = EtherspotWallet7579__factory.connect(await this.getAccountAddress(), this.provider);
     if (await accountContract.isModuleInstalled(moduleTypeId, module, initData)) {
       throw new Error('the module is already installed')
@@ -333,7 +332,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async signUserOpHash(userOpHash: string): Promise<string> {
-    const signature = await this.services.walletService.signMessage(arrayify(userOpHash));
+    const signature = await this.services.walletService.signUserOp(arrayify(userOpHash));
     return signature;
   }
 

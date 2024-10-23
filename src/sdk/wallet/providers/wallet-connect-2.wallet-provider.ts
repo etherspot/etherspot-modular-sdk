@@ -1,7 +1,8 @@
-import { BytesLike, TypedDataField } from 'ethers';
-import { toHex } from '../../common';
+import { BytesLike } from 'ethers';
+import { Deferrable, hashMessage, toUtf8Bytes } from 'ethers/lib/utils';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { EthereumProvider } from './interfaces';
+import { EthereumProvider, TransactionRequest, TransactionResponse } from './interfaces';
+import { toHex } from '../../common';
 
 export class WalletConnect2WalletProvider extends DynamicWalletProvider {
   constructor(readonly provider: EthereumProvider) {
@@ -29,56 +30,52 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: BytesLike): Promise<string> {
+  async signMessage(message: BytesLike, validatorAddress?: string, accountAddress?: string): Promise<string> {
+    const msg = toUtf8Bytes(hashMessage(toUtf8Bytes(message.toString())));
     const response = await this.provider.signer.request({
       method: 'personal_sign',
-      params: [toHex(message), this.address],
+      params: [msg, accountAddress ?? this.address],
     });
 
-    return typeof response === 'string' ? response : null;
+    return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
   }
 
-  async signTypedData(typedData: TypedDataField[], message: any, accountAddress: string): Promise<string> {
-    
-    const domainSeparator = {
-      name: "EtherspotWallet",
-      version: "2.0.0",
-      chainId: this.provider.chainId,
-      verifyingContract: accountAddress
-    };
+  async signUserOp(message: BytesLike): Promise<string> {
+    return this.provider.signer.request({
+      method: 'personal_sign',
+      params: [toHex(message), this.address],
+    })
+  }
+
+  async signTypedData(typedData: any, accountAddress?: string): Promise<string> {
     const signature = await this.provider.signer.request({
       method: 'eth_signTypedData_v4', 
       params: [
-        this.address,
-        {
-          "types": {
-            "EIP712Domain": [
-              {
-                "name": "name",
-                "type": "string"
-              },
-              {
-                "name": "version",
-                "type": "string"
-              },
-              {
-                "name": "chainId",
-                "type": "uint256"
-              },
-              {
-                "name": "verifyingContract",
-                "type": "address"
-              }
-            ],
-            "message": typedData
-          },
-          "primaryType": "message",
-          "domain": domainSeparator,
-          "message": message
-        }
+        accountAddress ?? this.address,
+        typedData
       ]
     })
     return typeof signature === 'string' ? signature : null;
+  }
+
+  async eth_requestAccounts(address: string): Promise<string[]> {
+    return [address];
+  }
+
+  async eth_accounts(address: string): Promise<string[]> {
+    return [address];
+  }
+
+  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+    return this.provider.signer.request({method: 'eth_sendTransaction', params: [
+      transaction
+    ]});
+  }
+
+  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
+    return this.provider.signer.request({method: 'eth_signTransaction', params: [
+      transaction
+    ]});
   }
 
   protected updateSessionHandler(error: Error, payload: { params: { accounts: string[]; chainId: number } }): void {

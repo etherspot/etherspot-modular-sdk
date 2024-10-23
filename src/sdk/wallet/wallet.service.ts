@@ -1,8 +1,9 @@
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { BytesLike, ethers, providers, Wallet as EtherWallet, TypedDataField } from 'ethers';
+import { Deferrable } from 'ethers/lib/utils';
+import { BytesLike, ethers, providers, Wallet as EtherWallet } from 'ethers';
 import { Service, ObjectSubject } from '../common';
-import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike } from './providers';
+import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload, TransactionRequest, TransactionResponse } from './providers';
 import { Wallet, WalletOptions } from './interfaces';
 
 export class WalletService extends Service {
@@ -41,12 +42,32 @@ export class WalletService extends Service {
     return new ethers.providers.JsonRpcProvider(this.rpcBundlerUrl)
   }
 
-  async signMessage(message: BytesLike): Promise<string> {
-    return this.provider ? this.provider.signMessage(message) : null;
+  async signMessage(message: BytesLike, validatorAddress?: string, accountAddress?: string): Promise<string> {
+    return this.provider ? this.provider.signMessage(message, validatorAddress, accountAddress) : null;
   }
 
-  async signTypedData(types: TypedDataField[], message: any, accountAddress: string): Promise<string> {
-    return this.provider ? this.provider.signTypedData(types, message, accountAddress) : null;
+  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
+    return this.provider ? this.provider.signTypedData(msg, accountAddress) : null;
+  }
+
+  async eth_requestAccounts(address?: string): Promise<string[]> {
+    return this.provider ? this.provider.eth_requestAccounts(address) : null;
+  }
+
+  async eth_accounts(address?: string): Promise<string[]> {
+    return this.provider ? this.provider.eth_accounts(address) : null;
+  }
+
+  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+    return this.provider ? this.provider.eth_sendTransaction(transaction) : null;
+  }
+
+  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
+    return this.provider ? this.provider.eth_signTransaction(transaction) : null;
+  }
+
+  async signUserOp(message: BytesLike): Promise<string> {
+    return this.provider ? this.provider.signUserOp(message) : null;
   }
 
   protected switchWalletProvider(providerLike: WalletProviderLike): void {

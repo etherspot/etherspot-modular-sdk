@@ -1,7 +1,7 @@
+import { BytesLike, Deferrable } from 'ethers/lib/utils';
 import { NetworkNames, prepareNetworkName } from '../../network';
 import { prepareAddress, UniqueSubject } from '../../common';
-import { WalletProvider } from './interfaces';
-import { TypedDataField } from 'ethers';
+import { MessagePayload, TransactionRequest, TransactionResponse, WalletProvider } from './interfaces';
 
 export abstract class DynamicWalletProvider implements WalletProvider {
   readonly address$ = new UniqueSubject<string>();
@@ -19,9 +19,11 @@ export abstract class DynamicWalletProvider implements WalletProvider {
     return this.networkName$.value;
   }
 
-  abstract signMessage(message: any): Promise<string>;
+  abstract signMessage(message: any, validatorAddress?: string): Promise<string>;
 
-  abstract signTypedData(typedData: TypedDataField[], message: any, accountAddress: string): Promise<string>;
+  abstract signUserOp(message: BytesLike): Promise<string>;
+
+  abstract signTypedData(msg: MessagePayload): Promise<string>
 
   protected setAddress(address: string): void {
     this.address$.next(prepareAddress(address));
@@ -30,4 +32,12 @@ export abstract class DynamicWalletProvider implements WalletProvider {
   protected setNetworkName(networkNameOrChainId: string | number): void {
     this.networkName$.next(prepareNetworkName(networkNameOrChainId));
   }
+
+  abstract eth_requestAccounts(address?: string): Promise<string[]>;
+
+  abstract eth_accounts(address?: string): Promise<string[]>;
+
+  abstract eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse>;
+
+  abstract eth_signTransaction(transaction: TransactionRequest): Promise<string>;
 }

@@ -1,7 +1,8 @@
-import { BytesLike, TypedDataField } from 'ethers';
-import { toHex } from '../../common';
+import { BytesLike } from 'ethers';
+import { Deferrable, hashMessage, toUtf8Bytes } from 'ethers/lib/utils';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { WalletConnectConnector } from './interfaces';
+import { MessagePayload, TransactionRequest, TransactionResponse, WalletConnectConnector } from './interfaces';
+import { toHex } from '../../common';
 
 export class WalletConnectWalletProvider extends DynamicWalletProvider {
   static connect(connector: WalletConnectConnector): WalletConnectWalletProvider {
@@ -33,18 +34,53 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: BytesLike): Promise<string> {
+  async signMessage(message: BytesLike, validatorAddress?: string, accountAddress?: string): Promise<string> {
+    const msg = toUtf8Bytes(hashMessage(toUtf8Bytes(message.toString())));
     const response = await this.connector.signPersonalMessage([
+      msg, //
+      accountAddress ?? this.address,
+    ]);
+
+    return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
+  }
+
+  async signUserOp(message: BytesLike): Promise<string> {
+    return this.connector.signPersonalMessage([
       toHex(message), //
       this.address,
     ]);
-
-    return response || null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async signTypedData(typedData: TypedDataField[], message: any, accountAddress: string): Promise<string> {
-    throw new Error('Not supported on this provider')
+  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
+    const signature = await this.connector.request({
+      method: 'eth_signTypedData', 
+      params: [
+        accountAddress ?? this.address,
+        msg
+      ]
+    })
+    return typeof signature === 'string' ? signature : null;
+  }
+
+  async eth_requestAccounts(): Promise<string[]> {
+    return [this.address];
+  }
+
+  async eth_accounts(): Promise<string[]> {
+    return [this.address];
+  }
+
+  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+    return this.connector.request({method: 'eth_sendTransaction', params: [
+      transaction
+    ]});
+  }
+
+  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
+    return this.connector.request({method: 'eth_signTransaction', params: [
+      transaction
+    ]});
   }
 
   protected updateSessionHandler(error: Error, payload: { params: { accounts: string[]; chainId: number } }): void {
