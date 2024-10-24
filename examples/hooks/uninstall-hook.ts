@@ -20,14 +20,16 @@ async function main() {
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
   const moduleIsolationHookAddress = '0x36973ffC8E14c9301D334Ea6Fe0A95Ead0Ea22ed';
+  const hookMultiplexerAddress = '0x370e65e9921f4F496e0Cb7c454B24DdC632eC862';
 
   //this should be previous node address of the module to be uninstalled and the deinit data
   //deinit data is the data that is passed to the module to be uninstalled
   // here we need to call the function which can find out the address of previous node of the module to be uninstalled
   // and the deinit data can be 0x00 as default value
-  const deInitDataDefault = '0x00';
+  //const deInitDataDefault = '0x00';
+  const deinitData = ethers.utils.defaultAbiCoder.encode(["bytes"], ["0x"]);
 
-  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.HOOK, moduleIsolationHookAddress, deInitDataDefault);
+  const uoHash = await modularSdk.uninstallModule(MODULE_TYPE.HOOK, hookMultiplexerAddress, deinitData);
   console.log(`UserOpHash: ${uoHash}`);
   
   // get transaction hash...

@@ -16,8 +16,8 @@ async function main() {
 
   console.log('address: ', modularSdk.state.EOAAddress);
 
-  const hookMultiplexerAddress = '0x36973ffC8E14c9301D334Ea6Fe0A95Ead0Ea22ed';
-  const credibleAccountModuleAddress = '0x096D8be3c95c8976B9FB80E6c8A1D84b9014f51c';
+  const hookMultiplexerAddress = '0x370e65e9921f4F496e0Cb7c454B24DdC632eC862';
+  const credibleAccountModuleAddress = '0x5F43Bf56479f09E0aD5ed22117e8b66fe2429746';
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -25,6 +25,8 @@ async function main() {
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
   const hookMultiplexerInitData = await getHookMultiPlexerInitDataWithCredibleAccountModule(credibleAccountModuleAddress);
+
+  console.log(`Hook Multiplexer Init Data: ${hookMultiplexerInitData}`);
 
   const uoHash = await modularSdk.installModule(MODULE_TYPE.HOOK, hookMultiplexerAddress, hookMultiplexerInitData);
   

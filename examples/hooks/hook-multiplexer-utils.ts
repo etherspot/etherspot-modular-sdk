@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import * as HookMultiPlexerABI from "../../src/sdk/abi/HookMultiPlexer.json";
 
 // Define the SigHookInit type
 interface SigHookInit {
@@ -33,14 +34,19 @@ export async function getHookMultiPlexerInitDataWithCredibleAccountModule(credib
         ]
     );
 
-    return encodedData;
+    console.log("Encoded Data:", encodedData);
+
+    const iface = new ethers.utils.Interface(HookMultiPlexerABI.abi);
+    const hookMultiplexerInitData = iface.encodeFunctionData('onInstall', [encodedData]);
+
+    console.log("Hook Multiplexer Init Data:", hookMultiplexerInitData);
+
+    return hookMultiplexerInitData;
 }
 
-
-
 // npx ts-node examples/hook-multiplexer.ts
-(async () => {
-    const credibleAccountModuleAddress = "0x36973ffC8E14c9301D334Ea6Fe0A95Ead0Ea22ed";
-    const encodedData = await getHookMultiPlexerInitDataWithCredibleAccountModule(credibleAccountModuleAddress);
-    console.log("Encoded Data:", encodedData);
-})();
+// (async () => {
+//     const credibleAccountModuleAddress = "0x36973ffC8E14c9301D334Ea6Fe0A95Ead0Ea22ed";
+//     const encodedData = await getHookMultiPlexerInitDataWithCredibleAccountModule(credibleAccountModuleAddress);
+//     console.log("Encoded Data:", encodedData);
+// })();

@@ -104,6 +104,14 @@ export class ModularSdk {
     return this.etherspotWallet.services.networkService.supportedNetworks;
   }
 
+  get provider(): providers.JsonRpcProvider {
+    return this.etherspotWallet.provider as providers.JsonRpcProvider;
+  }
+
+  get userOpsBatchRequest(): BatchUserOpsRequest {
+    return this.userOpsBatch;
+  }
+
   /**
    * destroys
    */
@@ -283,6 +291,11 @@ export class ModularSdk {
     return this.etherspotWallet.getPreviousAddress(module, moduleTypeId);
   }
 
+  async generateModuleInstallData(moduleTypeId: MODULE_TYPE, module: string, moduleInitData: string): Promise<string> {
+    const moduleInstallData = await this.etherspotWallet.installModule(moduleTypeId, module, moduleInitData);
+    return moduleInstallData;
+  }
+
   async generateModuleDeInitData(moduleTypeId: MODULE_TYPE, module: string, moduleDeInitData: string): Promise<string> {
     return await this.etherspotWallet.generateModuleDeInitData(moduleTypeId, module, moduleDeInitData);
   }
@@ -293,6 +306,8 @@ export class ModularSdk {
 
   async uninstallModule(moduleTypeId: MODULE_TYPE, module: string, deinitData: string): Promise<string> {
     const uninstallData = await this.etherspotWallet.uninstallModule(moduleTypeId, module, deinitData);
+
+    console.log(`Uninstalling module ${module} with uninstallData data ${uninstallData}`);
 
     this.clearUserOpsFromBatch();
 

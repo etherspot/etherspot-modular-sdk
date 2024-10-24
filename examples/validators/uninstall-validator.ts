@@ -19,7 +19,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const validatorAddress = '0xE340d86e447D2c290AcF1e574399A06924DAF78c';
+  const validatorAddress = '0x2997eCcbB8cbf4e4378baEe23C08Aec53A223CeD';
 
   //this should be previous node address of the module to be uninstalled and the deinit data
   //deinit data is the data that is passed to the module to be uninstalled

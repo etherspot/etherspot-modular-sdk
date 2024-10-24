@@ -20,9 +20,10 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const validatorAddress = '0x5e805F8d9cEb897122361ef343522D4dad5Ad8f2';
+  const erc20SessionKeyValidatorAddress = '0x2997eCcbB8cbf4e4378baEe23C08Aec53A223CeD';
+  const credibleAccountValidatorModule = '';
 
-  const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, validatorAddress);
+  const uoHash = await modularSdk.installModule(MODULE_TYPE.VALIDATOR, credibleAccountValidatorModule);
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...
