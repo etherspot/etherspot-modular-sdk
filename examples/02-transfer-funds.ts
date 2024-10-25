@@ -7,7 +7,7 @@ import { sleep } from '../src/sdk/common';
 dotenv.config();
 
 const recipient = '0xb849845BE2c6D56624C3648bf9a9fC4CEb31FB2B'; // recipient wallet address
-const value = '0.0000001'; // transfer value
+const value = '0.00000001'; // transfer value
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
 // npx ts-node examples/02-transfer-funds.ts
