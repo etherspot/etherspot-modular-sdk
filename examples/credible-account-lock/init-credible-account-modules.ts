@@ -30,19 +30,15 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const weiAmount = ethers.utils.parseUnits('0.1', 6);
-
-  console.log('weiAmount: ', weiAmount);
-
   // Define the TokenData array
   const tokenData: TokenData[] = [
     {
       token: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // USDC address
-      amount: weiAmount.toBigInt() 
+      amount: ethers.utils.parseUnits('0.002', 6).toBigInt() 
     },
     {
       token: "0x08210F9170F89Ab7658F0B5E3fF39b0E03C594D4", // EURC address
-      amount: weiAmount.toBigInt() 
+      amount: ethers.utils.parseUnits('0.003', 6).toBigInt() 
     },
   ];
 
@@ -51,7 +47,7 @@ async function main() {
 
   // Define the SessionData object
   const sessionData: SessionData = {
-    sessionKey: "0xA2901c07465Ec78335b466919169B197a51978C0", // dummySessionKey
+    sessionKey: "0x94c054B7191aAF22342F0caB29acfb1851C5331D", // dummySessionKey
     validAfter: currentTime + 10, // validAfter should be greater than current time
     validUntil: currentTime + 300, // validUntil should be 5 minutes from current time
     tokenData: tokenData
@@ -67,21 +63,21 @@ async function main() {
   const upserOpString = await printOp(op);
   console.log(`Estimated UserOp: ${upserOpString}`);
 
-  // const uoHash = await modularSdk.send(op);
+  const uoHash = await modularSdk.send(op);
 
-  // console.log(`UserOpHash: ${uoHash}`);
+  console.log(`UserOpHash: ${uoHash}`);
 
-  // // get transaction hash...
-  // console.log('Waiting for transaction...');
-  // let userOpsReceipt = null;
-  // const timeout = Date.now() + 60000; // 1 minute timeout
-  // while ((userOpsReceipt == null) && (Date.now() < timeout)) {
-  //   await sleep(2);
-  //   userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
-  // }
-  // console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
+  // get transaction hash...
+  console.log('Waiting for transaction...');
+  let userOpsReceipt = null;
+  const timeout = Date.now() + 60000; // 1 minute timeout
+  while ((userOpsReceipt == null) && (Date.now() < timeout)) {
+    await sleep(2);
+    userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
+  }
+  console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
 
-  // return uoHash;
+  return uoHash;
 }
 
 async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMultiplexerAddress: string, credibleAccountModuleAddress: string, sessionData: SessionData) {
@@ -190,7 +186,7 @@ async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMult
 
     console.log(`Wallet: ${etherspotWalletAddress} has Token: ${token} with Balance: ${tokenBalance}`);
 
-    if (tokenBalance.toBigInt() !== amount) {
+    if (tokenBalance.toBigInt() < amount) {
       errorMessage += `Wallet: ${etherspotWalletAddress} has Token: ${token} with Actual Balance: ${tokenBalance.toString()} Wei, but Expected Balance: ${amount.toString()} Wei \n`;
     }
   }

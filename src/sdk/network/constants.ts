@@ -98,9 +98,9 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155111',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
-      bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
-      multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      walletFactory: '0xC172845CB98bF243865e7CaaF7E627CB4A22aEEa',
+      bootstrap: '0x8ae317E8E07A71C47a8073902Afc16fC97e3FF96',
+      multipleOwnerECDSAValidator: '0x3e8b2354b07C8FfAE1Dada07262ffA035Ce65bF0',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
     },
   },
