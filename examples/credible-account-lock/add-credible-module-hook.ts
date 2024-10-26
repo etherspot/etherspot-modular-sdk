@@ -1,11 +1,11 @@
 import { EtherspotBundler, ModularSdk } from '../../src';
 import * as dotenv from 'dotenv';
 import { MODULE_TYPE, sleep } from '../../src/sdk/common';
-import { getHookMultiPlexerInitDataWithCredibleAccountModule } from './hook-multiplexer-utils';
+import { getHookMultiPlexerInitDataWithCredibleAccountModule } from './utils/hook-multiplexer-utils';
 
 dotenv.config();
 
-// npx ts-node examples/hooks/install-hook-multiplexer.ts
+// npx ts-node examples/hooks/add-credible-module-hook.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
@@ -43,6 +43,6 @@ async function main() {
   console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
 }
 
-main()
-  .catch(console.error)
-  .finally(() => process.exit());
+// main()
+//   .catch(console.error)
+//   .finally(() => process.exit());

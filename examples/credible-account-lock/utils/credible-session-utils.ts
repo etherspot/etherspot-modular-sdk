@@ -1,6 +1,10 @@
 import { TokenData, SessionData } from "./credible-session-types";
 import { ethers } from "ethers";
-import * as CredibleAccountModuleABI from '../../src/sdk/abi/CredibleAccountModule.json';
+import * as CredibleAccountModuleABI from '../../../src/sdk/abi/CredibleAccountModule.json';
+
+const abi = [
+    "function sessionData(address, address) view returns (tuple(address sessionKey, uint48 validAfter, uint48 validUntil))"
+];
 
 export function validateTokenData(tokenData: TokenData[]): void {
     const tokenSet = new Set<string>();
@@ -58,3 +62,25 @@ export function generateEnableSessionKeyCalldata(sessionData: SessionData): stri
     return enableSessionKeyCallData;
 }
 
+export async function sessionKeyExists(credibleAccountModuleAddress: string, sessionKey: string, walletAddress: string, provider: ethers.providers.Provider): Promise<boolean> {
+    // const sessionData = await getSessionData(sessionKey, walletAddress, provider);
+    // return sessionData.sessionKey === sessionKey;
+
+    const sessionKeys = await getSessionKeysByWalletAddress(credibleAccountModuleAddress, walletAddress, provider);
+    console.log("sessionKeys:", sessionKeys);
+    return sessionKeys.includes(sessionKey);
+}
+
+export async function getSessionKeysByWalletAddress(credibleAccountModuleAddress: string, walletAddress: string, provider: ethers.providers.Provider): Promise<string[]> {
+    const credibleAccountModuleInstance = new ethers.Contract(credibleAccountModuleAddress, CredibleAccountModuleABI.abi, provider);
+    const sessionKeys = await credibleAccountModuleInstance.getSessionKeysByWallet(walletAddress);
+    return sessionKeys;
+}
+
+export async function getSessionData(credibleAccountModuleAddress: string, sessionKey: string, walletAddress: string, provider: ethers.providers.Provider): Promise<SessionData> {
+    const credibleAccountModuleInstance = new ethers.Contract(credibleAccountModuleAddress, CredibleAccountModuleABI.abi, provider);
+    console.log("getSessionData -> Session Key:", sessionKey);
+    console.log("getSessionData -> Wallet Address:", walletAddress);
+    const sessionData = await credibleAccountModuleInstance.sessionData(sessionKey, walletAddress);
+    return sessionData;
+}

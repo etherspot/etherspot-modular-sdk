@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import * as HookMultiPlexerABI from "../../src/sdk/abi/HookMultiPlexer.json";
+import * as HookMultiPlexerABI from "../../../src/sdk/abi/HookMultiPlexer.json";
 
 // Define the SigHookInit type
 interface SigHookInit {

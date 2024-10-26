@@ -20,7 +20,7 @@ async function main() {
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
   const moduleIsolationHookAddress = '0x36973ffC8E14c9301D334Ea6Fe0A95Ead0Ea22ed';
-  const hookMultiplexerAddress = '0x370e65e9921f4F496e0Cb7c454B24DdC632eC862';
+  const hookMultiplexerAddress = '0x2dbad2872b6aabd4dd3cd1eef7a46a241baa6cae';
 
   //this should be previous node address of the module to be uninstalled and the deinit data
   //deinit data is the data that is passed to the module to be uninstalled

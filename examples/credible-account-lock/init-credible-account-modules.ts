@@ -1,11 +1,11 @@
 import { EtherspotBundler, ModularSdk } from '../../src';
 import * as dotenv from 'dotenv';
 import { MODULE_TYPE, sleep } from '../../src/sdk/common';
-import { getHookMultiPlexerInitDataWithCredibleAccountModule } from '../hooks/hook-multiplexer-utils';
+import { getHookMultiPlexerInitDataWithCredibleAccountModule } from './utils/hook-multiplexer-utils';
 import { ethers } from 'ethers';
 import * as HookMultiPlexerABI from "../../src/sdk/abi/HookMultiPlexer.json";
-import { TokenData, SessionData } from './credible-session-types';
-import { generateEnableSessionKeyCalldata } from './credible-session-utils';
+import { TokenData, SessionData } from './utils/credible-session-types';
+import { generateEnableSessionKeyCalldata, sessionKeyExists } from './utils/credible-session-utils';
 import { printOp } from '../../src/sdk/common/OperationUtils';
 
 dotenv.config();
@@ -30,12 +30,20 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
+  const weiAmount = ethers.utils.parseUnits('0.1', 6);
+
+  console.log('weiAmount: ', weiAmount);
+
   // Define the TokenData array
   const tokenData: TokenData[] = [
     {
-      token: "0xa0Cb889707d426A7A386870A03bc70d1b0697598", // USDC address
-      amount: BigInt(10000000) // newAmounts[0]
-    }
+      token: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // USDC address
+      amount: weiAmount.toBigInt() 
+    },
+    {
+      token: "0x08210F9170F89Ab7658F0B5E3fF39b0E03C594D4", // EURC address
+      amount: weiAmount.toBigInt() 
+    },
   ];
 
   // Get the current time in epoch seconds
@@ -43,7 +51,7 @@ async function main() {
 
   // Define the SessionData object
   const sessionData: SessionData = {
-    sessionKey: "0xB5fEAfbDD752ad52Afb7e1bD2E40432A485bBB7F", // dummySessionKey
+    sessionKey: "0xA2901c07465Ec78335b466919169B197a51978C0", // dummySessionKey
     validAfter: currentTime + 10, // validAfter should be greater than current time
     validUntil: currentTime + 300, // validUntil should be 5 minutes from current time
     tokenData: tokenData
@@ -55,9 +63,25 @@ async function main() {
   await initialiseCredibleAccountModules(modularSdk, hookMultiplexerAddress, credibleAccountModuleAddress, sessionData);
   console.log('UserOpsBatch: ', modularSdk.userOpsBatchRequest);
   const op = await modularSdk.estimate();
-  console.log(`Estimated UserOp: ${printOp(op)}`);
-  const uoHash = await modularSdk.send(op);
-  return uoHash;
+
+  const upserOpString = await printOp(op);
+  console.log(`Estimated UserOp: ${upserOpString}`);
+
+  // const uoHash = await modularSdk.send(op);
+
+  // console.log(`UserOpHash: ${uoHash}`);
+
+  // // get transaction hash...
+  // console.log('Waiting for transaction...');
+  // let userOpsReceipt = null;
+  // const timeout = Date.now() + 60000; // 1 minute timeout
+  // while ((userOpsReceipt == null) && (Date.now() < timeout)) {
+  //   await sleep(2);
+  //   userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
+  // }
+  // console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
+
+  // return uoHash;
 }
 
 async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMultiplexerAddress: string, credibleAccountModuleAddress: string, sessionData: SessionData) {
@@ -145,6 +169,36 @@ async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMult
   }
 
   // 3. enable SessionKey
+
+  // check if the session key already exists
+  const doesSessionKeyExists = await sessionKeyExists(credibleAccountModuleAddress, sessionData.sessionKey, etherspotWalletAddress, modularSdk.provider);
+
+  if (doesSessionKeyExists) {
+    throw new Error(`Session key ${sessionData.sessionKey} already exists`);
+  }
+
+  // check if the wallet has sufficient token balances for the tokens in the sessionData
+  const tokenData = sessionData.tokenData;
+
+  let errorMessage = '';
+
+  for (let i = 0; i < tokenData.length; i++) {
+    const token = tokenData[i].token;
+    const amount = tokenData[i].amount;
+
+    const tokenBalance = await getTokenBalance(modularSdk.provider, token, etherspotWalletAddress);
+
+    console.log(`Wallet: ${etherspotWalletAddress} has Token: ${token} with Balance: ${tokenBalance}`);
+
+    if (tokenBalance.toBigInt() !== amount) {
+      errorMessage += `Wallet: ${etherspotWalletAddress} has Token: ${token} with Actual Balance: ${tokenBalance.toString()} Wei, but Expected Balance: ${amount.toString()} Wei \n`;
+    }
+  }
+
+  if (errorMessage) {
+    throw new Error(`Token balance discrepancies found for session key ${sessionData.sessionKey}:\n${errorMessage}`);
+  }
+
   const enableSessionKeyCallData = generateEnableSessionKeyCalldata(sessionData);
 
   console.log(`Enable Session Key Call Data: ${enableSessionKeyCallData}`);
@@ -154,6 +208,11 @@ async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMult
     data: enableSessionKeyCallData
   });
 
+}
+
+export async function getTokenBalance(provider: ethers.providers.JsonRpcProvider, token: string, walletAddress: string): Promise<ethers.BigNumber> {
+  const tokenContract = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)'], provider);
+  return await tokenContract.balanceOf(walletAddress);
 }
 
 // npx ts-node examples/credible-account-lock/init-credible-account-modules.ts

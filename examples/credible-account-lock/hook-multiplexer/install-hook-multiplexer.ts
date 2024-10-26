@@ -1,11 +1,11 @@
-import { EtherspotBundler, ModularSdk } from '../../src';
+import { EtherspotBundler, ModularSdk } from '../../../src';
 import * as dotenv from 'dotenv';
-import { MODULE_TYPE, sleep } from '../../src/sdk/common';
-import { getHookMultiPlexerInitDataWithCredibleAccountModule } from './hook-multiplexer-utils';
+import { MODULE_TYPE, sleep } from '../../../src/sdk/common';
+import { getHookMultiPlexerInitDataWithCredibleAccountModule } from '../utils/hook-multiplexer-utils';
 
 dotenv.config();
 
-// npx ts-node examples/hooks/add-credible-module-hook.ts
+// npx ts-node examples/hooks/install-hook-multiplexer.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
