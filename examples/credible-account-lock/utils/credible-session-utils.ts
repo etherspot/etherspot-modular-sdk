@@ -65,6 +65,8 @@ export function generateEnableSessionKeyCalldata(sessionData: ResourceLockSessio
 export async function sessionKeyExists(credibleAccountModuleAddress: string, sessionKey: string, walletAddress: string, provider: ethers.providers.JsonRpcProvider): Promise<boolean> {
     const onChainSessionData = await getOnChainSessionData(credibleAccountModuleAddress, sessionKey, walletAddress, provider);
     return onChainSessionData.sessionKey === sessionKey;
+    // const sessionKeys = await getSessionKeysByWalletAddress(credibleAccountModuleAddress, walletAddress, provider);
+    // return sessionKeys.includes(sessionKey);
 }
 
 export async function getSessionKeysByWalletAddress(credibleAccountModuleAddress: string, walletAddress: string, provider: ethers.providers.JsonRpcProvider): Promise<string[]> {

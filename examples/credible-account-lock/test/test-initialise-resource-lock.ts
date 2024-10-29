@@ -19,8 +19,8 @@ async function main() {
 
   console.log('address: ', modularSdk.state.EOAAddress);
 
-  const hookMultiplexerAddress = '0x2dbad2872b6aabd4dd3cd1eef7a46a241baa6cae';
-  const credibleAccountModuleAddress = '0xf47600D8dFef04269206255E53c8926519BA09a9';
+  const hookMultiplexerAddress = '0x2dBAD2872B6AaBd4dD3cd1EEf7A46A241BaA6CAe';
+  const credibleAccountModuleAddress = '0xFE14F6d4e407850b24D160B9ACfBb042D32BE492';
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -30,11 +30,11 @@ async function main() {
   // Define the TokenData array
   const tokenData: TokenData[] = [
     {
-      token: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // USDC address
+      token: "0x4de0Bb9BA339b16bdc4ac845dedF65a00d63213A", // USDC address
       amount: ethers.utils.parseUnits('10', 6).toBigInt()
     },
     {
-      token: "0x493f198225647DB41FB966ddCd5f63E8EE1012d3", // USDT address
+      token: "0x27B70eAF5439Dda875609bB7Bb5fAE16AdDb3e69", // USDT address
       amount: ethers.utils.parseUnits('12', 6).toBigInt()
     },
   ];

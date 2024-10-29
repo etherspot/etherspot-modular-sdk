@@ -99,11 +99,11 @@ export async function initialiseCredibleAccountModules(modularSdk: ModularSdk, h
   // 3. enable SessionKey
 
   // check if the session key already exists
-  // const doesSessionKeyExists = await sessionKeyExists(credibleAccountModuleAddress, sessionData.sessionKey, etherspotWalletAddress, modularSdk.provider);
+  const doesSessionKeyExists = await sessionKeyExists(credibleAccountModuleAddress, sessionData.sessionKey, etherspotWalletAddress, modularSdk.provider);
 
-  // if (doesSessionKeyExists) {
-  //   throw new Error(`Session key ${sessionData.sessionKey} already exists`);
-  // }
+  if (doesSessionKeyExists) {
+    throw new Error(`Session key ${sessionData.sessionKey} already exists`);
+  }
 
   // check if the wallet has sufficient token balances for the tokens in the sessionData
   const tokenData = sessionData.tokenData;
