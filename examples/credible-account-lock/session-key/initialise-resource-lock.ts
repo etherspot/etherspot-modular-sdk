@@ -1,88 +1,20 @@
-import { EtherspotBundler, ModularSdk } from '../../src';
+import { ModularSdk } from '../../../src';
 import * as dotenv from 'dotenv';
-import { MODULE_TYPE, sleep } from '../../src/sdk/common';
-import { getHookMultiPlexerInitDataWithCredibleAccountModule } from './utils/hook-multiplexer-utils';
+import { MODULE_TYPE } from '../../../src/sdk/common';
+import { getHookMultiPlexerInitDataWithCredibleAccountModule } from '../utils/hook-multiplexer-utils';
 import { ethers } from 'ethers';
-import * as HookMultiPlexerABI from "../../src/sdk/abi/HookMultiPlexer.json";
-import { TokenData, SessionData } from './utils/credible-session-types';
-import { generateEnableSessionKeyCalldata, sessionKeyExists } from './utils/credible-session-utils';
-import { printOp } from '../../src/sdk/common/OperationUtils';
-
+import * as HookMultiPlexerABI from "../../../src/sdk/abi/HookMultiPlexer.json";
+import { ResourceLockSessionData } from '../utils/credible-session-types';
+import { generateEnableSessionKeyCalldata, sessionKeyExists } from '../utils/credible-session-utils';
+import { printOp } from '../../../src/sdk/common/OperationUtils';
 dotenv.config();
 
-async function main() {
-  const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
-
-  // initializating sdk...
-  const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY },
-    {
-      chainId: Number(process.env.CHAIN_ID),
-      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID))
-    })
-
-  console.log('address: ', modularSdk.state.EOAAddress);
-
-  const hookMultiplexerAddress = '0x2dbad2872b6aabd4dd3cd1eef7a46a241baa6cae';
-  const credibleAccountModuleAddress = '0xf47600D8dFef04269206255E53c8926519BA09a9';
-
-  // get address of EtherspotWallet
-  const address: string = await modularSdk.getCounterFactualAddress();
-
-  console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
-
-  // Define the TokenData array
-  const tokenData: TokenData[] = [
-    {
-      token: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // USDC address
-      amount: ethers.utils.parseUnits('0.002', 6).toBigInt() 
-    },
-    {
-      token: "0x08210F9170F89Ab7658F0B5E3fF39b0E03C594D4", // EURC address
-      amount: ethers.utils.parseUnits('0.003', 6).toBigInt() 
-    },
-  ];
-
-  // Get the current time in epoch seconds
-  const currentTime = Math.floor(Date.now() / 1000);
-
-  // Define the SessionData object
-  const sessionData: SessionData = {
-    sessionKey: "0x94c054B7191aAF22342F0caB29acfb1851C5331D", // dummySessionKey
-    validAfter: currentTime + 10, // validAfter should be greater than current time
-    validUntil: currentTime + 300, // validUntil should be 5 minutes from current time
-    tokenData: tokenData
-  };
-
-  console.log('validAfter: ', sessionData.validAfter);
-  console.log('validUntil: ', sessionData.validUntil);
-
-  await initialiseCredibleAccountModules(modularSdk, hookMultiplexerAddress, credibleAccountModuleAddress, sessionData);
-  console.log('UserOpsBatch: ', modularSdk.userOpsBatchRequest);
-  const op = await modularSdk.estimate();
-
-  const upserOpString = await printOp(op);
-  console.log(`Estimated UserOp: ${upserOpString}`);
-
-  const uoHash = await modularSdk.send(op);
-
-  console.log(`UserOpHash: ${uoHash}`);
-
-  // get transaction hash...
-  console.log('Waiting for transaction...');
-  let userOpsReceipt = null;
-  const timeout = Date.now() + 60000; // 1 minute timeout
-  while ((userOpsReceipt == null) && (Date.now() < timeout)) {
-    await sleep(2);
-    userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
-  }
-  console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
-
-  return uoHash;
-}
-
-async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMultiplexerAddress: string, credibleAccountModuleAddress: string, sessionData: SessionData) {
+export async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMultiplexerAddress: string, credibleAccountModuleAddress: string, sessionData: ResourceLockSessionData) {
 
   const etherspotWalletAddress = await modularSdk.getCounterFactualAddress();
+
+  console.log(`credibleAccountModuleAddress: ${credibleAccountModuleAddress}`);
+  console.log(`hookMultiplexerAddress is: ${hookMultiplexerAddress}`);
 
   console.log(`Initialising CredibleAccountModule on wallet: ${etherspotWalletAddress} for Session Key: ${sessionData.sessionKey}`);
 
@@ -167,11 +99,11 @@ async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMult
   // 3. enable SessionKey
 
   // check if the session key already exists
-  const doesSessionKeyExists = await sessionKeyExists(credibleAccountModuleAddress, sessionData.sessionKey, etherspotWalletAddress, modularSdk.provider);
+  // const doesSessionKeyExists = await sessionKeyExists(credibleAccountModuleAddress, sessionData.sessionKey, etherspotWalletAddress, modularSdk.provider);
 
-  if (doesSessionKeyExists) {
-    throw new Error(`Session key ${sessionData.sessionKey} already exists`);
-  }
+  // if (doesSessionKeyExists) {
+  //   throw new Error(`Session key ${sessionData.sessionKey} already exists`);
+  // }
 
   // check if the wallet has sufficient token balances for the tokens in the sessionData
   const tokenData = sessionData.tokenData;
@@ -204,14 +136,17 @@ async function initialiseCredibleAccountModules(modularSdk: ModularSdk, hookMult
     data: enableSessionKeyCallData
   });
 
+  const op = await modularSdk.estimate();
+
+  const upserOpString = await printOp(op);
+  console.log(`Estimated UserOp: ${upserOpString}`);
+
+  const uoHash = await modularSdk.send(op);
+
+  return uoHash;
 }
 
 export async function getTokenBalance(provider: ethers.providers.JsonRpcProvider, token: string, walletAddress: string): Promise<ethers.BigNumber> {
   const tokenContract = new ethers.Contract(token, ['function balanceOf(address) view returns (uint256)'], provider);
   return await tokenContract.balanceOf(walletAddress);
 }
-
-// npx ts-node examples/credible-account-lock/init-credible-account-modules.ts
-main()
-  .catch(console.error)
-  .finally(() => process.exit());

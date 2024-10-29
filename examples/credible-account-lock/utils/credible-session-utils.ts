@@ -1,4 +1,4 @@
-import { TokenData, SessionData, SessionInfo } from "./credible-session-types";
+import { TokenData, ResourceLockSessionData, OnChainSessionData } from "./credible-session-types";
 import { ethers } from "ethers";
 import * as CredibleAccountModuleABI from '../../../src/sdk/abi/CredibleAccountModule.json';
 
@@ -19,7 +19,7 @@ export function validateTokenData(tokenData: TokenData[]): void {
     }
 }
 
-export function validateSessionData(sessionData: SessionData): void {
+export function validateSessionData(sessionData: ResourceLockSessionData): void {
     const currentTime = Math.floor(Date.now() / 1000); // Get the current time in epoch seconds
 
     if (!sessionData.sessionKey) {
@@ -38,7 +38,7 @@ export function validateSessionData(sessionData: SessionData): void {
 }
 
 
-export function generateEnableSessionKeyCalldata(sessionData: SessionData): string {
+export function generateEnableSessionKeyCalldata(sessionData: ResourceLockSessionData): string {
     // Validate the session data
     validateSessionData(sessionData);
 
@@ -63,8 +63,8 @@ export function generateEnableSessionKeyCalldata(sessionData: SessionData): stri
 }
 
 export async function sessionKeyExists(credibleAccountModuleAddress: string, sessionKey: string, walletAddress: string, provider: ethers.providers.JsonRpcProvider): Promise<boolean> {
-    const sessionData = await getSessionData(credibleAccountModuleAddress, sessionKey, walletAddress, provider);
-    return sessionData.sessionKey === sessionKey;
+    const onChainSessionData = await getOnChainSessionData(credibleAccountModuleAddress, sessionKey, walletAddress, provider);
+    return onChainSessionData.sessionKey === sessionKey;
 }
 
 export async function getSessionKeysByWalletAddress(credibleAccountModuleAddress: string, walletAddress: string, provider: ethers.providers.JsonRpcProvider): Promise<string[]> {
@@ -73,17 +73,17 @@ export async function getSessionKeysByWalletAddress(credibleAccountModuleAddress
     return sessionKeys;
 }
 
-export async function getSessionData(credibleAccountModuleAddress: string, sessionKey: string, walletAddress: string, provider: ethers.providers.Provider): Promise<SessionInfo> {
+export async function getOnChainSessionData(credibleAccountModuleAddress: string, sessionKey: string, walletAddress: string, provider: ethers.providers.Provider): Promise<OnChainSessionData> {
     const credibleAccountModuleInstance = new ethers.Contract(credibleAccountModuleAddress, CredibleAccountModuleABI.abi, provider);
-    const sessionData = await credibleAccountModuleInstance['sessionData(address,address)'](sessionKey, walletAddress);
-     const sessionInfo: SessionInfo = {
-        sessionKey: sessionData.sessionKey,
-        validAfter: Number(sessionData.validAfter),
-        validUntil: Number(sessionData.validUntil),
-        live: sessionData.live
+    const sessionDataTuple = await credibleAccountModuleInstance['sessionData(address,address)'](sessionKey, walletAddress);
+     const onchainSessionData: OnChainSessionData = {
+        sessionKey: sessionDataTuple.sessionKey,
+        validAfter: Number(sessionDataTuple.validAfter),
+        validUntil: Number(sessionDataTuple.validUntil),
+        live: sessionDataTuple.live
     };
 
-    return sessionInfo;
+    return onchainSessionData;
 }
 
 export async function getCumulativeLocked(credibleAccountModuleAddress: string, walletAddress: string, provider: ethers.providers.Provider): Promise<ethers.BigNumber> {

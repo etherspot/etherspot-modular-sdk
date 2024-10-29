@@ -1,6 +1,6 @@
-import { EtherspotBundler, ModularSdk } from '../../src';
+import { EtherspotBundler, ModularSdk } from '../../../src';
 import * as dotenv from 'dotenv';
-import { getSessionData, getSessionKeysByWalletAddress, sessionKeyExists } from './utils/credible-session-utils';
+import { getOnChainSessionData, getSessionKeysByWalletAddress, sessionKeyExists } from '../utils/credible-session-utils';
 
 dotenv.config();
 
@@ -27,12 +27,12 @@ async function main() {
   console.log('Session Keys: ', sessionKeys);  
 
   const sessionKey: string = '0xb849845BE2c6D56624C3648bf9a9fC4CEb31FB2B';
-  const sessionData = await getSessionData(credibleAccountModuleAddress, sessionKey, etherspotWalletAddress, modularSdk.provider);
-  console.log('Session Data: ', sessionData);
+  const onchainSessionData = await getOnChainSessionData(credibleAccountModuleAddress, sessionKey, etherspotWalletAddress, modularSdk.provider);
+  console.log('onchain Session Data: ', onchainSessionData);
 }
 
 
-// npx ts-node examples/credible-account-lock/query-credible-module.ts
+// npx ts-node examples/credible-account-lock/test/test-query-credible-module.ts
 main()
   .catch(console.error)
   .finally(() => process.exit());

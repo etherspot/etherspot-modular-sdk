@@ -1,35 +1,45 @@
 import { EtherspotBundler, ModularSdk } from '../../../src';
 import * as dotenv from 'dotenv';
-import { MODULE_TYPE, sleep } from '../../../src/sdk/common';
-import { getHookMultiPlexerInitDataWithCredibleAccountModule } from '../utils/hook-multiplexer-utils';
+import { sleep } from '../../../src/sdk/common';
+import { printOp } from '../../../src/sdk/common/OperationUtils';
+import { removeCredibleModuleHook } from '../hook/remove-credible-module-hook';
+import { addCredibleModuleHook } from '../hook/add-credible-module-hook';
 
 dotenv.config();
 
-// npx ts-node examples/hooks/install-hook-multiplexer.ts
+// npx ts-node examples/credible-account-lock/test/test-add-credible-module-hook.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
   // initializating sdk...
   const modularSdk = new ModularSdk({ privateKey: process.env.WALLET_PRIVATE_KEY },
-     { chainId: Number(process.env.CHAIN_ID),
-       bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey) })
+    {
+      chainId: Number(process.env.CHAIN_ID),
+      bundlerProvider: new EtherspotBundler(Number(process.env.CHAIN_ID), bundlerApiKey)
+    })
 
   console.log('address: ', modularSdk.state.EOAAddress);
 
-  const hookMultiplexerAddress = '0x370e65e9921f4F496e0Cb7c454B24DdC632eC862';
-  const credibleAccountModuleAddress = '0x5F43Bf56479f09E0aD5ed22117e8b66fe2429746';
+  const hookMultiplexerAddress = '0x2dBAD2872B6AaBd4dD3cd1EEf7A46A241BaA6CAe';
+  const credibleAccountModuleAddress = '0xf47600D8dFef04269206255E53c8926519BA09a9';
 
   // get address of EtherspotWallet
   const address: string = await modularSdk.getCounterFactualAddress();
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const hookMultiplexerInitData = await getHookMultiPlexerInitDataWithCredibleAccountModule(credibleAccountModuleAddress);
+  const removeCredibleModuleHookData = await addCredibleModuleHook(modularSdk, hookMultiplexerAddress, credibleAccountModuleAddress);
 
-  console.log(`Hook Multiplexer Init Data: ${hookMultiplexerInitData}`);
+  await modularSdk.addUserOpsToBatch({
+    to: hookMultiplexerAddress,
+    data: removeCredibleModuleHookData
+  });
 
-  const uoHash = await modularSdk.installModule(MODULE_TYPE.HOOK, hookMultiplexerAddress, hookMultiplexerInitData);
-  
+  console.log('UserOpsBatch: ', modularSdk.userOpsBatchRequest);
+  const op = await modularSdk.estimate();
+  console.log(`Estimated UserOp: ${printOp(op)}`);
+  const uoHash = await modularSdk.send(op);
+
   console.log(`UserOpHash: ${uoHash}`);
 
   // get transaction hash...

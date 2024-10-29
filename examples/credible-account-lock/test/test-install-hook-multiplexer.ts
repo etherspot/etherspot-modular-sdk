@@ -1,11 +1,11 @@
-import { EtherspotBundler, ModularSdk } from '../../src';
+import { EtherspotBundler, ModularSdk } from '../../../src';
 import * as dotenv from 'dotenv';
-import { MODULE_TYPE, sleep } from '../../src/sdk/common';
-import { getHookMultiPlexerInitDataWithCredibleAccountModule } from './utils/hook-multiplexer-utils';
+import { sleep } from '../../../src/sdk/common';
+import { installHookMultiplexer } from '../hook/install-hook-multiplexer';
 
 dotenv.config();
 
-// npx ts-node examples/hooks/add-credible-module-hook.ts
+// npx ts-node examples/test/test-install-hook-multiplexer.ts
 async function main() {
   const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
 
@@ -24,11 +24,7 @@ async function main() {
 
   console.log('\x1b[33m%s\x1b[0m', `EtherspotWallet address: ${address}`);
 
-  const hookMultiplexerInitData = await getHookMultiPlexerInitDataWithCredibleAccountModule(credibleAccountModuleAddress);
-
-  console.log(`Hook Multiplexer Init Data: ${hookMultiplexerInitData}`);
-
-  const uoHash = await modularSdk.installModule(MODULE_TYPE.HOOK, hookMultiplexerAddress, hookMultiplexerInitData);
+  const uoHash = await installHookMultiplexer(modularSdk, hookMultiplexerAddress, credibleAccountModuleAddress);
   
   console.log(`UserOpHash: ${uoHash}`);
 
@@ -43,6 +39,7 @@ async function main() {
   console.log('\x1b[33m%s\x1b[0m', `Transaction Receipt: `, userOpsReceipt);
 }
 
-// main()
-//   .catch(console.error)
-//   .finally(() => process.exit());
+
+main()
+  .catch(console.error)
+  .finally(() => process.exit());
