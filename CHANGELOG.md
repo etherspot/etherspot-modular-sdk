@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.0-alpha.0] - 2024-10-30
+### New
+- HookMultiplexer feature added to Modular Wallet contracts
+### Breaking Changes
+- Wallet factory and bootstrap contract address updates to support HookMultiplexer
+- Supported chains - Sepolia, Base sepolia, Amoy, Arbitrum sepolia, Optimism sepolia
+
 ## [2.0.7] - 2024-10-23
 ### Breaking Changes
 - `signMessage` fn now adds accountAddress on personal_sign methods
