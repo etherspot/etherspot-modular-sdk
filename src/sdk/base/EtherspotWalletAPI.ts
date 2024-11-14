@@ -279,30 +279,29 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
     const accountAddress = await this.getAccountAddress();
 
-    const nonceKey =  key.eq(0) ? this.multipleOwnerECDSAValidatorAddress : key.toHexString();
+    const nonceKey = key.eq(0) ? this.multipleOwnerECDSAValidatorAddress : key.toHexString();
 
-    console.log(`nonceKey: ${nonceKey}`);
+    if (!this.checkAccountPhantom()) {
 
-    let isAddressIndicator = false;
+      let isAddressIndicator = false;
 
-    try {
-      isAddressIndicator = isAddress(getAddress(nonceKey), { strict: true });
-      console.log(`isAddressIndicator: ${isAddressIndicator}`);
-      if (!isAddressIndicator) {
+      try {
+        isAddressIndicator = isAddress(getAddress(nonceKey), { strict: true });
+        if (!isAddressIndicator) {
+          throw new Error(`Invalid Validator Address: ${nonceKey}`);
+        }
+        else {
+          const isModuleInstalled = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceKey);
+          if (!isModuleInstalled) {
+            throw new Error(`Validator: ${nonceKey} is not installed in the wallet`);
+          }
+        }
+
+      } catch (e) {
+        console.error(`Error caught : ${e}`);
         throw new Error(`Invalid Validator Address: ${nonceKey}`);
       }
-      else {
-        const isModuleInstalled = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceKey);
-        if(!isModuleInstalled) {
-          throw new Error(`Validator: ${nonceKey} is not installed in the wallet`);
-        }
-      }
-
-    } catch (e) {
-      console.error(`Error caught : ${e}`);
-      throw new Error(`Invalid Validator Address: ${nonceKey}`);
     }
-
 
     const dummyKey = getAddress(nonceKey) + "00000000"
 

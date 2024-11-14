@@ -236,7 +236,7 @@ export abstract class BaseAccountAPI {
     }
     const accountAddress = await this.getAccountAddress();
     const senderAddressCode = await this.publicClient.getCode({ address: accountAddress as Hex })
-    if (senderAddressCode.length > 2) {
+    if (senderAddressCode && senderAddressCode.length > 2) {
       this.isPhantom = false;
     }
     return this.isPhantom;
