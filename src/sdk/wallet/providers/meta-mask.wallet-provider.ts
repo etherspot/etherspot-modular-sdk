@@ -52,7 +52,7 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     super('MetaMask');
   }
 
-  async signMessage(message: string, validatorAddress?: string): Promise<string> {
+  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
     const msg = getBytes(hashMessage(getBytes(message)));
     const signature = await this.sendRequest('personal_sign', [
       msg,
