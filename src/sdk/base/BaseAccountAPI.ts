@@ -149,7 +149,7 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.services.walletService.signMessage(message, this.validatorAddress, this.accountAddress);
+    return this.services.walletService.signMessage(message, this.validatorAddress);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -528,7 +528,7 @@ export abstract class BaseAccountAPI {
   }
 
   async signTypedData(message: MessagePayload) {
-    return this.services.walletService.signTypedData(message, this.accountAddress);
+    return this.services.walletService.signTypedData(message, this.validatorAddress);
   }
 
   async eth_requestAccounts(): Promise<string[]> {

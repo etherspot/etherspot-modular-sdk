@@ -1,8 +1,8 @@
 import { BytesLike } from 'ethers';
-import { Deferrable, hashMessage, toUtf8Bytes } from 'ethers/lib/utils';
+import { Deferrable, hashMessage } from 'ethers/lib/utils';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { MessagePayload, TransactionRequest, TransactionResponse, WalletConnectConnector } from './interfaces';
-import { toHex } from '../../common';
+import { getBytes, toHex } from '../../common';
 
 export class WalletConnectWalletProvider extends DynamicWalletProvider {
   static connect(connector: WalletConnectConnector): WalletConnectWalletProvider {
@@ -34,11 +34,11 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: BytesLike, validatorAddress?: string, accountAddress?: string): Promise<string> {
-    const msg = toUtf8Bytes(hashMessage(toUtf8Bytes(message.toString())));
+  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
+    const msg = getBytes(hashMessage(getBytes(message)));
     const response = await this.connector.signPersonalMessage([
       msg, //
-      accountAddress ?? this.address,
+      this.address,
     ]);
 
     return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
@@ -52,15 +52,17 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
+  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
+    if (msg.types.EIP712Domain) delete msg.types.EIP712Domain; // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
+
     const signature = await this.connector.request({
-      method: 'eth_signTypedData', 
+      method: 'eth_signTypedData_v4',
       params: [
-        accountAddress ?? this.address,
+        this.address,
         msg
       ]
     })
-    return typeof signature === 'string' ? signature : null;
+    return typeof signature === 'string' ? validatorAddress + signature.slice(2) : null;
   }
 
   async eth_requestAccounts(): Promise<string[]> {

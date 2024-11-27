@@ -1,5 +1,6 @@
 import { utils } from 'ethers';
 import { registerDecorator, ValidationOptions } from 'class-validator';
+import { isBytesLike } from 'ethers/lib/utils';
 
 export function IsBytesLike(options: ValidationOptions & { acceptText?: boolean } = {}) {
   return (object: any, propertyName: string) => {
@@ -28,7 +29,7 @@ export function IsBytesLike(options: ValidationOptions & { acceptText?: boolean 
                   break;
 
                 case 'object':
-                  result = Array.isArray(value) && value.every((value) => typeof value === 'number');
+                  result = isBytesLike(value);
                   break;
               }
             }
