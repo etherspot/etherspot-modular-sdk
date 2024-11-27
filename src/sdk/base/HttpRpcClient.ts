@@ -14,14 +14,11 @@ const debug = Debug('aa.rpc');
 
 export class HttpRpcClient {
   private readonly publicClient: PublicClient;
-  private readonly walletClient: WalletClient;
   initializing: Promise<void>;
 
-  constructor(readonly bundlerUrl: string, readonly entryPointAddress: string, readonly chainId: number, walletClient: WalletClient, publicClient: PublicClient) {
+  constructor(readonly bundlerUrl: string, readonly entryPointAddress: string, readonly chainId: number, publicClient: PublicClient) {
     try {
       this.publicClient = publicClient;
-      this.walletClient = walletClient;
-
       this.initializing = this.validateChainId();
     } catch (err) {
       if (err.message.includes('failed response'))
@@ -57,7 +54,7 @@ export class HttpRpcClient {
   async getVerificationGasInfo(tx: BaseAccountUserOperationStruct): Promise<any> {
     const hexifiedUserOp = deepHexlify(await resolveProperties(tx));
     try {
-      const response = await this.walletClient.request({
+      const response = await this.publicClient.request({
         method: 'eth_estimateUserOperationGas',
         params: [hexifiedUserOp, this.entryPointAddress]
       });
@@ -96,7 +93,7 @@ export class HttpRpcClient {
       const jsonRequestData: [BaseAccountUserOperationStruct, string] = [hexifiedUserOp, this.entryPointAddress];
       await this.printUserOperation('eth_sendUserOperation', jsonRequestData);
       //return await this.userOpJsonRpcProvider.send('eth_sendUserOperation', [hexifiedUserOp, this.entryPointAddress]);
-      return await this.walletClient.request({
+      return await this.publicClient.request({
         method: 'eth_sendUserOperation',
         params: [hexifiedUserOp, this.entryPointAddress]
       });
@@ -113,7 +110,7 @@ export class HttpRpcClient {
       //   hexifiedUserOps,
       //   this.entryPointAddress,
       // ]);
-      return await this.walletClient.request({
+      return await this.publicClient.request({
         method: 'eth_sendAggregatedUserOperation',
         params: [hexifiedUserOps, this.entryPointAddress]
       });

@@ -5,11 +5,12 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { Account, Hex, parseAbi, parseAbiItem, PublicClient, TypedDataParameter, WalletClient } from 'viem';
+import { Hex, parseAbi, parseAbiItem, PublicClient, TypedDataParameter } from 'viem';
 import { entryPointAbi } from '../common/abis';
 import { resolveProperties, Result } from '../common/utils';
 import { BaseAccountUserOperationStruct, FeeData, TypedDataField } from '../types/user-operation-types';
 import { BigNumber, BigNumberish } from '../types/bignumber';
+import { WalletProviderLike, WalletService } from '../wallet';
 
 export interface BaseApiParams {
   entryPointAddress: string;
@@ -17,9 +18,8 @@ export interface BaseApiParams {
   overheads?: Partial<GasOverheads>;
   factoryAddress?: string;
   optionsLike?: SdkOptions;
-  walletClient?: WalletClient;
   publicClient?: PublicClient;
-  account?: Account;
+  wallet: WalletProviderLike;
 }
 
 export interface UserOpResult {
@@ -54,8 +54,7 @@ export abstract class BaseAccountAPI {
   paymasterAPI?: PaymasterAPI;
   factoryUsed: Factory;
   factoryAddress?: string;
-  account: Account;
-  walletClient: WalletClient;
+  wallet: WalletProviderLike;
   publicClient: PublicClient;
 
   /**
@@ -75,6 +74,12 @@ export abstract class BaseAccountAPI {
 
     this.services = {
       networkService: new NetworkService(chainId),
+      walletService: new WalletService(
+        params.wallet,
+        { provider: rpcProviderUrl},
+        bundlerProvider.url,
+        chainId
+      ),
     };
 
     this.context = new Context(this.services);
@@ -84,10 +89,8 @@ export abstract class BaseAccountAPI {
     // super();
     this.overheads = params.overheads;
     this.entryPointAddress = params.entryPointAddress;
-    this.account = params.account;
     this.accountAddress = params.accountAddress;
     this.factoryAddress = params.factoryAddress;
-    this.walletClient = params.walletClient;
     this.publicClient = params.publicClient;
   }
 
@@ -122,11 +125,7 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.walletClient.signMessage(
-      {
-        account: this.account,
-        message: message as Hex
-      });
+    return this.services.walletService.signMessage(message as Hex);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -364,7 +363,6 @@ export abstract class BaseAccountAPI {
     const deployerAddress = initCode.substring(0, 42);
     const deployerCallData = '0x' + initCode.substring(42);
     const estimatedGas = await this.publicClient.estimateGas({
-      account: this.account,
       to: deployerAddress,
       data: deployerCallData,
     });
@@ -552,13 +550,11 @@ export abstract class BaseAccountAPI {
       }
     });
 
-    return await this.walletClient.signTypedData({
+    return await this.services.walletService.signTypedData({
       domain,
-      types: typesObject,
+      types: typesObject as any,
       primaryType: 'UserOperation',
-      account: this.account,
       message
-    });
-    //return this.services.walletService.signTypedData(types, message, this.accountAddress);
+    })
   }
 }

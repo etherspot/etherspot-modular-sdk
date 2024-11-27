@@ -2,7 +2,7 @@ import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
-import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, type WalletClient, type PublicClient, toBytes, concat, getAddress, pad, toHex, isBytes, Account, Hex, isAddress } from 'viem';
+import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, concat, getAddress, pad, toHex, isBytes, Hex, isAddress } from 'viem';
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
 import { getInstalledModules } from '../common/getInstalledModules';
 import { getViemAddress } from '../common/utils/viem-utils';
@@ -56,11 +56,10 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
     this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
     this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
-    this.eoaAddress = this.account.address;
   }
 
   getEOAAddress(): Hex {
-    return this.account.address
+    return this.services.walletService.EOAAddress;
   }
 
   async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<boolean> {
@@ -364,14 +363,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async signUserOpHash(userOpHash: string): Promise<string> {
-    const userOpHashHex = userOpHash as Hex;
-    const signature = await this.walletClient.signMessage(
-      {
-        message: { raw: userOpHashHex },
-        account: this.account,
-      });
-
-    return signature;
+    return await this.services.walletService.signUserOp(userOpHash as Hex);
   }
 
   async encodeBatch(targets: string[], values: BigNumberish[], datas: string[]): Promise<string> {

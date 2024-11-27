@@ -5,7 +5,7 @@ import { erc20Abi } from "../../src/sdk/common/abis";
 
 export const generateModularSDKInstance = (privateKey: string, chainId: number, bundlerApiKey: string, index: number = 0) => {
     const modularSdk = new ModularSdk(
-        { privateKey: privateKey },
+        privateKey,
         {
             chainId: chainId,
             bundlerProvider: new EtherspotBundler(chainId, bundlerApiKey),

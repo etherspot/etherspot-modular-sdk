@@ -1,5 +1,6 @@
 import { ErrorSubject, Service } from './common';
 import { NetworkService } from './network';
+import { WalletService } from './wallet';
 
 export class Context {
   readonly error$ = new ErrorSubject();
@@ -9,6 +10,7 @@ export class Context {
   constructor(
     readonly services: {
       networkService: NetworkService;
+      walletService: WalletService;
     },
   ) {
     const items = [...Object.values(services)];
