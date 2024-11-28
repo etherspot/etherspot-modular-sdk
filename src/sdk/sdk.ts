@@ -101,7 +101,7 @@ export class ModularSdk {
       factoryAddress: walletFactoryAddress,
       predefinedAccountAddress: accountAddress,
       index: this.index,
-      wallet: walletProvider,
+      wallet: walletConnectProvider ?? walletProvider,
       publicClient: this.publicClient,
     });
     this.bundler = new HttpRpcClient(

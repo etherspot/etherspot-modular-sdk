@@ -513,20 +513,15 @@ export abstract class BaseAccountAPI {
   async getUserOpReceipt(userOpHash: string, timeout = 30000, interval = 5000): Promise<string | null> {
     const endtime = Date.now() + timeout;
     while (Date.now() < endtime) {
-      const filter = await this.publicClient.createEventFilter({
-        address: this.entryPointAddress as Hex,
-        args: {
-          userOpHash: userOpHash as Hex,
-        },
-        event: parseAbiItem('event UserOperationEvent(bytes32 indexed userOpHash,address indexed sender,address indexed paymaster,uint256 nonce,bool success,uint256 actualGasCost,uint256 actualGasUsed)'),
-      })
-
-      const logs = await this.publicClient.getFilterLogs({ filter })
-
-      if (logs && logs.length > 0) {
-        return logs[0].transactionHash;
+      const response = await this.publicClient.request({
+        method: 'eth_getUserOperationReceipt',
+        params: [
+          userOpHash
+        ]
+      }) as any;
+      if (response && response.receipt !== undefined) {
+        return response.receipt.transactionHash;
       }
-
       await new Promise((resolve) => setTimeout(resolve, interval));
     }
 
