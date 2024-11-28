@@ -1,8 +1,8 @@
 import { BytesLike } from 'ethers';
-import { Deferrable, hashMessage, toUtf8Bytes } from 'ethers/lib/utils';
+import { Deferrable, hashMessage } from 'ethers/lib/utils';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { MessagePayload, TransactionRequest, TransactionResponse } from './interfaces';
-import { toHex } from '../../common';
+import { getBytes, toHex } from '../../common';
 
 declare const window: Window & {
   ethereum: {
@@ -52,11 +52,11 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     super('MetaMask');
   }
 
-  async signMessage(message: BytesLike, validatorAddress?: string, accountAddress?: string): Promise<string> {
-    const msg = toUtf8Bytes(hashMessage(toUtf8Bytes(message.toString())))
+  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
+    const msg = getBytes(hashMessage(getBytes(message)));
     const signature = await this.sendRequest('personal_sign', [
       msg,
-      accountAddress ?? this.address, //
+      this.address, //
     ]);
     return validatorAddress + signature.slice(2);
   }
@@ -68,12 +68,14 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     ])
   }
 
-  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
+  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
+    if (msg.types.EIP712Domain) delete msg.types.EIP712Domain; // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
+
     const signature = await this.sendRequest('eth_signTypedData_v4', [
-      accountAddress ?? this.address,
+      this.address,
       msg
     ])
-    return signature
+    return validatorAddress + signature.slice(2)
   }
 
   async eth_requestAccounts(address: string): Promise<string[]> {

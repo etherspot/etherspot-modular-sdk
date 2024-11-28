@@ -12,9 +12,9 @@ export interface WalletProvider {
   readonly networkName?: NetworkNames;
   readonly networkName$?: UniqueSubject<NetworkNames>;
 
-  signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string>;
+  signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string>;
 
-  signMessage(message: BytesLike, validatorAddress?: string, accountAddress?: string): Promise<string>;
+  signMessage(message: BytesLike, validatorAddress?: string): Promise<string>;
 
   signUserOp(message: BytesLike): Promise<string>;
 
@@ -112,7 +112,7 @@ export type TransactionRequest = {
 // https://eips.ethereum.org/EIPS/eip-712#parameters
 export type MessagePayload = {
   domain: EIP712Domain;
-  types: { EIP712Domain: EIP712Domain } & Record<string, TypedProperty[]>;
+  types: Record<string, TypedProperty[]>;
   primaryType: string;
   message: any;
 };
