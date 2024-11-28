@@ -2,14 +2,13 @@ import { Factory, PaymasterApi, SdkOptions } from './interfaces';
 import { Network } from "./network";
 import {
   BatchUserOpsRequest, Exception, getGasFee,
-  getViemAccount, getViemAddress, MODULE_TYPE,
+  getViemAddress, MODULE_TYPE,
   onRampApiKey, openUrl, UserOperation, UserOpsRequest
 } from "./common";
 import {
   EthereumProvider,
   isWalletConnectProvider,
   isWalletProvider,
-  MessagePayload,
   WalletConnect2WalletProvider,
   WalletProviderLike
 } from './wallet';
@@ -20,8 +19,8 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { Account, formatEther, Hex, http, TypedDataParameter, type PublicClient, type WalletClient } from 'viem';
-import { getPublicClient, getWalletClientFromAccount } from './common/utils/viem-utils';
+import { Account, formatEther, Hex, http, TypedDataParameter, type PublicClient } from 'viem';
+import { getPublicClient } from './common/utils/viem-utils';
 import { BigNumber, BigNumberish } from './types/bignumber';
 
 /**
@@ -139,13 +138,13 @@ export class ModularSdk {
    * @return Promise<string>
    */
   async signMessage(dto: SignMessageDto): Promise<string> {
-    const { message } = await validateDto(dto, SignMessageDto);
+    await validateDto(dto, SignMessageDto);
 
     await this.etherspotWallet.require({
       network: false,
     });
 
-    return await this.etherspotWallet.services.walletService.signMessage(message as Hex);
+    return await this.etherspotWallet.signMessage(dto);
   }
 
   getEOAAddress(): Hex {

@@ -1,4 +1,4 @@
-import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http } from 'viem';
+import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http, concat, Address } from 'viem';
 import { MessagePayload, WalletProvider } from './interfaces';
 import { privateKeyToAccount } from 'viem/accounts';
 import { Networks } from '../../network/constants';
@@ -22,22 +22,28 @@ export class KeyWalletProvider implements WalletProvider {
     this.address = address;
   }
 
-  async signMessage(message: Hex): Promise<string> {
-    return this.wallet.signMessage({
-      message: message,
-      account: this.wallet.account
-    });
+  async signMessage(message: Hex, validatorAddress?: Address): Promise<string> {
+    return concat([
+      validatorAddress,
+      await this.wallet.signMessage({
+        message: message,
+        account: this.wallet.account
+      })]
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async signTypedData(msg: MessagePayload): Promise<string> {
-    return this.wallet.signTypedData({
-      domain: msg.domain,
-      types: msg.types,
-      message: msg.message,
-      account: this.wallet.account,
-      primaryType: ''
-    });
+  async signTypedData(msg: MessagePayload, validatorAddress?: Address): Promise<string> {
+    return concat([
+      validatorAddress,
+      await this.wallet.signTypedData({
+        domain: msg.domain,
+        types: msg.types,
+        message: msg.message,
+        account: this.wallet.account,
+        primaryType: ''
+      })
+    ])
   }
 
   async eth_requestAccounts(address: string): Promise<string[]> {

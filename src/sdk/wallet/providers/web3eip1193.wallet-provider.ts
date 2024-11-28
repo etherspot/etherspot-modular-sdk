@@ -46,9 +46,9 @@ export class Web3eip1193WalletProvider extends DynamicWalletProvider {
     return result;
   }
 
-  async signMessage(message: Hex, validatorAddress?: string, accountAddress?: string): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
     const msg = toBytes(hashMessage(message.toString()))
-    const signature = await this.sendRequest('personal_sign', [msg, accountAddress ?? this.address]);
+    const signature = await this.sendRequest('personal_sign', [msg, this.address]);
     return validatorAddress + signature.slice(2)
   }
 
@@ -56,12 +56,12 @@ export class Web3eip1193WalletProvider extends DynamicWalletProvider {
     return this.sendRequest('personal_sign', [toHex(message), this.address]);
   }
 
-  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
+  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
     const signature = await this.sendRequest('eth_signTypedData', [
-      accountAddress ?? this.address,
+      this.address,
       msg
     ])
-    return signature;
+    return validatorAddress + signature.slice(2);
   }
 
   async eth_requestAccounts(): Promise<string[]> {

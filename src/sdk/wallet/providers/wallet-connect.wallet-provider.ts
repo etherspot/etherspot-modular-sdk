@@ -32,11 +32,11 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: Hex, validatorAddress?: string, accountAddress?: string): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
     const msg = toBytes(hashMessage(message.toString()));
     const response = await this.connector.signPersonalMessage([
       msg, //
-      accountAddress ?? this.address,
+      this.address,
     ]);
 
     return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
@@ -50,15 +50,15 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
+  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
     const signature = await this.connector.request({
       method: 'eth_signTypedData', 
       params: [
-        accountAddress ?? this.address,
+        this.address,
         msg
       ]
     })
-    return typeof signature === 'string' ? signature : null;
+    return typeof signature === 'string' ? validatorAddress + signature.slice(2) : null;
   }
 
   async eth_requestAccounts(): Promise<string[]> {

@@ -23,7 +23,7 @@ export abstract class DynamicWalletProvider implements WalletProvider {
 
   abstract signUserOp(message: Hex): Promise<string>;
 
-  abstract signTypedData(msg: MessagePayload): Promise<string>
+  abstract signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string>
 
   protected setAddress(address: string): void {
     this.address$.next(prepareAddress(address));

@@ -11,9 +11,9 @@ export interface WalletProvider {
   readonly networkName?: NetworkNames;
   readonly networkName$?: UniqueSubject<NetworkNames>;
 
-  signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string>;
+  signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string>;
 
-  signMessage(message: Hex, validatorAddress?: string, accountAddress?: string): Promise<string>;
+  signMessage(message: Hex, validatorAddress?: string): Promise<string>;
 
   signUserOp(message: Hex): Promise<string>;
 

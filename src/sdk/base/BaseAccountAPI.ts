@@ -11,6 +11,7 @@ import { resolveProperties, Result } from '../common/utils';
 import { BaseAccountUserOperationStruct, FeeData, TypedDataField } from '../types/user-operation-types';
 import { BigNumber, BigNumberish } from '../types/bignumber';
 import { WalletProviderLike, WalletService } from '../wallet';
+import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
 
 export interface BaseApiParams {
   entryPointAddress: string;
@@ -54,6 +55,7 @@ export abstract class BaseAccountAPI {
   paymasterAPI?: PaymasterAPI;
   factoryUsed: Factory;
   factoryAddress?: string;
+  validatorAddress?: string;
   wallet: WalletProviderLike;
   publicClient: PublicClient;
 
@@ -92,6 +94,7 @@ export abstract class BaseAccountAPI {
     this.accountAddress = params.accountAddress;
     this.factoryAddress = params.factoryAddress;
     this.publicClient = params.publicClient;
+    this.validatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
   }
 
   get error$(): ErrorSubject {
@@ -125,7 +128,7 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.services.walletService.signMessage(message as Hex);
+    return this.services.walletService.signMessage(message as Hex, this.validatorAddress);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -545,11 +548,14 @@ export abstract class BaseAccountAPI {
       }
     });
 
-    return await this.services.walletService.signTypedData({
-      domain,
-      types: typesObject as any,
-      primaryType: 'UserOperation',
-      message
-    })
+    return await this.services.walletService.signTypedData(
+      {
+        domain,
+        types: typesObject as any,
+        primaryType: 'UserOperation',
+        message
+      },
+      this.validatorAddress
+    )
   }
 }

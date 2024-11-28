@@ -1,4 +1,4 @@
-import { Hash, hashMessage, Hex, toBytes, toHex, TransactionReceipt, TransactionRequest } from 'viem';
+import { Hash, hashMessage, Hex, toBytes, toHex, TransactionRequest } from 'viem';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { EthereumProvider } from './interfaces';
 
@@ -28,11 +28,11 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: Hex, validatorAddress?: string, accountAddress?: string): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
     const msg = toBytes(hashMessage(message.toString()));
     const response = await this.provider.signer.request({
       method: 'personal_sign',
-      params: [msg, accountAddress ?? this.address],
+      params: [msg, this.address],
     });
 
     return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
@@ -45,15 +45,15 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     })
   }
 
-  async signTypedData(typedData: any, accountAddress?: string): Promise<string> {
+  async signTypedData(typedData: any, validatorAddress?: string): Promise<string> {
     const signature = await this.provider.signer.request({
       method: 'eth_signTypedData_v4', 
       params: [
-        accountAddress ?? this.address,
+        this.address,
         typedData
       ]
     })
-    return typeof signature === 'string' ? signature : null;
+    return typeof signature === 'string' ? validatorAddress + signature.slice(2) : null;
   }
 
   async eth_requestAccounts(address: string): Promise<string[]> {

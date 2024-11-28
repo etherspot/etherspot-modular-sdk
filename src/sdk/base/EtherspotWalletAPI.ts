@@ -1,6 +1,6 @@
 import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
-import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
+import { DEFAULT_BOOTSTRAP_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
 import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
 import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, concat, getAddress, pad, toHex, isBytes, Hex, isAddress } from 'viem';
 import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
@@ -47,7 +47,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   index: number;
   predefinedAccountAddress?: string;
   bootstrapAddress?: string;
-  multipleOwnerECDSAValidatorAddress?: string;
   eoaAddress: Hex;
 
   constructor(params: EtherspotWalletApiParams) {
@@ -55,7 +54,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.index = params.index ?? 0;
     this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
     this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
-    this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
   }
 
   public getEOAAddress(): Hex {
@@ -209,7 +207,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   }
 
   async getInitCodeData(): Promise<string> {
-    const validators: BootstrapConfig[] = makeBootstrapConfig(this.multipleOwnerECDSAValidatorAddress, '0x');
+    const validators: BootstrapConfig[] = makeBootstrapConfig(this.validatorAddress, '0x');
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
     const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
@@ -278,7 +276,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
   async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
     const accountAddress = await this.getAccountAddress();
 
-    const nonceKey = key.eq(0) ? this.multipleOwnerECDSAValidatorAddress : key.toHexString();
+    const nonceKey = key.eq(0) ? this.validatorAddress : key.toHexString();
 
     if (!this.checkAccountPhantom()) {
 
