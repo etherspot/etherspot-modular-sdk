@@ -1,21 +1,15 @@
-import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http } from 'viem';
+import { Hash, Hex, TransactionRequest, WalletClient } from 'viem';
 import { MessagePayload, WalletProvider } from './interfaces';
-import { privateKeyToAccount } from 'viem/accounts';
-import { Networks } from '../../network/constants';
 
-export class KeyWalletProvider implements WalletProvider {
-  readonly type = 'Key';
+export class WalletClientProvider implements WalletProvider {
+  readonly type = 'WalletClient';
   readonly address: string;
   readonly accountAddress: string;
 
   readonly wallet: WalletClient;
 
-  constructor(chainId: number, privateKey: string) {
-    this.wallet = createWalletClient({
-      account: privateKeyToAccount(privateKey as Hex),
-      chain: Networks[chainId].chain,
-      transport: http()
-    });
+  constructor(walletClient: WalletClient) {
+    this.wallet = walletClient
 
     const { address } = this.wallet.account;
 

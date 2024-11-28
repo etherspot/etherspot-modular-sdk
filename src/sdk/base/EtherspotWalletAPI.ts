@@ -58,7 +58,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.multipleOwnerECDSAValidatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
   }
 
-  getEOAAddress(): Hex {
+  public getEOAAddress(): Hex {
     return this.services.walletService.EOAAddress;
   }
 

@@ -79,4 +79,4 @@ export declare class EthereumProvider {
   readonly isWalletConnect?: boolean;
 }
 
-export type WalletProviderLike = string | WalletLike | WalletProvider | EthereumProvider;
+export type WalletProviderLike = string | WalletLike | WalletProvider | EthereumProvider | WalletClient;

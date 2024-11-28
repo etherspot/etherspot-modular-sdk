@@ -1,4 +1,4 @@
-import { hashMessage, Hex, toBytes, toHex, TransactionReceipt, TransactionRequest } from 'viem';
+import { Hash, hashMessage, Hex, toBytes, toHex, TransactionReceipt, TransactionRequest } from 'viem';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { EthereumProvider } from './interfaces';
 
@@ -64,7 +64,7 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     return [address];
   }
 
-  async eth_sendTransaction(transaction: TransactionRequest): Promise<TransactionReceipt> {
+  async eth_sendTransaction(transaction: TransactionRequest): Promise<Hash> {
     return this.provider.signer.request({method: 'eth_sendTransaction', params: [
       transaction
     ]});

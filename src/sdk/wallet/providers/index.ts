@@ -7,3 +7,4 @@ export * from './wallet-connect.wallet-provider';
 export * from './wallet-connect-2.wallet-provider';
 export * from './web3.wallet-provider';
 export * from './web3eip1193.wallet-provider';
+export * from "./walletClient.provider";

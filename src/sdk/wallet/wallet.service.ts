@@ -1,20 +1,17 @@
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Service, ObjectSubject } from '../common';
-import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload } from './providers';
+import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload, WalletClientProvider } from './providers';
 import { Wallet, WalletOptions } from './interfaces';
 import {
   WalletClient,
-  PublicClient,
-  createPublicClient,
   Hex,
   TransactionRequest,
-  Hash
+  Hash,
 } from 'viem';
 
 export class WalletService extends Service {
-  readonly wallet$ = new ObjectSubject<WalletClient>();
-  readonly EOAAddress$: Observable<string>;
+  readonly wallet$ = new ObjectSubject<Wallet>();
   readonly rpcBundlerUrl: string;
   readonly chainId: number;
 
@@ -29,7 +26,6 @@ export class WalletService extends Service {
     super();
     this.rpcBundlerUrl = rpcUrl;
     this.chainId = chain;
-    this.EOAAddress$ = this.wallet$.observeKey('address');
   }
 
   get wallet(): Wallet {
@@ -37,17 +33,11 @@ export class WalletService extends Service {
   }
 
   get EOAAddress(): Hex | null {
-    return this.wallet ? this.wallet.address : null;
+    return this.wallet ? this.wallet.address as Hex : null;
   }
 
   get walletProvider(): WalletProvider {
     return this.provider ? this.provider : null;
-  }
-
-  getWalletProvider(): PublicClient {
-    return createPublicClient({
-      transport: http(this.rpcUrl || this.rpcBundlerUrl)
-    });
   }
 
   async signMessage(message: Hex, validatorAddress?: string, accountAddress?: string): Promise<string> {
@@ -85,17 +75,17 @@ export class WalletService extends Service {
         case 'object': {
           const { privateKey } = providerLike as WalletLike;
           const walletLike = providerLike as WalletClient;
-          const isNotJsonRpcProvider = walletLike.chain !== undefined;
-          if (privateKey && isNotJsonRpcProvider) {
-            provider = new KeyWalletProvider(privateKey);
+          const isNotViemClient = walletLike?.account.address === undefined;
+          if (privateKey && isNotViemClient) {
+            provider = new KeyWalletProvider(this.chainId, privateKey);
           } else {
-            provider = providerLike as WalletProvider;
+            provider = new WalletClientProvider(walletLike);
           }
           break;
         }
 
         case 'string':
-          provider = new KeyWalletProvider(providerLike);
+          provider = new KeyWalletProvider(this.chainId, providerLike);
           break;
       }
     }
