@@ -1,7 +1,6 @@
 import { bsc, gnosis } from "viem/chains";
 import { NetworkConfig } from ".";
 import * as Chain from "viem/chains";
-import { ancient8, base, optimism, optimismSepolia, ancient8Sepolia } from "./ViemChainConfig";
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -88,7 +87,6 @@ export const Networks: {
 } = {
   [84532]: {
     chainId: 84532,
-    // TODO fix to identify this chainId
     chain: Chain.baseSepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/84532',
     contracts: {
@@ -114,7 +112,7 @@ export const Networks: {
   [10]: {
     chainId: 10,
     // compilation issue for optimism mainnet, using custom config
-    chain: optimism,
+    chain: Chain.optimism,
     bundler: 'https://rpc.etherspot.io/v2/10',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -283,7 +281,7 @@ export const Networks: {
   },
   [8453]: {
     chainId: 8453,
-    chain: base,
+    chain: Chain.base,
     bundler: 'https://rpc.etherspot.io/v2/8453',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -403,8 +401,7 @@ export const Networks: {
   },
   [11155420]: {
     chainId: 11155420,
-    // TODO check compilation issue
-    chain: optimismSepolia,
+    chain: Chain.optimismSepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155420',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -416,7 +413,7 @@ export const Networks: {
   },
   [28122024]: {
     chainId: 28122024,
-    chain: ancient8Sepolia,
+    chain: Chain.ancient8Sepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/28122024',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
@@ -428,7 +425,7 @@ export const Networks: {
   },
   [888888888]: {
     chainId: 888888888,
-    chain: ancient8,
+    chain: Chain.ancient8,
     bundler: 'https://rpc.etherspot.io/v2/888888888',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
