@@ -1,28 +1,27 @@
-import { BehaviorSubject } from 'rxjs';
-import { BigNumber, BigNumberish, Contract, ethers, providers } from 'ethers';
-import { Deferrable } from 'ethers/lib/utils';
-import { State, StateService } from './state';
+import { Factory, PaymasterApi, SdkOptions } from './interfaces';
+import { Network } from "./network";
+import {
+  BatchUserOpsRequest, Exception, getGasFee,
+  getViemAddress, MODULE_TYPE,
+  onRampApiKey, openUrl, UserOperation, UserOpsRequest
+} from "./common";
 import {
   EthereumProvider,
   isWalletConnectProvider,
   isWalletProvider,
-  MessagePayload,
-  TransactionRequest,
-  TransactionResponse,
   WalletConnect2WalletProvider,
   WalletProviderLike
 } from './wallet';
-import { Factory, PaymasterApi, SdkOptions } from './interfaces';
-import { Network } from "./network";
-import { BatchUserOpsRequest, Exception, getGasFee, MODULE_TYPE, onRampApiKey, openUrl, UserOperation, UserOpsRequest } from "./common";
 import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
 import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
-import { ModularEtherspotWallet } from './contracts/src/ERC7579/wallet';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
+import { Account, formatEther, Hex, http, TypedDataParameter, type PublicClient } from 'viem';
+import { getPublicClient } from './common/utils/viem-utils';
+import { BigNumber, BigNumberish } from './types/bignumber';
 
 /**
  * Modular-Sdk
@@ -36,11 +35,13 @@ export class ModularSdk {
   private chainId: number;
   private factoryUsed: Factory;
   private index: number;
+  private publicClient: PublicClient;
+  private account: Account;
+  private providerUrl: string;
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
   constructor(walletProvider: WalletProviderLike, optionsLike: SdkOptions) {
-
     let walletConnectProvider;
     if (isWalletConnectProvider(walletProvider)) {
       walletConnectProvider = new WalletConnect2WalletProvider(walletProvider as EthereumProvider);
@@ -63,12 +64,22 @@ export class ModularSdk {
     }
 
     this.factoryUsed = optionsLike.factoryWallet ?? Factory.ETHERSPOT;
-
-    let provider;
+    let viemClientUrl = '';
 
     if (rpcProviderUrl) {
-      provider = new providers.JsonRpcProvider(rpcProviderUrl);
-    } else provider = new providers.JsonRpcProvider(optionsLike.bundlerProvider.url);
+      viemClientUrl = rpcProviderUrl;
+    } else {
+      viemClientUrl = optionsLike.bundlerProvider.url;
+    }
+
+    this.providerUrl = viemClientUrl;
+
+    this.publicClient = getPublicClient({
+      chainId: chainId,
+      transport: http(
+        viemClientUrl
+      )
+    }) as PublicClient;
 
     let entryPointAddress = '', walletFactoryAddress = '';
     if (Networks[chainId]) {
@@ -82,26 +93,22 @@ export class ModularSdk {
 
     if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
     if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
+    this.account = this.account;
     this.etherspotWallet = new EtherspotWalletAPI({
-      provider,
-      walletProvider: walletConnectProvider ?? walletProvider,
       optionsLike,
       entryPointAddress,
       factoryAddress: walletFactoryAddress,
       predefinedAccountAddress: accountAddress,
       index: this.index,
-    })
-    this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId);
-  }
-
-
-  // exposes
-  get state(): StateService {
-    return this.etherspotWallet.services.stateService;
-  }
-
-  get state$(): BehaviorSubject<State> {
-    return this.etherspotWallet.services.stateService.state$;
+      wallet: walletConnectProvider ?? walletProvider,
+      publicClient: this.publicClient,
+    });
+    this.bundler = new HttpRpcClient(
+      optionsLike.bundlerProvider.url,
+      entryPointAddress,
+      chainId,
+      this.publicClient
+    );
   }
 
   get supportedNetworks(): Network[] {
@@ -115,6 +122,14 @@ export class ModularSdk {
     this.etherspotWallet.context.destroy();
   }
 
+  getPublicClient(): PublicClient {
+    return this.publicClient;
+  }
+
+  getProviderUrl(): string {
+    return this.providerUrl;
+  }
+
   // wallet
 
   /**
@@ -123,13 +138,17 @@ export class ModularSdk {
    * @return Promise<string>
    */
   async signMessage(dto: SignMessageDto): Promise<string> {
-    const { message } = await validateDto(dto, SignMessageDto);
+    await validateDto(dto, SignMessageDto);
 
     await this.etherspotWallet.require({
       network: false,
     });
 
-    return this.etherspotWallet.services.walletService.signMessage(message);
+    return await this.etherspotWallet.signMessage(dto);
+  }
+
+  getEOAAddress(): Hex {
+    return this.etherspotWallet.getEOAAddress();
   }
 
   async getCounterFactualAddress(): Promise<string> {
@@ -156,13 +175,13 @@ export class ModularSdk {
 
     const tx: TransactionDetailsForUserOp = {
       target: this.userOpsBatch.to,
-      values: this.userOpsBatch.value,  
+      values: this.userOpsBatch.value,
       data: this.userOpsBatch.data,
       dummySignature: dummySignature,
       ...gasDetails,
     }
 
-    const gasInfo = await this.getGasFee()
+    const gasInfo = await this.getGasFee();
 
     const partialtx = await this.etherspotWallet.createUnsignedUserOp({
       ...tx,
@@ -202,7 +221,7 @@ export class ModularSdk {
       if (!callGasLimit)
         partialtx.callGasLimit = expectedCallGasLimit;
       else if (BigNumber.from(callGasLimit).lt(expectedCallGasLimit))
-          throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
+        throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
     }
 
     return partialtx;
@@ -213,7 +232,7 @@ export class ModularSdk {
     const version = await this.bundler.getBundlerVersion();
     if (version && version.includes('skandha'))
       return this.bundler.getSkandhaGasPrice();
-    return getGasFee(this.etherspotWallet.provider as providers.JsonRpcProvider);
+    return getGasFee(this.publicClient);
   }
 
   async send(userOp: any, isUserOpAlreadySigned = false) {
@@ -222,37 +241,24 @@ export class ModularSdk {
   }
 
   async signTypedData(
-    message: MessagePayload
+    domain: any,
+    DataFields: TypedDataParameter[],
+    message: any
   ) {
-    return this.etherspotWallet.signTypedData(message);
-  }
-
-  async eth_requestAccounts(): Promise<string[]>{
-    return this.etherspotWallet.eth_requestAccounts();
-  }
-
-  async eth_accounts(): Promise<string[]> {
-    return this.etherspotWallet.eth_accounts();
-  }
-
-  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
-    return this.etherspotWallet.eth_sendTransaction(transaction);
-  }
-
-  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
-    return this.etherspotWallet.eth_signTransaction(transaction);
+    return this.etherspotWallet.signTypedData(domain, DataFields, message);
   }
 
   async getNativeBalance() {
     if (!this.etherspotWallet.accountAddress) {
       await this.getCounterFactualAddress();
     }
-    const balance = await this.etherspotWallet.provider.getBalance(this.etherspotWallet.accountAddress);
-    return ethers.utils.formatEther(balance);
+    const balance = await this.publicClient.getBalance({ address: getViemAddress(this.etherspotWallet.accountAddress) });
+    return formatEther(balance);
   }
 
   async getUserOpReceipt(userOpHash: string) {
-    return this.bundler.getUserOpsReceipt(userOpHash);
+    //return this.bundler.getUserOpsReceipt(userOpHash);
+    return await this.etherspotWallet.getUserOpReceipt(userOpHash);
   }
 
   async getUserOpHash(userOp: UserOperation) {
@@ -273,10 +279,6 @@ export class ModularSdk {
     this.userOpsBatch.to = [];
     this.userOpsBatch.data = [];
     this.userOpsBatch.value = [];
-  }
-
-  async getAccountContract(): Promise<ModularEtherspotWallet | Contract> {
-    return this.etherspotWallet._getAccountContract();
   }
 
   async isModuleInstalled(moduleTypeId: MODULE_TYPE, module: string): Promise<boolean> {
@@ -335,6 +337,11 @@ export class ModularSdk {
     const verificationGasLimit = BigNumber.from(await userOp.verificationGasLimit);
     const preVerificationGas = BigNumber.from(await userOp.preVerificationGas);
     return callGasLimit.add(verificationGasLimit).add(preVerificationGas);
+  }
+
+  async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
+    const nonce = await this.etherspotWallet.getNonce(key);
+    return nonce;
   }
 
   async getFiatOnRamp(params: OnRamperDto = {}) {

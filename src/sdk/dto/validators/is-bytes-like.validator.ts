@@ -1,6 +1,5 @@
-import { utils } from 'ethers';
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { isBytesLike } from 'ethers/lib/utils';
+import { isHex } from 'viem';
 
 export function IsBytesLike(options: ValidationOptions & { acceptText?: boolean } = {}) {
   return (object: any, propertyName: string) => {
@@ -11,7 +10,7 @@ export function IsBytesLike(options: ValidationOptions & { acceptText?: boolean 
         ...options,
       },
       name: 'IsBytesLike',
-      target: object.constructor,
+      target: object ? object.constructor : undefined,
       constraints: [],
       validator: {
         validate(value: any): boolean {
@@ -24,12 +23,12 @@ export function IsBytesLike(options: ValidationOptions & { acceptText?: boolean 
                   if (options.acceptText) {
                     result = true;
                   } else {
-                    result = utils.isHexString(value) && value.length % 2 === 0;
+                    result = isHex(value) && value.length % 2 === 0;
                   }
                   break;
 
                 case 'object':
-                  result = isBytesLike(value);
+                  result = isHex(value);
                   break;
               }
             }

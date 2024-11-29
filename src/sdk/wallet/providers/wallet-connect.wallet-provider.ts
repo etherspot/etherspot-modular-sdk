@@ -1,8 +1,6 @@
-import { BytesLike } from 'ethers';
-import { Deferrable, hashMessage } from 'ethers/lib/utils';
+import { Hash, hashMessage, Hex, toBytes, toHex, TransactionRequest } from 'viem';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { MessagePayload, TransactionRequest, TransactionResponse, WalletConnectConnector } from './interfaces';
-import { getBytes, toHex } from '../../common';
+import { MessagePayload, WalletConnectConnector } from './interfaces';
 
 export class WalletConnectWalletProvider extends DynamicWalletProvider {
   static connect(connector: WalletConnectConnector): WalletConnectWalletProvider {
@@ -34,8 +32,8 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
-    const msg = getBytes(hashMessage(getBytes(message)));
+  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
+    const msg = toBytes(hashMessage(message.toString()));
     const response = await this.connector.signPersonalMessage([
       msg, //
       this.address,
@@ -44,7 +42,7 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
     return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
   }
 
-  async signUserOp(message: BytesLike): Promise<string> {
+  async signUserOp(message: Hex): Promise<string> {
     return this.connector.signPersonalMessage([
       toHex(message), //
       this.address,
@@ -53,8 +51,6 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
-    if (msg.types.EIP712Domain) delete msg.types.EIP712Domain; // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
-
     const signature = await this.connector.request({
       method: 'eth_signTypedData_v4',
       params: [
@@ -73,7 +69,7 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
     return [this.address];
   }
 
-  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+  async eth_sendTransaction(transaction: TransactionRequest): Promise<Hash> {
     return this.connector.request({method: 'eth_sendTransaction', params: [
       transaction
     ]});

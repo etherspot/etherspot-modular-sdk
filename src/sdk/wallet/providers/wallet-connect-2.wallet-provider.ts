@@ -1,8 +1,6 @@
-import { BytesLike } from 'ethers';
-import { Deferrable, hashMessage } from 'ethers/lib/utils';
+import { Hash, hashMessage, Hex, toBytes, toHex, TransactionRequest } from 'viem';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { EthereumProvider, TransactionRequest, TransactionResponse } from './interfaces';
-import { toHex, getBytes } from '../../common';
+import { EthereumProvider } from './interfaces';
 
 export class WalletConnect2WalletProvider extends DynamicWalletProvider {
   constructor(readonly provider: EthereumProvider) {
@@ -30,8 +28,8 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
-    const msg = getBytes(hashMessage(getBytes(message)));
+  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
+    const msg = toBytes(hashMessage(message.toString()));
     const response = await this.provider.signer.request({
       method: 'personal_sign',
       params: [msg, this.address],
@@ -40,7 +38,7 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
   }
 
-  async signUserOp(message: BytesLike): Promise<string> {
+  async signUserOp(message: Hex): Promise<string> {
     return this.provider.signer.request({
       method: 'personal_sign',
       params: [toHex(message), this.address],
@@ -48,8 +46,6 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
   }
 
   async signTypedData(typedData: any, validatorAddress?: string): Promise<string> {
-    if (typedData.types.EIP712Domain) delete typedData.types.EIP712Domain; // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
-    
     const signature = await this.provider.signer.request({
       method: 'eth_signTypedData_v4',
       params: [
@@ -68,7 +64,7 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     return [address];
   }
 
-  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+  async eth_sendTransaction(transaction: TransactionRequest): Promise<Hash> {
     return this.provider.signer.request({method: 'eth_sendTransaction', params: [
       transaction
     ]});

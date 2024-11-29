@@ -1,48 +1,46 @@
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Deferrable } from 'ethers/lib/utils';
-import { BytesLike, ethers, providers, Wallet as EtherWallet } from 'ethers';
 import { Service, ObjectSubject } from '../common';
-import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload, TransactionRequest, TransactionResponse } from './providers';
+import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload, WalletClientProvider } from './providers';
 import { Wallet, WalletOptions } from './interfaces';
+import {
+  WalletClient,
+  Hex,
+  TransactionRequest,
+  Hash,
+} from 'viem';
 
 export class WalletService extends Service {
   readonly wallet$ = new ObjectSubject<Wallet>();
-  readonly EOAAddress$: Observable<string>;
   readonly rpcBundlerUrl: string;
   readonly chainId: number;
 
   provider: WalletProvider;
 
-  constructor(private providerLike: WalletProviderLike, private options: WalletOptions, public rpcUrl: string, public chain: number) {
+  constructor(
+    private providerLike: WalletProviderLike,
+    private options: WalletOptions,
+    public rpcUrl: string,
+    public chain: number
+  ) {
     super();
     this.rpcBundlerUrl = rpcUrl;
     this.chainId = chain;
-    this.EOAAddress$ = this.wallet$.observeKey('address');
   }
 
   get wallet(): Wallet {
     return this.wallet$.value;
   }
 
-  get etherWallet(): Partial<EtherWallet> {
-    return this.wallet$.value;
-  }
-
-  get EOAAddress(): string {
-    return this.wallet ? this.wallet.address : null;
+  get EOAAddress(): Hex | null {
+    return this.wallet ? this.wallet.address as Hex : null;
   }
 
   get walletProvider(): WalletProvider {
     return this.provider ? this.provider : null;
   }
 
-  getWalletProvider(): providers.JsonRpcProvider {
-    if (this.rpcUrl) return new ethers.providers.JsonRpcProvider(this.rpcUrl)
-    return new ethers.providers.JsonRpcProvider(this.rpcBundlerUrl)
-  }
-
-  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
     return this.provider ? this.provider.signMessage(message, validatorAddress) : null;
   }
 
@@ -58,7 +56,7 @@ export class WalletService extends Service {
     return this.provider ? this.provider.eth_accounts(address) : null;
   }
 
-  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+  async eth_sendTransaction(transaction: TransactionRequest): Promise<Hash> {
     return this.provider ? this.provider.eth_sendTransaction(transaction) : null;
   }
 
@@ -66,7 +64,7 @@ export class WalletService extends Service {
     return this.provider ? this.provider.eth_signTransaction(transaction) : null;
   }
 
-  async signUserOp(message: BytesLike): Promise<string> {
+  async signUserOp(message: Hex): Promise<string> {
     return this.provider ? this.provider.signUserOp(message) : null;
   }
 
@@ -76,18 +74,18 @@ export class WalletService extends Service {
       switch (typeof providerLike) {
         case 'object': {
           const { privateKey } = providerLike as WalletLike;
-          const walletLike = providerLike as EtherWallet;
-          const isNotJsonRpcProvider = walletLike.provider?.constructor.name !== 'JsonRpcProvider';
-          if (privateKey && isNotJsonRpcProvider) {
-            provider = new KeyWalletProvider(privateKey);
+          const walletLike = providerLike as WalletClient;
+          const isNotViemClient = walletLike?.account.address === undefined;
+          if (privateKey && isNotViemClient) {
+            provider = new KeyWalletProvider(this.chainId, privateKey);
           } else {
-            provider = providerLike as WalletProvider;
+            provider = new WalletClientProvider(walletLike);
           }
           break;
         }
 
         case 'string':
-          provider = new KeyWalletProvider(providerLike);
+          provider = new KeyWalletProvider(this.chainId, providerLike);
           break;
       }
     }

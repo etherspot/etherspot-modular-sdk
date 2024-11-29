@@ -1,29 +1,33 @@
-import { ethers } from "ethers";
 // @ts-ignore
 import config from "../../config.json";
-import { ModularSdk } from "../../../src";
 import { printOp } from "../../../src/sdk/common/OperationUtils";
 import { sleep } from "../../../src/sdk/common";
+import { generateModularSDKInstance } from "../../helpers/sdk-helper";
+import { encodeFunctionData, getAddress, parseAbi } from "viem";
+import { erc721Abi } from "../../../src/sdk/common/abis";
 
 export default async function main(
   tknid: number,
   t: string,
   tkn: string,
 ) {
-  const modularSdk = new ModularSdk({ privateKey: config.signingKey }, { chainId: config.chainId, rpcProviderUrl: config.rpcProviderUrl })
-
+  const modularSdk = generateModularSDKInstance(
+    config.signingKey,
+    config.chainId,
+    config.rpcProviderUrl
+  );
   const address = await modularSdk.getCounterFactualAddress();
 
   const tokenId = tknid;
-  const tokenAddress = ethers.utils.getAddress(tkn);
-  const to = ethers.utils.getAddress(t);
+  const tokenAddress = getAddress(tkn);
+  const to = getAddress(t);
   console.log(`Transferring NFT ${tknid} ...`);
 
-  const erc721Interface = new ethers.utils.Interface([
-    'function safeTransferFrom(address _from, address _to, uint256 _tokenId)'
-  ])
-
-  const erc721Data = erc721Interface.encodeFunctionData('safeTransferFrom', [address, to, tokenId]);
+  const erc721Data = encodeFunctionData({
+    abi: parseAbi(erc721Abi),
+    functionName: 'safeTransferFrom',
+    args: [address, to, tokenId]
+  });
 
   // clear the transaction batch
   await modularSdk.clearUserOpsFromBatch();

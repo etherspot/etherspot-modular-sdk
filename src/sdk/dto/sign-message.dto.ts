@@ -1,4 +1,4 @@
-import { BytesLike } from 'ethers';
+import { BytesLike } from '../common/types';
 import { IsBytesLike } from './validators';
 
 export class SignMessageDto {

@@ -1,8 +1,6 @@
-import { BytesLike } from 'ethers';
-import { Deferrable, hashMessage } from 'ethers/lib/utils';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { MessagePayload, TransactionRequest, TransactionResponse } from './interfaces';
-import { getBytes, toHex } from '../../common';
+import { MessagePayload } from './interfaces';
+import { TransactionRequest, Hex, toBytes, hashMessage, toHex, Hash } from 'viem';
 
 declare const window: Window & {
   ethereum: {
@@ -52,16 +50,16 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     super('MetaMask');
   }
 
-  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
-    const msg = getBytes(hashMessage(getBytes(message)));
+  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
+    const msg = toBytes(hashMessage(message.toString()))
     const signature = await this.sendRequest('personal_sign', [
       msg,
-      this.address, //
+      this.address,
     ]);
     return validatorAddress + signature.slice(2);
   }
 
-  async signUserOp(message: BytesLike): Promise<string> {
+  async signUserOp(message: Hex): Promise<string> {
     return this.sendRequest('personal_sign', [
       toHex(message),
       this.address
@@ -69,13 +67,11 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
   }
 
   async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
-    if (msg.types.EIP712Domain) delete msg.types.EIP712Domain; // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
-
     const signature = await this.sendRequest('eth_signTypedData_v4', [
       this.address,
       msg
     ])
-    return validatorAddress + signature.slice(2)
+    return validatorAddress + signature.slice(2);
   }
 
   async eth_requestAccounts(address: string): Promise<string[]> {
@@ -86,7 +82,7 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     return [address];
   }
 
-  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
+  async eth_sendTransaction(transaction: TransactionRequest): Promise<Hash> {
     return this.sendRequest('eth_sendTransaction', [
       transaction
     ]);

@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0] - 2024-11-29
+### Breaking Changes
+- library migration for `ethers` to `viem` migration
+
 ## [2.0.8] - 2024-10-23
 ### Breaking Changes
 - `signMessage` & `signTypedData` fn now adds validatorAddress on the resultant signature to make it work for deployed smart wallets

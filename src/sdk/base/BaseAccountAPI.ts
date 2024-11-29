@@ -1,26 +1,26 @@
-import { ethers, BigNumber, BigNumberish } from 'ethers';
-import { BehaviorSubject } from 'rxjs';
-import { Provider } from '@ethersproject/providers';
-import { IEntryPoint, EntryPoint__factory } from '../contracts';
-import { UserOperationStruct } from '../contracts/account-abstraction/contracts/core/BaseAccount';
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
-import { Deferrable, resolveProperties } from 'ethers/lib/utils';
 import { PaymasterAPI } from './PaymasterAPI';
 import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
 import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
-import { Factory, isWalletProvider, MessagePayload, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, State, StateService, TransactionRequest, TransactionResponse, validateDto, WalletProviderLike, WalletService } from '..';
+import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
+import { Hex, parseAbi, parseAbiItem, PublicClient, TypedDataParameter } from 'viem';
+import { entryPointAbi } from '../common/abis';
+import { resolveProperties, Result } from '../common/utils';
+import { BaseAccountUserOperationStruct, FeeData, TypedDataField } from '../types/user-operation-types';
+import { BigNumber, BigNumberish } from '../types/bignumber';
+import { WalletProviderLike, WalletService } from '../wallet';
 import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
 
 export interface BaseApiParams {
-  provider: Provider;
   entryPointAddress: string;
   accountAddress?: string;
   overheads?: Partial<GasOverheads>;
-  walletProvider: WalletProviderLike;
   factoryAddress?: string;
   optionsLike?: SdkOptions;
+  publicClient?: PublicClient;
+  wallet: WalletProviderLike;
 }
 
 export interface UserOpResult {
@@ -49,10 +49,6 @@ export abstract class BaseAccountAPI {
 
   context: Context;
 
-  // entryPoint connected to "zero" address. allowed to make static calls (e.g. to getSenderAddress)
-  protected readonly entryPointView: IEntryPoint;
-
-  provider: Provider;
   overheads?: Partial<GasOverheads>;
   entryPointAddress: string;
   accountAddress?: string;
@@ -60,6 +56,8 @@ export abstract class BaseAccountAPI {
   factoryUsed: Factory;
   factoryAddress?: string;
   validatorAddress?: string;
+  wallet: WalletProviderLike;
+  publicClient: PublicClient;
 
   /**
    * base constructor.
@@ -69,13 +67,8 @@ export abstract class BaseAccountAPI {
 
     const optionsLike = params.optionsLike;
 
-    if (!isWalletProvider(params.walletProvider)) {
-      throw new Exception('Invalid wallet provider');
-    }
-
     const {
       chainId, //
-      stateStorage,
       rpcProviderUrl,
       factoryWallet,
       bundlerProvider,
@@ -83,39 +76,25 @@ export abstract class BaseAccountAPI {
 
     this.services = {
       networkService: new NetworkService(chainId),
-      walletService: new WalletService(params.walletProvider, {
-        provider: rpcProviderUrl,
-      }, bundlerProvider.url, chainId),
-      stateService: new StateService({
-        storage: stateStorage,
-      }),
+      walletService: new WalletService(
+        params.wallet,
+        { provider: rpcProviderUrl},
+        bundlerProvider.url,
+        chainId
+      ),
     };
 
     this.context = new Context(this.services);
 
     this.factoryUsed = factoryWallet;
-    
+
     // super();
-    this.provider = params.provider;
     this.overheads = params.overheads;
     this.entryPointAddress = params.entryPointAddress;
     this.accountAddress = params.accountAddress;
     this.factoryAddress = params.factoryAddress;
-
+    this.publicClient = params.publicClient;
     this.validatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
-
-    // factory "connect" define the contract address. the contract "connect" defines the "from" address.
-    this.entryPointView = EntryPoint__factory.connect(params.entryPointAddress, params.provider).connect(
-      ethers.constants.AddressZero,
-    );
-  }
-
-  get state(): StateService {
-    return this.services.stateService;
-  }
-
-  get state$(): BehaviorSubject<State> {
-    return this.services.stateService.state$;
   }
 
   get error$(): ErrorSubject {
@@ -131,7 +110,7 @@ export abstract class BaseAccountAPI {
   /**
    * destroys
    */
-   destroy(): void {
+  destroy(): void {
     this.context.destroy();
   }
 
@@ -149,7 +128,7 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.services.walletService.signMessage(message, this.validatorAddress);
+    return this.services.walletService.signMessage(message as Hex, this.validatorAddress);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -171,17 +150,6 @@ export abstract class BaseAccountAPI {
       wallet: true,
       ...options,
     };
-
-    const { walletService } = this.services;
-
-    if (options.network && !walletService.chainId) {
-      throw new Exception('Unknown network');
-    }
-
-    if (options.wallet && !walletService.EOAAddress) {
-      throw new Exception('Require wallet');
-    }
-
   }
 
   getNetworkChainId(networkName: NetworkNames = null): number {
@@ -225,7 +193,7 @@ export abstract class BaseAccountAPI {
 
   async init(): Promise<this> {
     // check EntryPoint is deployed at given address
-    if ((await this.provider.getCode(this.entryPointAddress)) === '0x') {
+    if ((await this.publicClient.getCode({ address: this.entryPointAddress as Hex })) === '0x') {
       throw new Error(`entryPoint not deployed at ${this.entryPointAddress}`);
     }
 
@@ -268,8 +236,9 @@ export abstract class BaseAccountAPI {
       // already deployed. no need to check anymore.
       return this.isPhantom;
     }
-    const senderAddressCode = await this.provider.getCode(this.getAccountAddress());
-    if (senderAddressCode.length > 2) {
+    const accountAddress = await this.getAccountAddress();
+    const senderAddressCode = await this.publicClient.getCode({ address: accountAddress as Hex })
+    if (senderAddressCode && senderAddressCode.length > 2) {
       this.isPhantom = false;
     }
     return this.isPhantom;
@@ -283,7 +252,15 @@ export abstract class BaseAccountAPI {
     // use entryPoint to query account address (factory can provide a helper method to do the same, but
     // this method attempts to be generic
     try {
-      await this.entryPointView.callStatic.getSenderAddress(initCode);
+      //await this.entryPointView.callStatic.getSenderAddress(initCode);
+      await this.publicClient.simulateContract({
+        address: this.entryPointAddress as Hex,
+        abi: parseAbi(entryPointAbi),
+        functionName: 'getSenderAddress',
+        args: [initCode]
+      });
+
+
     } catch (e: any) {
       return e.errorArgs.sender;
     }
@@ -313,7 +290,7 @@ export abstract class BaseAccountAPI {
    * should cover cost of putting calldata on-chain, and some overhead.
    * actual overhead depends on the expected bundle size
    */
-  async getPreVerificationGas(userOp: Partial<UserOperationStruct>): Promise<number> {
+  async getPreVerificationGas(userOp: Partial<BaseAccountUserOperationStruct>): Promise<number> {
     const p = await resolveProperties(userOp);
     return calcPreVerificationGas(p, this.overheads);
   }
@@ -321,7 +298,7 @@ export abstract class BaseAccountAPI {
   /**
    * ABI-encode a user operation. used for calldata cost estimation
    */
-  packUserOp(userOp: NotPromise<UserOperationStruct>): string {
+  packUserOp(userOp: NotPromise<BaseAccountUserOperationStruct>): string {
     return packUserOp(userOp, false);
   }
 
@@ -365,8 +342,7 @@ export abstract class BaseAccountAPI {
    */
   async getUserOpHash(userOp: UserOperation): Promise<string> {
     const op = await resolveProperties(userOp);
-    const provider = this.services.walletService.getWalletProvider();
-    const chainId = await provider.getNetwork().then((net) => net.chainId);
+    const chainId = await this.publicClient.getChainId();
     return getUserOpHash(op, this.entryPointAddress, chainId);
   }
 
@@ -389,8 +365,23 @@ export abstract class BaseAccountAPI {
     if (initCode == null || initCode === '0x') return 0;
     const deployerAddress = initCode.substring(0, 42);
     const deployerCallData = '0x' + initCode.substring(42);
-    const provider = this.services.walletService.getWalletProvider();
-    return await provider.estimateGas({ to: deployerAddress, data: deployerCallData });
+    const estimatedGas = await this.publicClient.estimateGas({
+      to: deployerAddress,
+      data: deployerCallData,
+    });
+
+    return estimatedGas ? estimatedGas : 0;
+  }
+
+  async getFeeData(): Promise<FeeData> {
+
+    const maxFeePerGasResponse = await this.publicClient.estimateFeesPerGas();
+    const maxPriorityFeePerGasResponse = await this.publicClient.estimateMaxPriorityFeePerGas();
+
+    const maxFeePerGas = maxFeePerGasResponse ? BigNumber.from(maxFeePerGasResponse.maxFeePerGas) : null;
+    const maxPriorityFeePerGas = maxPriorityFeePerGasResponse ? BigNumber.from(maxPriorityFeePerGasResponse.toString()) : null;
+
+    return { maxFeePerGas, maxPriorityFeePerGas};
   }
 
   /**
@@ -408,15 +399,14 @@ export abstract class BaseAccountAPI {
 
     let { maxFeePerGas, maxPriorityFeePerGas } = info;
     if (maxFeePerGas == null || maxPriorityFeePerGas == null) {
-      const provider = this.services.walletService.getWalletProvider();
       let feeData: any = {};
       try {
-        feeData = await provider.getFeeData();
+        feeData = await this.getFeeData();
       } catch (err) {
         console.warn(
           "getGas: eth_maxPriorityFeePerGas failed, falling back to legacy gas price."
         );
-        const gas = await provider.getGasPrice();
+        const gas = await this.publicClient.getGasPrice();
 
         feeData = { maxFeePerGas: gas, maxPriorityFeePerGas: gas };
       }
@@ -433,7 +423,7 @@ export abstract class BaseAccountAPI {
         sender: await this.getAccountAddress(),
         nonce: await this.getNonce(key),
         factory: this.factoryAddress,
-        factoryData : '0x' + factoryData.substring(42),
+        factoryData: '0x' + factoryData.substring(42),
         callData,
         callGasLimit,
         verificationGasLimit,
@@ -444,7 +434,7 @@ export abstract class BaseAccountAPI {
       partialUserOp = {
         sender: await this.getAccountAddress(),
         nonce: await this.getNonce(key),
-        factoryData : '0x' + factoryData.substring(42),
+        factoryData: '0x' + factoryData.substring(42),
         callData,
         callGasLimit,
         verificationGasLimit,
@@ -492,7 +482,6 @@ export abstract class BaseAccountAPI {
       userOp.paymasterPostOpGasLimit = paymasterData.result.paymasterPostOpGasLimit;
     }
     const userOpHash = await this.getUserOpHash(userOp);
-
     const signature = await this.signUserOpHash(userOpHash);
     return {
       ...userOp,
@@ -518,32 +507,46 @@ export abstract class BaseAccountAPI {
   async getUserOpReceipt(userOpHash: string, timeout = 30000, interval = 5000): Promise<string | null> {
     const endtime = Date.now() + timeout;
     while (Date.now() < endtime) {
-      const events = await this.entryPointView.queryFilter(this.entryPointView.filters.UserOperationEvent(userOpHash));
-      if (events.length > 0) {
-        return events[0].transactionHash;
+      const response = await this.publicClient.request({
+        method: 'eth_getUserOperationReceipt',
+        params: [
+          userOpHash
+        ]
+      }) as any;
+      if (response && response.receipt !== undefined) {
+        return response.receipt.transactionHash;
       }
       await new Promise((resolve) => setTimeout(resolve, interval));
     }
+
     return null;
   }
 
-  async signTypedData(message: MessagePayload) {
-    return this.services.walletService.signTypedData(message, this.validatorAddress);
-  }
+  // TODO fix signTypedData
+  async signTypedData(domain: any, types: TypedDataParameter[], message: any) {
 
-  async eth_requestAccounts(): Promise<string[]> {
-    return this.services.walletService.eth_requestAccounts(this.accountAddress)
-  }
+    // Step 1: Initialize an empty object for the transformed types
+    const typesObject: { [key: string]: TypedDataParameter[] } = {};
 
-  async eth_accounts(): Promise<string[]> {
-    return this.services.walletService.eth_requestAccounts(this.accountAddress)
-  }
+    // Step 2: Iterate over the types array to transform it into the required format
+    types.forEach((type) => {
+      if (!typesObject[type.type]) {
+        // Step 3a: If the type does not exist, create it with the current item as the first element
+        typesObject[type.type] = [type];
+      } else {
+        // Step 3b: If the type exists, append the current item to its array
+        typesObject[type.type].push(type);
+      }
+    });
 
-  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
-    return this.services.walletService.eth_sendTransaction(transaction);
-  }
-
-  async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
-    return this.services.walletService.eth_signTransaction(transaction);
+    return await this.services.walletService.signTypedData(
+      {
+        domain,
+        types: typesObject as any,
+        primaryType: 'UserOperation',
+        message
+      },
+      this.validatorAddress
+    )
   }
 }

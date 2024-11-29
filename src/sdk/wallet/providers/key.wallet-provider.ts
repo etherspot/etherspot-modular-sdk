@@ -1,35 +1,49 @@
-import { Wallet, BytesLike } from 'ethers';
-import { Deferrable, hashMessage } from 'ethers/lib/utils';
-import { MessagePayload, TransactionRequest, TransactionResponse, WalletProvider } from './interfaces';
-import { getBytes } from '../../common';
+import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http, concat, Address } from 'viem';
+import { MessagePayload, WalletProvider } from './interfaces';
+import { privateKeyToAccount } from 'viem/accounts';
+import { Networks } from '../../network/constants';
 
 export class KeyWalletProvider implements WalletProvider {
   readonly type = 'Key';
   readonly address: string;
   readonly accountAddress: string;
 
-  readonly wallet: Wallet;
+  readonly wallet: WalletClient;
 
-  constructor(privateKey: string) {
-    this.wallet = new Wallet(privateKey);
+  constructor(chainId: number, privateKey: string) {
+    this.wallet = createWalletClient({
+      account: privateKeyToAccount(privateKey as Hex),
+      chain: Networks[chainId].chain,
+      transport: http()
+    });
 
-    const { address } = this.wallet;
+    const { address } = this.wallet.account;
 
     this.address = address;
   }
 
-  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
-    const msg = getBytes(hashMessage(getBytes(message)));
-    const signature = await this.wallet.signMessage(msg);
-    return validatorAddress + signature.slice(2)
+  async signMessage(message: Hex, validatorAddress?: Address): Promise<string> {
+    return concat([
+      validatorAddress,
+      await this.wallet.signMessage({
+        message: message,
+        account: this.wallet.account
+      })]
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
-    if (msg.types.EIP712Domain) delete msg.types.EIP712Domain; // https://github.com/ethers-io/ethers.js/issues/687#issuecomment-714069471
-
-    const signature = await this.wallet._signTypedData(msg.domain, msg.types, msg.message)
-    return validatorAddress + signature.slice(2);
+  async signTypedData(msg: MessagePayload, validatorAddress?: Address): Promise<string> {
+    return concat([
+      validatorAddress,
+      await this.wallet.signTypedData({
+        domain: msg.domain,
+        types: msg.types,
+        message: msg.message,
+        account: this.wallet.account,
+        primaryType: ''
+      })
+    ])
   }
 
   async eth_requestAccounts(address: string): Promise<string[]> {
@@ -40,16 +54,28 @@ export class KeyWalletProvider implements WalletProvider {
     return [address];
   }
 
-  async signUserOp(message: BytesLike): Promise<string> {
-    return this.wallet.signMessage(message);
+  async signUserOp(message: Hex): Promise<string> {
+    return this.wallet.signMessage({
+      message: { raw: message },
+      account: this.wallet.account
+    });
   }
 
-  async eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse> {
-    return this.wallet.sendTransaction(transaction);
+  async eth_sendTransaction(transaction: TransactionRequest): Promise<Hash> {
+    return this.wallet.sendTransaction({
+      ...transaction,
+      account: this.wallet.account,
+      chain: this.wallet.chain,
+      kzg: undefined
+    });
   }
 
   async eth_signTransaction(transaction: TransactionRequest): Promise<string> {
-    return this.wallet.signTransaction(transaction);
+    return this.wallet.signTransaction({
+      ...transaction,
+      account: this.wallet.account,
+      chain: this.wallet.chain,
+      kzg: undefined
+    });
   }
-
 }

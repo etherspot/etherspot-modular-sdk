@@ -1,7 +1,7 @@
-import { BytesLike, Deferrable } from 'ethers/lib/utils';
 import { NetworkNames, prepareNetworkName } from '../../network';
 import { prepareAddress, UniqueSubject } from '../../common';
-import { MessagePayload, TransactionRequest, TransactionResponse, WalletProvider } from './interfaces';
+import { MessagePayload, WalletProvider } from './interfaces';
+import { Hash, Hex, TransactionRequest } from 'viem';
 
 export abstract class DynamicWalletProvider implements WalletProvider {
   readonly address$ = new UniqueSubject<string>();
@@ -21,7 +21,7 @@ export abstract class DynamicWalletProvider implements WalletProvider {
 
   abstract signMessage(message: any, validatorAddress?: string): Promise<string>;
 
-  abstract signUserOp(message: BytesLike): Promise<string>;
+  abstract signUserOp(message: Hex): Promise<string>;
 
   abstract signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string>
 
@@ -37,7 +37,7 @@ export abstract class DynamicWalletProvider implements WalletProvider {
 
   abstract eth_accounts(address?: string): Promise<string[]>;
 
-  abstract eth_sendTransaction(transaction: Deferrable<TransactionRequest>): Promise<TransactionResponse>;
+  abstract eth_sendTransaction(transaction: TransactionRequest): Promise<Hash>;
 
   abstract eth_signTransaction(transaction: TransactionRequest): Promise<string>;
 }
