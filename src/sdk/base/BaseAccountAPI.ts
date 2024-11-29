@@ -373,7 +373,7 @@ export abstract class BaseAccountAPI {
     return estimatedGas ? estimatedGas : 0;
   }
 
-  async getViemFeeData(): Promise<FeeData> {
+  async getFeeData(): Promise<FeeData> {
     const block = await this.publicClient.getBlock();
     const gasPrice = await this.publicClient.getGasPrice();
     const gasPriceInDecimals = BigNumber.from(gasPrice);
@@ -410,7 +410,7 @@ export abstract class BaseAccountAPI {
     if (maxFeePerGas == null || maxPriorityFeePerGas == null) {
       let feeData: any = {};
       try {
-        feeData = await this.getViemFeeData();
+        feeData = await this.getFeeData();
       } catch (err) {
         console.warn(
           "getGas: eth_maxPriorityFeePerGas failed, falling back to legacy gas price."
