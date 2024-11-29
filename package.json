@@ -92,5 +92,8 @@
     "typedoc": "^0.17.8",
     "typescript": "5.5.3",
     "viem": "2.21.53"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "*"
   }
 }
