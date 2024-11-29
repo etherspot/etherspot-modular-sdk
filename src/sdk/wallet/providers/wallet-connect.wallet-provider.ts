@@ -52,7 +52,7 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
     const signature = await this.connector.request({
-      method: 'eth_signTypedData', 
+      method: 'eth_signTypedData_v4',
       params: [
         this.address,
         msg

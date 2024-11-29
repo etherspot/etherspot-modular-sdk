@@ -7,3 +7,4 @@ export * from './bignumber-utils';
 export * from './hashing-utils';
 export * from './json-utils';
 export * from './userop-utils';
+export * from './get-bytes';

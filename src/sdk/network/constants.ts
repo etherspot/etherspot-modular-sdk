@@ -1,7 +1,7 @@
 import { bsc, gnosis } from "viem/chains";
 import { NetworkConfig } from ".";
 import * as Chain from "viem/chains";
-import { ancient8, base, optimism, optimismSepolia, ancient8Sepolia, baseSepolia } from "./ViemChainConfig";
+import { ancient8, base, optimism, optimismSepolia, ancient8Sepolia } from "./ViemChainConfig";
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',

@@ -47,7 +47,7 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
 
   async signTypedData(typedData: any, validatorAddress?: string): Promise<string> {
     const signature = await this.provider.signer.request({
-      method: 'eth_signTypedData_v4', 
+      method: 'eth_signTypedData_v4',
       params: [
         this.address,
         typedData

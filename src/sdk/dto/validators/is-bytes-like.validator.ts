@@ -28,7 +28,7 @@ export function IsBytesLike(options: ValidationOptions & { acceptText?: boolean 
                   break;
 
                 case 'object':
-                  result = Array.isArray(value) && value.every((value) => typeof value === 'number');
+                  result = isHex(value);
                   break;
               }
             }

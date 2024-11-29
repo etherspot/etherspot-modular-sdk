@@ -1,6 +1,6 @@
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { MessagePayload } from './interfaces';
-import { TransactionReceipt, TransactionRequest, Hex, toBytes, hashMessage, toHex, Hash } from 'viem';
+import { TransactionRequest, Hex, toBytes, hashMessage, toHex, Hash } from 'viem';
 
 declare const window: Window & {
   ethereum: {

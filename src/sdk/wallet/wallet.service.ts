@@ -44,8 +44,8 @@ export class WalletService extends Service {
     return this.provider ? this.provider.signMessage(message, validatorAddress) : null;
   }
 
-  async signTypedData(msg: MessagePayload, accountAddress?: string): Promise<string> {
-    return this.provider ? this.provider.signTypedData(msg, accountAddress) : null;
+  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
+    return this.provider ? this.provider.signTypedData(msg, validatorAddress) : null;
   }
 
   async eth_requestAccounts(address?: string): Promise<string[]> {
