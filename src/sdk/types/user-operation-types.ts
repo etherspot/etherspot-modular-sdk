@@ -35,8 +35,6 @@ export interface TypedDataField {
 };
 
 export interface FeeData {
-    lastBaseFeePerGas: null | BigNumber;
     maxFeePerGas: null | BigNumber;
     maxPriorityFeePerGas: null | BigNumber;
-    gasPrice: null | BigNumber;
 }

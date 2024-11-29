@@ -374,23 +374,14 @@ export abstract class BaseAccountAPI {
   }
 
   async getFeeData(): Promise<FeeData> {
-    const block = await this.publicClient.getBlock();
-    const gasPrice = await this.publicClient.getGasPrice();
-    const gasPriceInDecimals = BigNumber.from(gasPrice);
 
-    let lastBaseFeePerGas = null, maxFeePerGas = null, maxPriorityFeePerGas = null;
+    const maxFeePerGasResponse = await this.publicClient.estimateFeesPerGas();
+    const maxPriorityFeePerGasResponse = await this.publicClient.estimateMaxPriorityFeePerGas();
 
-    if (block && block.baseFeePerGas) {
-      // We may want to compute this more accurately in the future,
-      // using the formula "check if the base fee is correct".
-      // See: https://eips.ethereum.org/EIPS/eip-1559
-      lastBaseFeePerGas = block.baseFeePerGas;
-      const baseFeePerGasAsBigNumber = BigNumber.from(block.baseFeePerGas);
-      maxPriorityFeePerGas = BigNumber.from("1500000000");
-      maxFeePerGas = baseFeePerGasAsBigNumber.mul(2).add(maxPriorityFeePerGas);
-    }
+    const maxFeePerGas = maxFeePerGasResponse ? BigNumber.from(maxFeePerGasResponse.maxFeePerGas) : null;
+    const maxPriorityFeePerGas = maxPriorityFeePerGasResponse ? BigNumber.from(maxPriorityFeePerGasResponse.toString()) : null;
 
-    return { lastBaseFeePerGas, maxFeePerGas, maxPriorityFeePerGas, gasPrice: gasPriceInDecimals };
+    return { maxFeePerGas, maxPriorityFeePerGas};
   }
 
   /**
