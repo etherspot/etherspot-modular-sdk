@@ -1,7 +1,7 @@
 import { bsc, gnosis } from "viem/chains";
 import { NetworkConfig } from ".";
 import * as Chain from "viem/chains";
-import { ancient8, base, optimism, optimismSepolia, ancient8Sepolia } from "./ViemChainConfig";
+import { ancient8, base, optimism, optimismSepolia, ancient8Sepolia, baseSepolia } from "./ViemChainConfig";
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -89,7 +89,7 @@ export const Networks: {
   [84532]: {
     chainId: 84532,
     // TODO fix to identify this chainId
-    chain: null,
+    chain: Chain.baseSepolia,
     bundler: 'https://testnet-rpc.etherspot.io/v2/84532',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
