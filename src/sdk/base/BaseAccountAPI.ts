@@ -5,12 +5,12 @@ import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
 import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '..';
 import { Context } from '../context';
 import { PaymasterResponse } from './VerifyingPaymasterAPI';
-import { Hex, parseAbi, parseAbiItem, PublicClient, TypedDataParameter } from 'viem';
+import { Hex, parseAbi, PublicClient } from 'viem';
 import { entryPointAbi } from '../common/abis';
-import { resolveProperties, Result } from '../common/utils';
-import { BaseAccountUserOperationStruct, FeeData, TypedDataField } from '../types/user-operation-types';
+import { resolveProperties } from '../common/utils';
+import { BaseAccountUserOperationStruct, FeeData } from '../types/user-operation-types';
 import { BigNumber, BigNumberish } from '../types/bignumber';
-import { WalletProviderLike, WalletService } from '../wallet';
+import { MessagePayload, WalletProviderLike, WalletService } from '../wallet';
 import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
 
 export interface BaseApiParams {
@@ -274,7 +274,7 @@ export abstract class BaseAccountAPI {
   async getInitCode(): Promise<string> {
     if (await this.checkAccountPhantom()) {
       return await this.getAccountInitCode();
-    }
+    } else console.log(await this.getAccountInitCode());
     return '0x';
   }
 
@@ -522,30 +522,9 @@ export abstract class BaseAccountAPI {
     return null;
   }
 
-  // TODO fix signTypedData
-  async signTypedData(domain: any, types: TypedDataParameter[], message: any) {
-
-    // Step 1: Initialize an empty object for the transformed types
-    const typesObject: { [key: string]: TypedDataParameter[] } = {};
-
-    // Step 2: Iterate over the types array to transform it into the required format
-    types.forEach((type) => {
-      if (!typesObject[type.type]) {
-        // Step 3a: If the type does not exist, create it with the current item as the first element
-        typesObject[type.type] = [type];
-      } else {
-        // Step 3b: If the type exists, append the current item to its array
-        typesObject[type.type].push(type);
-      }
-    });
-
+  async signTypedData(msg: MessagePayload) {
     return await this.services.walletService.signTypedData(
-      {
-        domain,
-        types: typesObject as any,
-        primaryType: 'UserOperation',
-        message
-      },
+      msg,
       this.validatorAddress
     )
   }

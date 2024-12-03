@@ -33,7 +33,7 @@ export class WalletConnectWalletProvider extends DynamicWalletProvider {
   }
 
   async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
-    const msg = toBytes(hashMessage(message.toString()));
+    const msg = toBytes(hashMessage({raw: toBytes(message)}))
     const response = await this.connector.signPersonalMessage([
       msg, //
       this.address,

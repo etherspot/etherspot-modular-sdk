@@ -48,7 +48,7 @@ export class Web3WalletProvider extends DynamicWalletProvider {
   }
 
   async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
-    const msg = toBytes(hashMessage(message.toString()))
+    const msg = toBytes(hashMessage({raw: toBytes(message)}))
     const signature = await this.sendRequest(
       'personal_sign',
       [

@@ -9,6 +9,7 @@ import {
   EthereumProvider,
   isWalletConnectProvider,
   isWalletProvider,
+  MessagePayload,
   WalletConnect2WalletProvider,
   WalletProviderLike
 } from './wallet';
@@ -19,7 +20,7 @@ import { OnRamperDto, SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
-import { Account, formatEther, Hex, http, TypedDataParameter, type PublicClient } from 'viem';
+import { Account, formatEther, Hex, http, type PublicClient } from 'viem';
 import { getPublicClient } from './common/utils/viem-utils';
 import { BigNumber, BigNumberish } from './types/bignumber';
 
@@ -241,11 +242,9 @@ export class ModularSdk {
   }
 
   async signTypedData(
-    domain: any,
-    DataFields: TypedDataParameter[],
-    message: any
+    msg: MessagePayload
   ) {
-    return this.etherspotWallet.signTypedData(domain, DataFields, message);
+    return this.etherspotWallet.signTypedData(msg);
   }
 
   async getNativeBalance() {
