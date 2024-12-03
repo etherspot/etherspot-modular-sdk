@@ -1,4 +1,7 @@
 # Changelog
+## [3.0.1] - 2024-12-03
+### fix
+- `signMessage` and `signTypedData` returned signature now verifies with the etherspot smart wallet account
 
 ## [3.0.0] - 2024-11-29
 ### Breaking Changes
