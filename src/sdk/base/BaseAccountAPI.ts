@@ -274,7 +274,7 @@ export abstract class BaseAccountAPI {
   async getInitCode(): Promise<string> {
     if (await this.checkAccountPhantom()) {
       return await this.getAccountInitCode();
-    } else console.log(await this.getAccountInitCode());
+    }
     return '0x';
   }
 
