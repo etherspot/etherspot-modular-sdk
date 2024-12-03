@@ -149,7 +149,10 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.services.walletService.signMessage(message, this.validatorAddress);
+    const factoryData = await this.getInitCode()
+    const data = '0x' + factoryData.substring(42)
+
+    return this.services.walletService.signMessage(message, this.validatorAddress, this.factoryAddress, data);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -528,7 +531,9 @@ export abstract class BaseAccountAPI {
   }
 
   async signTypedData(message: MessagePayload) {
-    return this.services.walletService.signTypedData(message, this.validatorAddress);
+    const factoryData = await this.getInitCode()
+    const data = '0x' + factoryData.substring(42)
+    return this.services.walletService.signTypedData(message, this.validatorAddress, this.factoryAddress, data);
   }
 
   async eth_requestAccounts(): Promise<string[]> {

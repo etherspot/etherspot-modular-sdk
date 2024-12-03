@@ -42,12 +42,12 @@ export class WalletService extends Service {
     return new ethers.providers.JsonRpcProvider(this.rpcBundlerUrl)
   }
 
-  async signMessage(message: BytesLike, validatorAddress?: string): Promise<string> {
-    return this.provider ? this.provider.signMessage(message, validatorAddress) : null;
+  async signMessage(message: BytesLike, validatorAddress?: string, factoryAddress?: string, initCode?: string): Promise<string> {
+    return this.provider ? this.provider.signMessage(message, validatorAddress, factoryAddress, initCode) : null;
   }
 
-  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
-    return this.provider ? this.provider.signTypedData(msg, validatorAddress) : null;
+  async signTypedData(msg: MessagePayload, validatorAddress?: string, factoryAddress?: string, initCode?: string): Promise<string> {
+    return this.provider ? this.provider.signTypedData(msg, validatorAddress, factoryAddress, initCode) : null;
   }
 
   async eth_requestAccounts(address?: string): Promise<string[]> {

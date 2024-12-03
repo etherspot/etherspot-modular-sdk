@@ -129,7 +129,7 @@ export class ModularSdk {
       network: false,
     });
 
-    return this.etherspotWallet.services.walletService.signMessage(message);
+    return this.etherspotWallet.signMessage({message});
   }
 
   async getCounterFactualAddress(): Promise<string> {
