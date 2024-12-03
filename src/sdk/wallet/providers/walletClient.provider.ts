@@ -1,4 +1,4 @@
-import { Address, concat, Hash, Hex, TransactionRequest, WalletClient } from 'viem';
+import { Address, concat, Hash, hashMessage, hashTypedData, Hex, toBytes, TransactionRequest, WalletClient } from 'viem';
 import { MessagePayload, WalletProvider } from './interfaces';
 
 export class WalletClientProvider implements WalletProvider {
@@ -17,10 +17,11 @@ export class WalletClientProvider implements WalletProvider {
   }
 
   async signMessage(message: Hex, validatorAddress?: Address): Promise<string> {
+    const msg = toBytes(hashMessage({raw: toBytes(message)}));
     return concat([
       validatorAddress,
       await this.wallet.signMessage({
-        message: message,
+        message: {raw: msg},
         account: this.wallet.account
       })
     ]);
@@ -28,16 +29,14 @@ export class WalletClientProvider implements WalletProvider {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async signTypedData(msg: MessagePayload, validatorAddress?: Address): Promise<string> {
+    const typedDataEncoder = hashTypedData({domain: msg.domain, types: msg.types, primaryType: msg.primaryType, message: msg.message});
     return concat([
       validatorAddress,
-      await this.wallet.signTypedData({
-        domain: msg.domain,
-        types: msg.types,
-        message: msg.message,
-        account: this.wallet.account,
-        primaryType: ''
-      })
-    ]);
+      await this.wallet.signMessage({
+        message: {raw: toBytes(typedDataEncoder)},
+        account: this.wallet.account
+      })]
+    );
   }
 
   async eth_requestAccounts(address: string): Promise<string[]> {

@@ -33,7 +33,7 @@ export interface Web3Provider {
 // https://eips.ethereum.org/EIPS/eip-712#parameters
 export type MessagePayload = {
   domain: TypedDataDomain;
-  types: { EIP712Domain: TypedDataDomain } & Record<string, TypedProperty[]>;
+  types: Record<string, TypedProperty[]>;
   primaryType: string;
   message: any;
 };
