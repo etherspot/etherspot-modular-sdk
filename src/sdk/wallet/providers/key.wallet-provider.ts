@@ -1,7 +1,6 @@
 import { Wallet, BytesLike } from 'ethers';
-import { _TypedDataEncoder, defaultAbiCoder, Deferrable, hashMessage, hexConcat } from 'ethers/lib/utils';
+import { _TypedDataEncoder, defaultAbiCoder, Deferrable, hexConcat } from 'ethers/lib/utils';
 import { MessagePayload, TransactionRequest, TransactionResponse, WalletProvider } from './interfaces';
-import { getBytes, toHex } from '../../common';
 
 export class KeyWalletProvider implements WalletProvider {
   readonly type = 'Key';

@@ -75,8 +75,8 @@ async function main() {
     await verifyMessage({
       provider,
       signer: address,
-      message: 'My funds are SAFU with Ambire Wallet',
-      signature: await modularSdk.signMessage({ message: 'My funds are SAFU with Ambire Wallet' }),
+      message: 'My funds are SAFU with Etherspot Wallet',
+      signature: await modularSdk.signMessage({ message: 'My funds are SAFU with Etherspot Wallet' }),
     }),
   );
 }
