@@ -1,7 +1,7 @@
 import { Wallet, BytesLike } from 'ethers';
 import { _TypedDataEncoder, defaultAbiCoder, Deferrable, hashMessage } from 'ethers/lib/utils';
 import { MessagePayload, TransactionRequest, TransactionResponse, WalletProvider } from './interfaces';
-import { getBytes } from '../../common';
+import { getBytes, toHex } from '../../common';
 
 export class KeyWalletProvider implements WalletProvider {
   readonly type = 'Key';
@@ -19,8 +19,12 @@ export class KeyWalletProvider implements WalletProvider {
   }
 
   async signMessage(message: BytesLike, validatorAddress?: string, factoryAddress?: string, initCode?: string): Promise<string> {
-    const msg = getBytes(hashMessage(getBytes(message)));
+    let hashedMsg = message;
+    if (typeof(hashedMsg) === "string" && !hashedMsg.match(/^0x([0-9a-f][0-9a-f])*$/i))
+      hashedMsg = toHex(message);
+    const msg = getBytes(hashMessage(getBytes(hashedMsg)));
     const signature = await this.wallet.signMessage(msg);
+    console.log('initCode: ', initCode);
     if (initCode !== "0x") {
       const abiCoderResult = defaultAbiCoder.encode(['address', 'bytes', 'bytes'],[factoryAddress, initCode, signature]);
       return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
