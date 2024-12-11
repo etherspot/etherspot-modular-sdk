@@ -1,4 +1,4 @@
-import { Hash, hashMessage, Hex, toBytes, toHex, TransactionRequest } from 'viem';
+import { Address, concat, encodeAbiParameters, Hash, hashMessage, Hex, parseAbiParameters, toBytes, toHex, TransactionRequest } from 'viem';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { EthereumProvider } from './interfaces';
 
@@ -28,13 +28,19 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     });
   }
 
-  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const msg = toBytes(hashMessage({raw: toBytes(message)}))
-    const response = await this.provider.signer.request({
+    const response: Hex = await this.provider.signer.request({
       method: 'personal_sign',
       params: [msg, this.address],
     });
-
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, response])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
   }
 
@@ -45,14 +51,21 @@ export class WalletConnect2WalletProvider extends DynamicWalletProvider {
     })
   }
 
-  async signTypedData(typedData: any, validatorAddress?: string): Promise<string> {
-    const signature = await this.provider.signer.request({
+  async signTypedData(typedData: any, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
+    const signature: Hex = await this.provider.signer.request({
       method: 'eth_signTypedData_v4',
       params: [
         this.address,
         typedData
       ]
     })
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return typeof signature === 'string' ? validatorAddress + signature.slice(2) : null;
   }
 

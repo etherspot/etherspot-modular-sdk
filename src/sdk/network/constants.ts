@@ -105,7 +105,7 @@ export const Networks: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x93FB56A4a0B7160fbf8903d251Cc7A3fb9bA0933',
       bootstrap: '0x1baCB2F1ef4fD02f02e32cCF70888D9Caeb5f066',
-      multipleOwnerECDSAValidator: '0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143',
+      multipleOwnerECDSAValidator: '0x0261C9625D598c91188969537e6F01e13B466553',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
     },
   },

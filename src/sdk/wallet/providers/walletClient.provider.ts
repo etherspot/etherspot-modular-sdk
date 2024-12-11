@@ -1,4 +1,4 @@
-import { Address, concat, Hash, hashMessage, hashTypedData, Hex, toBytes, TransactionRequest, WalletClient } from 'viem';
+import { Address, concat, encodeAbiParameters, Hash, hashMessage, hashTypedData, Hex, parseAbiParameters, toBytes, TransactionRequest, WalletClient } from 'viem';
 import { MessagePayload, WalletProvider } from './interfaces';
 
 export class WalletClientProvider implements WalletProvider {
@@ -16,26 +16,42 @@ export class WalletClientProvider implements WalletProvider {
     this.address = address;
   }
 
-  async signMessage(message: Hex, validatorAddress?: Address): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const msg = toBytes(hashMessage({raw: toBytes(message)}));
+    const signature: Hex = await this.wallet.signMessage({
+      message: {raw: msg},
+      account: this.wallet.account
+    })
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return concat([
       validatorAddress,
-      await this.wallet.signMessage({
-        message: {raw: msg},
-        account: this.wallet.account
-      })
+      signature
     ]);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async signTypedData(msg: MessagePayload, validatorAddress?: Address): Promise<string> {
+  async signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const typedDataEncoder = hashTypedData({domain: msg.domain, types: msg.types, primaryType: msg.primaryType, message: msg.message});
+    const signature = await this.wallet.signMessage({
+      message: {raw: toBytes(typedDataEncoder)},
+      account: this.wallet.account
+    });
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return concat([
       validatorAddress,
-      await this.wallet.signMessage({
-        message: {raw: toBytes(typedDataEncoder)},
-        account: this.wallet.account
-      })]
+      signature]
     );
   }
 

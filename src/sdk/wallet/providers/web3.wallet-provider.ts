@@ -2,7 +2,7 @@ import { prepareAddress } from '../../common';
 import { NetworkNames, prepareNetworkName } from '../../network';
 import { MessagePayload, Web3Provider } from './interfaces';
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { Hash, hashMessage, Hex, toBytes, toHex, TransactionRequest } from 'viem';
+import { Address, concat, encodeAbiParameters, Hash, hashMessage, Hex, parseAbiParameters, toBytes, toHex, TransactionRequest } from 'viem';
 
 export class Web3WalletProvider extends DynamicWalletProvider {
   static async connect(provider: Web3Provider, type = 'Web3'): Promise<Web3WalletProvider> {
@@ -47,9 +47,9 @@ export class Web3WalletProvider extends DynamicWalletProvider {
     return result;
   }
 
-  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const msg = toBytes(hashMessage({raw: toBytes(message)}))
-    const signature = await this.sendRequest(
+    const signature: Hex = await this.sendRequest(
       'personal_sign',
       [
         msg,
@@ -57,6 +57,13 @@ export class Web3WalletProvider extends DynamicWalletProvider {
       ],
       this.address,
     );
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return validatorAddress + signature.slice(2);
   }
 
@@ -71,11 +78,18 @@ export class Web3WalletProvider extends DynamicWalletProvider {
     );
   }
 
-  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
-    const signature = await this.sendRequest('eth_signTypedData', [
+  async signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
+    const signature: Hex = await this.sendRequest('eth_signTypedData', [
       this.address,
       msg
     ])
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return validatorAddress + signature.slice(2);
   }
 

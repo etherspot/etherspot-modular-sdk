@@ -8,6 +8,7 @@ import {
   Hex,
   TransactionRequest,
   Hash,
+  Address,
 } from 'viem';
 
 export class WalletService extends Service {
@@ -40,12 +41,12 @@ export class WalletService extends Service {
     return this.provider ? this.provider : null;
   }
 
-  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
-    return this.provider ? this.provider.signMessage(message, validatorAddress) : null;
+  async signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
+    return this.provider ? this.provider.signMessage(message, validatorAddress, factoryAddress, initCode) : null;
   }
 
-  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
-    return this.provider ? this.provider.signTypedData(msg, validatorAddress) : null;
+  async signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
+    return this.provider ? this.provider.signTypedData(msg, validatorAddress, factoryAddress, initCode) : null;
   }
 
   async eth_requestAccounts(address?: string): Promise<string[]> {
