@@ -128,7 +128,8 @@ export abstract class BaseAccountAPI {
       network: false,
     });
 
-    return this.services.walletService.signMessage(message as Hex, this.validatorAddress);
+    const initCode = await this.getInitCode();
+    return this.services.walletService.signMessage(message as Hex, `0x${this.validatorAddress}`, `0x${this.factoryAddress.slice(2)}`, `0x${initCode.substring(42)}`);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -523,9 +524,12 @@ export abstract class BaseAccountAPI {
   }
 
   async signTypedData(msg: MessagePayload) {
+    const initCode = await this.getInitCode();
     return await this.services.walletService.signTypedData(
       msg,
-      this.validatorAddress
+      `0x${this.validatorAddress}`,
+      `0x${this.factoryAddress.slice(2)}`,
+      `0x${initCode.substring(42)}`
     )
   }
 }

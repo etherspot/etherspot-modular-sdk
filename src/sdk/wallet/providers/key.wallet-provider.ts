@@ -1,4 +1,4 @@
-import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http, concat, Address, hashTypedData, toBytes, hashMessage } from 'viem';
+import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http, concat, Address, hashTypedData, toBytes, hashMessage, encodeAbiParameters, parseAbiParameters } from 'viem';
 import { MessagePayload, WalletProvider } from './interfaces';
 import { privateKeyToAccount } from 'viem/accounts';
 import { Networks } from '../../network/constants';
@@ -22,8 +22,18 @@ export class KeyWalletProvider implements WalletProvider {
     this.address = address;
   }
 
-  async signMessage(message: Hex, validatorAddress?: Address): Promise<string> {
-    console.log(this.wallet.account);
+  async signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
+    const signature = await this.wallet.signMessage({
+      message: { raw: toBytes(hashMessage({raw: toBytes(message)}))},
+      account: this.wallet.account
+    })
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return concat([
       validatorAddress,
       await this.wallet.signMessage({
@@ -34,14 +44,22 @@ export class KeyWalletProvider implements WalletProvider {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async signTypedData(msg: MessagePayload, validatorAddress?: Address): Promise<string> {
+  async signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const typedDataEncoder = hashTypedData({domain: msg.domain, types: msg.types, primaryType: msg.primaryType, message: msg.message});
+    const signature = await this.wallet.signMessage({
+      message: {raw: toBytes(typedDataEncoder)},
+      account: this.wallet.account
+    })
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return concat([
       validatorAddress,
-      await this.wallet.signMessage({
-        message: {raw: toBytes(typedDataEncoder)},
-        account: this.wallet.account
-      })]
+      signature]
     );
   }
 

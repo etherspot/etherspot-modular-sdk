@@ -1,6 +1,6 @@
 import { DynamicWalletProvider } from './dynamic.wallet-provider';
 import { MessagePayload } from './interfaces';
-import { TransactionRequest, Hex, toBytes, hashMessage, toHex, Hash } from 'viem';
+import { TransactionRequest, Hex, toBytes, hashMessage, toHex, Hash, encodeAbiParameters, parseAbiParameters, concat, Address } from 'viem';
 
 declare const window: Window & {
   ethereum: {
@@ -50,12 +50,19 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     super('MetaMask');
   }
 
-  async signMessage(message: Hex, validatorAddress?: string): Promise<string> {
+  async signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const msg = toBytes(hashMessage({raw: toBytes(message)}))
-    const signature = await this.sendRequest('personal_sign', [
+    const signature: Hex = await this.sendRequest('personal_sign', [
       msg,
       this.address,
     ]);
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return validatorAddress + signature.slice(2);
   }
 
@@ -66,11 +73,18 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     ])
   }
 
-  async signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string> {
-    const signature = await this.sendRequest('eth_signTypedData_v4', [
+  async signTypedData(msg: MessagePayload, validatorAddress?: string, factoryAddress?: Address, initCode?: Hex): Promise<string> {
+    const signature: Hex = await this.sendRequest('eth_signTypedData_v4', [
       this.address,
       msg
     ])
+    if (initCode !== '0x') {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters('address, bytes, bytes'),
+        [factoryAddress, initCode, concat([`0x${validatorAddress.slice(2)}`, signature])]
+      )
+      return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+    }
     return validatorAddress + signature.slice(2);
   }
 

@@ -1,4 +1,4 @@
-import { Hash, Hex, TransactionRequest, TypedDataDomain, WalletClient } from 'viem';
+import { Address, Hash, Hex, TransactionRequest, TypedDataDomain, WalletClient } from 'viem';
 import type UniversalProvider from '@walletconnect/universal-provider';
 import { UniqueSubject } from '../../common';
 import { NetworkNames } from '../../network';
@@ -11,9 +11,9 @@ export interface WalletProvider {
   readonly networkName?: NetworkNames;
   readonly networkName$?: UniqueSubject<NetworkNames>;
 
-  signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string>;
+  signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string>;
 
-  signMessage(message: Hex, validatorAddress?: string): Promise<string>;
+  signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string>;
 
   signUserOp(message: Hex): Promise<string>;
 

@@ -1,7 +1,7 @@
 import { NetworkNames, prepareNetworkName } from '../../network';
 import { prepareAddress, UniqueSubject } from '../../common';
 import { MessagePayload, WalletProvider } from './interfaces';
-import { Hash, Hex, TransactionRequest } from 'viem';
+import { Address, Hash, Hex, TransactionRequest } from 'viem';
 
 export abstract class DynamicWalletProvider implements WalletProvider {
   readonly address$ = new UniqueSubject<string>();
@@ -19,11 +19,11 @@ export abstract class DynamicWalletProvider implements WalletProvider {
     return this.networkName$.value;
   }
 
-  abstract signMessage(message: any, validatorAddress?: string): Promise<string>;
+  abstract signMessage(message: any, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string>;
 
   abstract signUserOp(message: Hex): Promise<string>;
 
-  abstract signTypedData(msg: MessagePayload, validatorAddress?: string): Promise<string>
+  abstract signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string>
 
   protected setAddress(address: string): void {
     this.address$.next(prepareAddress(address));
