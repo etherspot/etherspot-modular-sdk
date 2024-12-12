@@ -1,4 +1,10 @@
 # Changelog
+## [3.0.2] - 2024-12-12
+### Breaking Changes
+- Changed the validator address from `0x8c4496Ba340aFe5ac4148cfEA9ccbBCD54093143` to `0x7aCEE15c9FFc1e8f287C26E0f4C8244A0729F557`. Please use earlier version for fund recovery
+### fix
+- `signMessage` and `signTypedData` returned signature now verifies with the etherspot undeployed smart wallet account
+
 ## [3.0.1] - 2024-12-03
 ### fix
 - `signMessage` and `signTypedData` returned signature now verifies with the etherspot smart wallet account
