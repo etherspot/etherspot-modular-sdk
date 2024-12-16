@@ -1,6 +1,6 @@
 {
   "name": "@etherspot/modular-sdk",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Etherspot Modular SDK - build with ERC-7579 smart accounts modules",
   "keywords": [
     "ether",
@@ -19,7 +19,7 @@
   "homepage": "https://etherspot.io",
   "main": "./dist/cjs/index.js",
   "browser": {
-    "./dist/browser.js": "./dist/browser.js",
+    "./dist/browser.js": "./dist/cjs/browser.js",
     "child_process": false
   },
   "types": "./dist/cjs/index.d.ts",

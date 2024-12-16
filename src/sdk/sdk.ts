@@ -3,7 +3,7 @@ import { Network } from "./network";
 import {
   BatchUserOpsRequest, Exception, getGasFee,
   getViemAddress, MODULE_TYPE,
-  onRampApiKey, openUrl, UserOperation, UserOpsRequest
+  UserOperation, UserOpsRequest
 } from "./common";
 import {
   EthereumProvider,
@@ -13,10 +13,10 @@ import {
   WalletConnect2WalletProvider,
   WalletProviderLike
 } from './wallet';
-import { DEFAULT_QUERY_PAGE_SIZE, Networks, onRamperAllNetworks } from './network/constants';
+import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/constants';
 import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
 import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
-import { OnRamperDto, SignMessageDto, validateDto } from './dto';
+import { SignMessageDto, validateDto } from './dto';
 import { ErrorHandler } from './errorHandler/errorHandler.service';
 import { EtherspotBundler } from './bundler';
 import { ModuleInfo } from './base/EtherspotWalletAPI';
@@ -341,37 +341,5 @@ export class ModularSdk {
   async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
     const nonce = await this.etherspotWallet.getNonce(key);
     return nonce;
-  }
-
-  async getFiatOnRamp(params: OnRamperDto = {}) {
-    if (!params.onlyCryptoNetworks) params.onlyCryptoNetworks = onRamperAllNetworks.join(',');
-    else {
-      const networks = params.onlyCryptoNetworks.split(',');
-      for (const network in networks) {
-        if (!onRamperAllNetworks.includes(network)) throw new ErrorHandler('Included Networks which are not supported. Please Check', 1);
-      }
-    }
-
-    const url = `https://buy.onramper.com/?networkWallets=ETHEREUM:${await this.getCounterFactualAddress()}` +
-      `&apiKey=${onRampApiKey}` +
-      `&onlyCryptoNetworks=${params.onlyCryptoNetworks}` +
-      `${params.defaultCrypto ? `&defaultCrypto=${params.defaultCrypto}` : ``}` +
-      `${params.excludeCryptos ? `&excludeCryptos=${params.excludeCryptos}` : ``}` +
-      `${params.onlyCryptos ? `&onlyCryptos=${params.onlyCryptos}` : ``}` +
-      `${params.excludeCryptoNetworks ? `&excludeCryptoNetworks=${params.excludeCryptoNetworks}` : ``}` +
-      `${params.defaultAmount ? `&defaultCrypto=${params.defaultAmount}` : ``}` +
-      `${params.defaultFiat ? `&defaultFiat=${params.defaultFiat}` : ``}` +
-      `${params.isAmountEditable ? `&isAmountEditable=${params.isAmountEditable}` : ``}` +
-      `${params.onlyFiats ? `&onlyFiats=${params.onlyFiats}` : ``}` +
-      `${params.excludeFiats ? `&excludeFiats=${params.excludeFiats}` : ``}` +
-      `&themeName=${params.themeName ?? 'dark'}`;
-
-    if (typeof window === 'undefined') {
-      openUrl(url);
-    } else {
-      window.open(url);
-    }
-
-    return url;
   }
 }
