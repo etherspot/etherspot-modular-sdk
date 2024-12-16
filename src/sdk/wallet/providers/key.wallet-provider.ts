@@ -1,4 +1,4 @@
-import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http, concat, Address, encodeAbiParameters, parseAbiParameters } from 'viem';
+import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http, concat, Address, encodeAbiParameters, parseAbiParameters, hashMessage, toBytes } from 'viem';
 import { MessagePayload, WalletProvider } from './interfaces';
 import { privateKeyToAccount } from 'viem/accounts';
 import { Networks } from '../../network/constants';
@@ -24,7 +24,7 @@ export class KeyWalletProvider implements WalletProvider {
 
   async signMessage(message: string, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const signature = await this.wallet.signMessage({
-      message: message,
+      message: {raw: toBytes(hashMessage({raw : toBytes(message)}))},
       account: this.wallet.account
     })
     if (initCode !== '0x') {

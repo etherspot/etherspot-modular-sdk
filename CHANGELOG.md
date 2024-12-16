@@ -1,4 +1,7 @@
 # Changelog
+## [4.0.1] - 2024-12-16
+### fix
+-`signMessage` on walletconnect now verifies as valid on react walletConnect testing app
 
 ## [4.0.0] - 2024-12-12
 ### Breaking Changes
