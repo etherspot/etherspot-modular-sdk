@@ -13,7 +13,7 @@ export interface WalletProvider {
 
   signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string>;
 
-  signMessage(message: Hex, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string>;
+  signMessage(message: string, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string>;
 
   signUserOp(message: Hex): Promise<string>;
 

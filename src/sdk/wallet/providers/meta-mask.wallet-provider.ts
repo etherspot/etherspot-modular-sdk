@@ -73,7 +73,7 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     ])
   }
 
-  async signTypedData(msg: MessagePayload, validatorAddress?: string, factoryAddress?: Address, initCode?: Hex): Promise<string> {
+  async signTypedData(msg: MessagePayload, validatorAddress?: Address, factoryAddress?: Address, initCode?: Hex): Promise<string> {
     const signature: Hex = await this.sendRequest('eth_signTypedData_v4', [
       this.address,
       msg
@@ -81,7 +81,7 @@ export class MetaMaskWalletProvider extends DynamicWalletProvider {
     if (initCode !== '0x') {
       const abiCoderResult = encodeAbiParameters(
         parseAbiParameters('address, bytes, bytes'),
-        [factoryAddress, initCode, concat([`0x${validatorAddress.slice(2)}`, signature])]
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
       )
       return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
     }

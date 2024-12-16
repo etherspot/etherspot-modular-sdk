@@ -11,7 +11,7 @@ import { resolveProperties } from '../common/utils';
 import { BaseAccountUserOperationStruct, FeeData } from '../types/user-operation-types';
 import { BigNumber, BigNumberish } from '../types/bignumber';
 import { MessagePayload, WalletProviderLike, WalletService } from '../wallet';
-import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/constants';
+import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network';
 
 export interface BaseApiParams {
   entryPointAddress: string;
@@ -129,7 +129,7 @@ export abstract class BaseAccountAPI {
     });
 
     const initCode = await this.getInitCode();
-    return this.services.walletService.signMessage(message as Hex, `0x${this.validatorAddress}`, `0x${this.factoryAddress.slice(2)}`, `0x${initCode.substring(42)}`);
+    return this.services.walletService.signMessage(message as Hex, `0x${this.validatorAddress.slice(2)}`, `0x${this.factoryAddress.slice(2)}`, `0x${initCode.substring(42)}`);
   }
 
   async setPaymasterApi(paymaster: PaymasterAPI | null) {
@@ -527,7 +527,7 @@ export abstract class BaseAccountAPI {
     const initCode = await this.getInitCode();
     return await this.services.walletService.signTypedData(
       msg,
-      `0x${this.validatorAddress}`,
+      `0x${this.validatorAddress.slice(2)}`,
       `0x${this.factoryAddress.slice(2)}`,
       `0x${initCode.substring(42)}`
     )

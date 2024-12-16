@@ -1,7 +1,6 @@
 export * from './deep-compare';
 export * from './is-url';
 export * from './sleep';
-export * from './openurl';
 export * from './viem-utils';
 export * from './bignumber-utils';
 export * from './hashing-utils';
