@@ -1,13 +1,17 @@
 import { resolveProperties } from './utils';
 import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
 import { toHex } from 'viem';
+import { BigNumber } from '../types/bignumber';
 
 export function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<any> {
   return resolveProperties(op).then((userOp) =>
     Object.keys(userOp)
       .map((key) => {
         let val = (userOp as any)[key];
-        if (typeof val !== 'string' || !val.startsWith('0x')) {
+        if (typeof val === 'object' && BigNumber.isBigNumber(val)) {
+          val = val.toHexString()
+        }
+        else if (typeof val !== 'string' || !val.startsWith('0x')) {
           val = toHex(val);
         }
         return [key, val];
