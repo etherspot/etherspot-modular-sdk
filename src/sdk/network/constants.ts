@@ -1,6 +1,7 @@
 import { bsc, gnosis } from "viem/chains";
 import { NetworkConfig } from ".";
 import * as Chain from "viem/chains";
+import { defineChain } from "viem";
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -36,10 +37,14 @@ export enum NetworkNames {
   Amoy = 'amoy',
   XDCTestnet = 'xdcTestnet',
   XDCMainnet = 'xdcMainnet',
+  KakarotSepolia = 'kakarotSepolia',
+  CeloTestnet = 'celoTestnet',
+  Celo = 'celo',
+  SxNetworkTestnet = 'sxNetworkTestnet',
 }
 
 export const SupportedNetworks =
-  [1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 43113, 43114, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 888888888]
+  [1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 42220, 43113, 43114, 44787, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 79479957, 888888888, 920637907288165]
 
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
@@ -78,6 +83,10 @@ export const NETWORK_NAME_TO_CHAIN_ID: {
   [NetworkNames.Amoy]: 80002,
   [NetworkNames.XDCTestnet]: 51,
   [NetworkNames.XDCMainnet]: 50,
+  [NetworkNames.KakarotSepolia]: 920637907288165,
+  [NetworkNames.CeloTestnet]: 44787,
+  [NetworkNames.Celo]: 42220,
+  [NetworkNames.SxNetworkTestnet]: 79479957
 };
 
 export const Networks: {
@@ -480,6 +489,67 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0xDF64D7bFedf0100177D9276f83cF2C330Ddb7B29',
       erc20SessionKeyValidator: '',
     },
+  },
+  [920637907288165]: {
+    chainId: 920637907288165,
+    chain: Chain.kakarotSepolia,
+    bundler: 'https://rpc.etherspot.io/v2/920637907288165',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '',
+      bootstrap: '',
+      multipleOwnerECDSAValidator: '',
+      erc20SessionKeyValidator: ''
+    }
+  },
+  [44787]: {
+    chainId: 44787,
+    chain: Chain.celoAlfajores,
+    bundler: 'https://rpc.etherspot.io/v2/44787',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '',
+      bootstrap: '',
+      multipleOwnerECDSAValidator: '',
+      erc20SessionKeyValidator: ''
+    }
+  },
+  [42220]: {
+    chainId: 42220,
+    chain: Chain.celo,
+    bundler: 'https://rpc.etherspot.io/v2/42220',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '',
+      bootstrap: '',
+      multipleOwnerECDSAValidator: '',
+      erc20SessionKeyValidator: ''
+    }
+  },
+  [79479957]: {
+    chainId: 79479957,
+    chain: defineChain({
+      id: 79479957,
+      name: "SX Rollup Testnet",
+      nativeCurrency: {
+        decimals: 18,
+        name: 'SX',
+        symbol: 'SX'
+      },
+      rpcUrls: {
+        default: {
+          http: ['https://rpc.sx-rollup-testnet.t.raas.gelato.cloud/']
+        }
+      }
+    }),
+    bundler: 'https://rpc.etherspot.io/v2/79479957',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '',
+      bootstrap: '',
+      multipleOwnerECDSAValidator: '',
+      erc20SessionKeyValidator: ''
+    }
   }
 };
 
