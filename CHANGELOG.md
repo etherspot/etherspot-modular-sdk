@@ -1,4 +1,10 @@
 # Changelog
+
+## [5.0.0] - 2025-01-07
+### Breaking Changes
+- Changed contract address for Bootstrap to `0xbE937d1C58D885B873CA5EACce160301572a75F9`
+- Changed contract address for Wallet Factory to `0x37f7ca7f9ffD04525a18B9B905088D96D625853a`
+
 ## [4.0.1] - 2024-12-16
 ### fix
 -`signMessage` on walletconnect now verifies as valid on react walletConnect testing app
