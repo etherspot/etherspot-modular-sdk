@@ -491,7 +491,7 @@ export const Networks: {
   [44787]: {
     chainId: 44787,
     chain: Chain.celoAlfajores,
-    bundler: 'https://rpc.etherspot.io/v2/44787',
+    bundler: 'https://testnet-rpc.etherspot.io/v2/44787',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x37f7ca7f9ffD04525a18B9B905088D96D625853a',
@@ -528,7 +528,7 @@ export const Networks: {
         }
       }
     }),
-    bundler: 'https://rpc.etherspot.io/v2/79479957',
+    bundler: 'https://testnet-rpc.etherspot.io/v2/79479957',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x37f7ca7f9ffD04525a18B9B905088D96D625853a',
