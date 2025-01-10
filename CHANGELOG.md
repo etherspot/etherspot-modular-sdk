@@ -2,8 +2,9 @@
 
 ## [5.0.0] - 2025-01-07
 ### Breaking Changes
-- Changed contract address for Bootstrap to `0xbE937d1C58D885B873CA5EACce160301572a75F9`
-- Changed contract address for Wallet Factory to `0x37f7ca7f9ffD04525a18B9B905088D96D625853a`
+- Changed contract address for Bootstrap to `0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA`
+- Changed contract address for Wallet Factory to `0x2A40091f044e48DEB5C0FCbc442E443F3341B451`
+- Changed contract address for Multiple Owner ECDSA Validator to `0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906`
 - Results in a change of precomputed modular account address.
 
 ## [4.0.1] - 2024-12-16
