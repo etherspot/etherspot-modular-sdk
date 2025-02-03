@@ -5,7 +5,7 @@ dotenv.config();
 
 // tsx examples/basics/get-counterfactual-address.ts
 async function main() {
-  const etherspotBundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+  const etherspotBundlerApiKey = 'etherspot_public_key';
   // initializating sdk for index 0...
   const modularSdk = generateModularSDKInstance(
     process.env.WALLET_PRIVATE_KEY as string,

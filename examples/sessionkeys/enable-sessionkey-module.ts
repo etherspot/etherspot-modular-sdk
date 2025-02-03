@@ -9,7 +9,7 @@ const secondsInAMonth = 30 * 24 * 60 * 60; // 2592000 seconds
 
 // tsx examples/sessionkeys/enable-sessionkey-module.ts
 async function main() {
-  const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+  const bundlerApiKey = 'etherspot_public_key';
 
   // initializating sdk...
   const modularSdk = generateModularSDKInstance(

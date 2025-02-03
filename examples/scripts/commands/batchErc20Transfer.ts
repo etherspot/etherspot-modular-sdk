@@ -17,7 +17,7 @@ export default async function main(
   t: Array<string>,
   amt: string,
 ) {
-  const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+  const bundlerApiKey = 'etherspot_public_key';
   // initializating sdk...
   const modularSdk = generateModularSDKInstance(
     config.signingKey,
