@@ -6,7 +6,7 @@ dotenv.config();
 
 // tsx examples/modules/is-module-installed.ts
 async function main() {
-  const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+  const bundlerApiKey = 'etherspot_public_key';
 
   console.log(`inside is-module-installed script:`);
 

@@ -6,7 +6,7 @@ dotenv.config();
 
 // npx ts-node examples/modules/generate-module-uninstall-deinitdata.ts
 async function main() {
-  const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+  const bundlerApiKey = 'etherspot_public_key';
 
   // initializating sdk for index 0...
   const modularSdk = generateModularSDKInstance(

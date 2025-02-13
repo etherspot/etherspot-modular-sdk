@@ -9,7 +9,7 @@ const sessionKey = '0x476595CD5ed26D40Fd299F266350e5E85A7DF0D3';
 
 // tsx examples/sessionkeys/disable-sessionkey-module.ts
 async function main() {
-  const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+  const bundlerApiKey = 'etherspot_public_key';
 
   // initializating sdk...
   const modularSdk = generateModularSDKInstance(process.env.WALLET_PRIVATE_KEY as string, 

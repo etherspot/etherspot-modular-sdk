@@ -26,7 +26,7 @@ async function main() {
         chain: polygonAmoy
     });
     
-    const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
+    const bundlerApiKey = 'etherspot_public_key';
 
     const modularSdk = new ModularSdk(
         walletClient,
