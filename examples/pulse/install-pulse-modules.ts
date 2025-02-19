@@ -4,6 +4,7 @@ import {  MODULE_TYPE, sleep } from '../../src/sdk/common';
 import { encodeAbiParameters, encodeFunctionData, Hex, parseAbi } from 'viem';
 import { generateModularSDKInstance } from '../helpers/sdk-helper';
 import { getHookMultiPlexerInitData } from './utils';
+import { accountAbi } from '../../src/sdk/common/abis';
 
 dotenv.config();
 
@@ -11,17 +12,6 @@ const bundlerApiKey = 'etherspot_public_key';
 const credibleAccountModule = "0xf47600D8dFef04269206255E53c8926519BA09a9";
 const resourceLockValidator = "0x";
 const hookMultiplexer = "0x2dbad2872b6aabd4dd3cd1eef7a46a241baa6cae";
-
-const accountAbi = [
-  'function execute(bytes32 mode,bytes executionCalldata)',
-  'function getActiveHook() external view returns (address hook)',
-  'function getValidatorPaginated(address cursor,uint256 size) returns (address[] memory, address)',
-  'function getExecutorsPaginated(address cursor,uint256 size) returns (address[] memory, address)',
-  'function installModule(uint256 moduleTypeId,address module,bytes calldata initData)',
-  'function uninstallModule(uint256 moduleTypeId,address module,bytes calldata deInitData)',
-  'function isModuleInstalled(uint256 moduleTypeId,address module,bytes calldata additionalContext) returns (bool)',
-  'function isOwner(address _address) returns (bool)'
-];
 
 // tsx examples/paymaster/paymaster.ts
 async function main() {
