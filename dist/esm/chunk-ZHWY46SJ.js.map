@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/sdk/common/exceptions/exception.ts"],"sourcesContent":["export class Exception extends Error {\n  //\n}\n"],"mappings":";AAAO,IAAM,YAAN,cAAwB,MAAM;AAAA;AAErC;","names":[]}

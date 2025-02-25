@@ -1,0 +1,57 @@
+import { ModularSdk } from '../sdk.cjs';
+import { KeyStore } from './constants.cjs';
+import { SessionKeyResponse, GetNonceResponse, SessionData } from './interfaces.cjs';
+import { UserOperation } from '../common/ERC4337Utils.cjs';
+import '../common/getGasFee.cjs';
+import '../types/bignumber.cjs';
+import 'viem';
+import '../interfaces.cjs';
+import '../bundler/interface.cjs';
+import '../../interfaces-q-ZvJZS9.cjs';
+import 'viem/chains';
+import '../wallet/providers/interfaces.cjs';
+import '@walletconnect/universal-provider';
+import '../common/rxjs/unique.subject.cjs';
+import 'rxjs';
+import '../common/constants.cjs';
+import '../common/interfaces.cjs';
+import '../base/TransactionDetailsForUserOp.cjs';
+import '../dto/sign-message.dto.cjs';
+import '../common/types.cjs';
+import '../base/EtherspotWalletAPI.cjs';
+import '../base/BaseAccountAPI.cjs';
+import '../../PaymasterAPI-CbUneXjr.cjs';
+import '../types/user-operation-types.cjs';
+import '../../network.service-BJk94rpB.cjs';
+import '../common/rxjs/error.subject.cjs';
+import '../common/rxjs/object.subject.cjs';
+import '../wallet/interfaces.cjs';
+import '../base/calcPreVerificationGas.cjs';
+
+declare class SessionKeyValidator {
+    private modularSdk;
+    private providerURL;
+    private erc20SessionKeyValidator?;
+    private chainId?;
+    private publicClient;
+    private constructor();
+    static create(modularSdk: ModularSdk): Promise<SessionKeyValidator>;
+    private initialize;
+    enableSessionKey(token: string, functionSelector: string, spendingLimit: string, validAfter: number, validUntil: number, keyStore?: KeyStore): Promise<SessionKeyResponse>;
+    rotateSessionKey(token: string, functionSelector: string, spendingLimit: string, validAfter: number, validUntil: number, oldSessionKey: string, keyStore?: KeyStore): Promise<SessionKeyResponse>;
+    disableSessionKey(sessionKey: string): Promise<SessionKeyResponse>;
+    getNonce(sessionKey: string): Promise<GetNonceResponse>;
+    getAssociatedSessionKeys(): Promise<string[]>;
+    sessionData(sessionKey: string): Promise<SessionData>;
+    private getERC20SessionKeyValidator;
+    private getChainId;
+    private generateSessionKeyData;
+    private getSessionKey;
+    private deleteSessionKey;
+    private getSignUserOp;
+    private getNonceData;
+    signUserOpWithSessionKey(sessionKey: string, userOp: UserOperation): Promise<UserOperation>;
+    isAValidToken(token: string): Promise<boolean>;
+}
+
+export { SessionKeyValidator };

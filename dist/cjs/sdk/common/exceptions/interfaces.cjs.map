@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../src/sdk/common/exceptions/interfaces.ts"],"sourcesContent":["export interface ValidationError {\n  property: string;\n  value?: any;\n  constraints?: {\n    [type: string]: string;\n  };\n  children?: ValidationError[];\n}\n"],"mappings":";;;;;;;;;;;;;;;AAAA;AAAA;","names":[]}

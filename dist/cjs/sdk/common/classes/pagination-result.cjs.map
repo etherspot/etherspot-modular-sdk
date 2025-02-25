@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../../src/sdk/common/classes/pagination-result.ts"],"sourcesContent":["/**\n * @ignore\n */\nexport abstract class PaginationResult<T = any> {\n  items?: T[];\n\n  currentPage: number;\n\n  nextPage: number;\n}\n"],"mappings":";;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAGO,IAAe,mBAAf,MAAyC;AAMhD;","names":[]}

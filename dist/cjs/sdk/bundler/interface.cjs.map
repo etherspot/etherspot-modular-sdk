@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../src/sdk/bundler/interface.ts"],"sourcesContent":["\nexport interface BundlerProvider {\n  readonly url: string;\n}\n\nexport type BundlerProviderLike = BundlerProvider;"],"mappings":";;;;;;;;;;;;;;;AAAA;AAAA;","names":[]}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/sdk/common/classes/base-class.ts"],"sourcesContent":["/**\n * @ignore\n */\nexport class BaseClass<T> {\n  constructor(raw?: Partial<T>) {\n    if (raw) {\n      Object.assign(this, raw);\n    }\n  }\n}\n"],"mappings":";AAGO,IAAM,YAAN,MAAmB;AAAA,EACxB,YAAY,KAAkB;AAC5B,QAAI,KAAK;AACP,aAAO,OAAO,MAAM,GAAG;AAAA,IACzB;AAAA,EACF;AACF;","names":[]}

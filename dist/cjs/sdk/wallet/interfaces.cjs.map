@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../src/sdk/wallet/interfaces.ts"],"sourcesContent":["export interface Wallet {\n  address: string;\n  providerType: string;\n}\n\nexport interface WalletOptions {\n  provider?: string;\n}\n"],"mappings":";;;;;;;;;;;;;;;AAAA;AAAA;","names":[]}

@@ -20,9 +20,6 @@ workspace.code-workspace
 # node
 node_modules
 
-# dist
-dist
-
 # develop
 .graphqlconfig
 .cache
