@@ -1,102 +1,253 @@
-import {
-  ModularSdk
-} from "../chunk-ZPSQARNM.js";
-import "../chunk-KY7TQQTC.js";
-import "../chunk-X43KF6FC.js";
-import "../chunk-EGN3VPUB.js";
-import "../chunk-RBVJQYWP.js";
-import "../chunk-L6M4WISX.js";
-import "../chunk-677BG7LZ.js";
-import "../chunk-4C5GJCB6.js";
-import "../chunk-SI63LRN5.js";
-import "../chunk-NLZ3QXSG.js";
-import "../chunk-DIECYCKK.js";
-import "../chunk-R4ON74AM.js";
-import "../chunk-CHR2G5TD.js";
-import "../chunk-7FE6CGVE.js";
-import "../chunk-BZJCUZRI.js";
-import "../chunk-DDUMIWSZ.js";
-import "../chunk-VMUO65NX.js";
-import "../chunk-4TDNRCY6.js";
-import "../chunk-53QCOEFK.js";
-import "../chunk-CDDQB6W3.js";
-import "../chunk-645BWKCR.js";
-import "../chunk-R3K76433.js";
-import "../chunk-7Y4ZOR77.js";
-import "../chunk-RMYTR7WV.js";
-import "../chunk-NNQEX6PF.js";
-import "../chunk-R7Y35C7I.js";
-import "../chunk-IUUB4F7U.js";
-import "../chunk-4JU7XSFU.js";
-import "../chunk-VJN3GYFI.js";
-import "../chunk-3MNK3TJ5.js";
-import "../chunk-ZSFEVHV3.js";
-import "../chunk-RYKQDQQJ.js";
-import "../chunk-A5JWHM74.js";
-import "../chunk-UUIL3T3C.js";
-import "../chunk-ZFKMDGTX.js";
-import "../chunk-MHVYE5E2.js";
-import "../chunk-IA5TOLW2.js";
-import "../chunk-FJPVIKCW.js";
-import "../chunk-MZTFRCWQ.js";
-import "../chunk-JKJUQEQ6.js";
-import "../chunk-RNSEOPYU.js";
-import "../chunk-K2LHOFME.js";
-import "../chunk-WZQO5STN.js";
-import "../chunk-ACHZ4ZIC.js";
-import "../chunk-BFF5QBNK.js";
-import "../chunk-5KZJ7WJ6.js";
-import "../chunk-ZJ2O6KOQ.js";
-import "../chunk-BLORCE2A.js";
-import "../chunk-UAWLE3Q3.js";
-import "../chunk-RIH2I2BE.js";
-import "../chunk-AQESWNQB.js";
-import "../chunk-QRHPTBCF.js";
-import "../chunk-Q7ECE72N.js";
-import "../chunk-AD5PGUYK.js";
-import "../chunk-LT6TVN3Y.js";
-import "../chunk-B2GURONC.js";
-import "../chunk-V624XYS3.js";
-import "../chunk-P3ASQGGB.js";
-import "../chunk-WMTRHLCY.js";
-import "../chunk-S2454LNH.js";
-import "../chunk-TFOPGRAD.js";
-import "../chunk-ZHWY46SJ.js";
-import "../chunk-IRK7BPGT.js";
-import "../chunk-EX2L45PO.js";
-import "../chunk-XMZSJVAW.js";
-import "../chunk-JGJFWWZ2.js";
-import "../chunk-LY6TS44P.js";
-import "../chunk-KE62UF5Z.js";
-import "../chunk-S7PPKJF3.js";
-import "../chunk-CIQTVOVJ.js";
-import "../chunk-BVR3U5P6.js";
-import "../chunk-VJKFSPZG.js";
-import "../chunk-FB5DCH4I.js";
-import "../chunk-6KKS3Q5S.js";
-import "../chunk-ZOZG64B5.js";
-import "../chunk-PEMLSLBC.js";
-import "../chunk-AXCSRNW4.js";
-import "../chunk-4KVEROXU.js";
-import "../chunk-N2P4NRH3.js";
-import "../chunk-QN43T53T.js";
-import "../chunk-AR3EM3EV.js";
-import "../chunk-QWCJZTVT.js";
-import "../chunk-BFP3WTVA.js";
-import "../chunk-XZTC7YZW.js";
-import "../chunk-EDY4DXI5.js";
-import "../chunk-IXDF7SOZ.js";
-import "../chunk-PLQWNRTZ.js";
-import "../chunk-DDDNIC7V.js";
-import "../chunk-LWM5MV7Z.js";
-import "../chunk-BK72YQKX.js";
-import "../chunk-EFSON5UP.js";
-import "../chunk-VOPA75Q5.js";
-import "../chunk-UFWBG2KU.js";
-import "../chunk-5ZBZ6BDF.js";
-import "../chunk-ADKYMEBK.js";
-import "../chunk-LQXP7TCC.js";
-export {
-  ModularSdk
-};
+import { Factory } from './interfaces.js';
+import { Exception, getGasFee, getViemAddress, getPublicClient } from "./common/index.js";
+import { isWalletConnectProvider, isWalletProvider, WalletConnect2WalletProvider } from './wallet/index.js';
+import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/index.js';
+import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base/index.js';
+import { SignMessageDto, validateDto } from './dto/index.js';
+import { ErrorHandler } from './errorHandler/errorHandler.service.js';
+import { EtherspotBundler } from './bundler/index.js';
+import { formatEther, http } from 'viem';
+import { BigNumber } from './types/bignumber.js';
+/**
+ * Modular-Sdk
+ *
+ * @category Modular-Sdk
+ */
+export class ModularSdk {
+    constructor(walletProvider, optionsLike) {
+        this.userOpsBatch = { to: [], data: [], value: [] };
+        let walletConnectProvider;
+        if (isWalletConnectProvider(walletProvider)) {
+            walletConnectProvider = new WalletConnect2WalletProvider(walletProvider);
+        }
+        else if (!isWalletProvider(walletProvider)) {
+            throw new Exception('Invalid wallet provider');
+        }
+        const { index, chainId, rpcProviderUrl, accountAddress, } = optionsLike;
+        this.chainId = chainId;
+        this.index = index ?? 0;
+        if (!optionsLike.bundlerProvider) {
+            optionsLike.bundlerProvider = new EtherspotBundler(chainId);
+        }
+        this.factoryUsed = optionsLike.factoryWallet ?? Factory.ETHERSPOT;
+        let viemClientUrl = '';
+        if (rpcProviderUrl) {
+            viemClientUrl = rpcProviderUrl;
+        }
+        else {
+            viemClientUrl = optionsLike.bundlerProvider.url;
+        }
+        this.providerUrl = viemClientUrl;
+        this.publicClient = getPublicClient({
+            chainId: chainId,
+            transport: http(viemClientUrl)
+        });
+        let entryPointAddress = '', walletFactoryAddress = '';
+        if (Networks[chainId]) {
+            entryPointAddress = Networks[chainId].contracts.entryPoint;
+            if (Networks[chainId].contracts.walletFactory == '')
+                throw new Exception('The selected factory is not deployed in the selected chain_id');
+            walletFactoryAddress = Networks[chainId].contracts.walletFactory;
+        }
+        if (optionsLike.entryPointAddress)
+            entryPointAddress = optionsLike.entryPointAddress;
+        if (optionsLike.walletFactoryAddress)
+            walletFactoryAddress = optionsLike.walletFactoryAddress;
+        if (entryPointAddress == '')
+            throw new Exception('entryPointAddress not set on the given chain_id');
+        if (walletFactoryAddress == '')
+            throw new Exception('walletFactoryAddress not set on the given chain_id');
+        this.account = this.account;
+        this.etherspotWallet = new EtherspotWalletAPI({
+            optionsLike,
+            entryPointAddress,
+            factoryAddress: walletFactoryAddress,
+            predefinedAccountAddress: accountAddress,
+            index: this.index,
+            wallet: walletConnectProvider ?? walletProvider,
+            publicClient: this.publicClient,
+        });
+        this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId, this.publicClient);
+    }
+    get supportedNetworks() {
+        return this.etherspotWallet.services.networkService.supportedNetworks;
+    }
+    /**
+     * destroys
+     */
+    destroy() {
+        this.etherspotWallet.context.destroy();
+    }
+    getPublicClient() {
+        return this.publicClient;
+    }
+    getProviderUrl() {
+        return this.providerUrl;
+    }
+    // wallet
+    /**
+     * signs message
+     * @param dto
+     * @return Promise<string>
+     */
+    async signMessage(dto) {
+        await validateDto(dto, SignMessageDto);
+        await this.etherspotWallet.require({
+            network: false,
+        });
+        return await this.etherspotWallet.signMessage(dto);
+    }
+    getEOAAddress() {
+        return this.etherspotWallet.getEOAAddress();
+    }
+    async getCounterFactualAddress() {
+        return this.etherspotWallet.getCounterFactualAddress();
+    }
+    async estimate(params = {}) {
+        const { paymasterDetails, gasDetails, callGasLimit, key } = params;
+        const dummySignature = "0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
+        if (this.userOpsBatch.to.length < 1) {
+            throw new ErrorHandler('cannot sign empty transaction batch', 1);
+        }
+        if (paymasterDetails?.url) {
+            const paymasterAPI = new VerifyingPaymasterAPI(paymasterDetails.url, this.etherspotWallet.entryPointAddress, paymasterDetails.context ?? {});
+            this.etherspotWallet.setPaymasterApi(paymasterAPI);
+        }
+        else
+            this.etherspotWallet.setPaymasterApi(null);
+        const tx = {
+            target: this.userOpsBatch.to,
+            values: this.userOpsBatch.value,
+            data: this.userOpsBatch.data,
+            dummySignature: dummySignature,
+            ...gasDetails,
+        };
+        const gasInfo = await this.getGasFee();
+        const partialtx = await this.etherspotWallet.createUnsignedUserOp({
+            ...tx,
+            maxFeePerGas: gasInfo.maxFeePerGas,
+            maxPriorityFeePerGas: gasInfo.maxPriorityFeePerGas,
+        }, key);
+        if (callGasLimit) {
+            partialtx.callGasLimit = BigNumber.from(callGasLimit).toHexString();
+        }
+        if (await this.etherspotWallet.checkAccountPhantom()) {
+            partialtx.factory = this.etherspotWallet.factoryAddress;
+        }
+        const bundlerGasEstimate = await this.bundler.getVerificationGasInfo(partialtx);
+        // if user has specified the gas prices then use them
+        if (gasDetails?.maxFeePerGas && gasDetails?.maxPriorityFeePerGas) {
+            partialtx.maxFeePerGas = gasDetails.maxFeePerGas;
+            partialtx.maxPriorityFeePerGas = gasDetails.maxPriorityFeePerGas;
+        }
+        // if estimation has gas prices use them, otherwise fetch them in a separate call
+        else if (bundlerGasEstimate.maxFeePerGas && bundlerGasEstimate.maxPriorityFeePerGas) {
+            partialtx.maxFeePerGas = bundlerGasEstimate.maxFeePerGas;
+            partialtx.maxPriorityFeePerGas = bundlerGasEstimate.maxPriorityFeePerGas;
+        }
+        else {
+            const gas = await this.getGasFee();
+            partialtx.maxFeePerGas = gas.maxFeePerGas;
+            partialtx.maxPriorityFeePerGas = gas.maxPriorityFeePerGas;
+        }
+        if (bundlerGasEstimate.preVerificationGas) {
+            partialtx.preVerificationGas = BigNumber.from(bundlerGasEstimate.preVerificationGas);
+            partialtx.verificationGasLimit = BigNumber.from(bundlerGasEstimate.verificationGasLimit ?? bundlerGasEstimate.verificationGas);
+            const expectedCallGasLimit = BigNumber.from(bundlerGasEstimate.callGasLimit);
+            if (!callGasLimit)
+                partialtx.callGasLimit = expectedCallGasLimit;
+            else if (BigNumber.from(callGasLimit).lt(expectedCallGasLimit))
+                throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
+        }
+        return partialtx;
+    }
+    async getGasFee() {
+        const version = await this.bundler.getBundlerVersion();
+        if (version && version.includes('skandha'))
+            return this.bundler.getSkandhaGasPrice();
+        return getGasFee(this.publicClient);
+    }
+    async send(userOp, isUserOpAlreadySigned = false) {
+        const signedUserOp = isUserOpAlreadySigned ? userOp : await this.etherspotWallet.signUserOp(userOp);
+        return this.bundler.sendUserOpToBundler(signedUserOp);
+    }
+    async signTypedData(msg) {
+        return this.etherspotWallet.signTypedData(msg);
+    }
+    async getNativeBalance() {
+        if (!this.etherspotWallet.accountAddress) {
+            await this.getCounterFactualAddress();
+        }
+        const balance = await this.publicClient.getBalance({ address: getViemAddress(this.etherspotWallet.accountAddress) });
+        return formatEther(balance);
+    }
+    async getUserOpReceipt(userOpHash) {
+        //return this.bundler.getUserOpsReceipt(userOpHash);
+        return await this.etherspotWallet.getUserOpReceipt(userOpHash);
+    }
+    async getUserOpHash(userOp) {
+        return this.etherspotWallet.getUserOpHash(userOp);
+    }
+    async addUserOpsToBatch(tx) {
+        if (!tx.data && !tx.value)
+            throw new ErrorHandler('Data and Value both cannot be empty', 1);
+        this.userOpsBatch.to.push(tx.to);
+        this.userOpsBatch.value.push(tx.value ?? BigNumber.from(0));
+        this.userOpsBatch.data.push(tx.data ?? '0x');
+        return this.userOpsBatch;
+    }
+    async clearUserOpsFromBatch() {
+        this.userOpsBatch.to = [];
+        this.userOpsBatch.data = [];
+        this.userOpsBatch.value = [];
+    }
+    async isModuleInstalled(moduleTypeId, module) {
+        return this.etherspotWallet.isModuleInstalled(moduleTypeId, module);
+    }
+    async installModule(moduleTypeId, module, initData) {
+        const installData = await this.etherspotWallet.installModule(moduleTypeId, module, initData);
+        this.clearUserOpsFromBatch();
+        await this.addUserOpsToBatch({
+            to: this.etherspotWallet.accountAddress ?? await this.getCounterFactualAddress(),
+            data: installData
+        });
+        const op = await this.estimate();
+        const uoHash = await this.send(op);
+        return uoHash;
+    }
+    async getPreviousModuleAddress(moduleTypeId, module) {
+        return this.etherspotWallet.getPreviousAddress(module, moduleTypeId);
+    }
+    async generateModuleDeInitData(moduleTypeId, module, moduleDeInitData) {
+        return await this.etherspotWallet.generateModuleDeInitData(moduleTypeId, module, moduleDeInitData);
+    }
+    async getPreviousAddress(moduleTypeId, targetAddress) {
+        return await this.etherspotWallet.getPreviousAddress(targetAddress, moduleTypeId);
+    }
+    async uninstallModule(moduleTypeId, module, deinitData) {
+        const uninstallData = await this.etherspotWallet.uninstallModule(moduleTypeId, module, deinitData);
+        this.clearUserOpsFromBatch();
+        await this.addUserOpsToBatch({
+            to: this.etherspotWallet.accountAddress ?? await this.getCounterFactualAddress(),
+            data: uninstallData
+        });
+        const op = await this.estimate();
+        const uoHash = await this.send(op);
+        return uoHash;
+    }
+    async getAllModules(pageSize = DEFAULT_QUERY_PAGE_SIZE) {
+        const modules = await this.etherspotWallet.getAllModules(pageSize);
+        return modules;
+    }
+    async totalGasEstimated(userOp) {
+        const callGasLimit = BigNumber.from(await userOp.callGasLimit);
+        const verificationGasLimit = BigNumber.from(await userOp.verificationGasLimit);
+        const preVerificationGas = BigNumber.from(await userOp.preVerificationGas);
+        return callGasLimit.add(verificationGasLimit).add(preVerificationGas);
+    }
+    async getNonce(key = BigNumber.from(0)) {
+        const nonce = await this.etherspotWallet.getNonce(key);
+        return nonce;
+    }
+}
 //# sourceMappingURL=sdk.js.map

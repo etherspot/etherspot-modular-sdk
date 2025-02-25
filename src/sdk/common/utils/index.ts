@@ -7,3 +7,4 @@ export * from './hashing-utils.js';
 export * from './json-utils.js';
 export * from './userop-utils.js';
 export * from './get-bytes.js';
+export * from './hexlify.js';

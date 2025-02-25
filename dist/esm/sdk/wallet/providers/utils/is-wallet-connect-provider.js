@@ -1,8 +1,4 @@
-import {
-  isWalletConnectProvider
-} from "../../../../chunk-4C5GJCB6.js";
-import "../../../../chunk-LQXP7TCC.js";
-export {
-  isWalletConnectProvider
-};
+export function isWalletConnectProvider(provider) {
+    return typeof provider === 'object' && provider?.isWalletConnect;
+}
 //# sourceMappingURL=is-wallet-connect-provider.js.map

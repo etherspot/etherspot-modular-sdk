@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"sourcesContent":[],"mappings":"","names":[]}
+{"version":3,"file":"is-wallet-connect-provider.js","sourceRoot":"","sources":["../../../../../../src/sdk/wallet/providers/utils/is-wallet-connect-provider.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU,uBAAuB,CAAC,QAA4B;IAClE,OAAO,OAAO,QAAQ,KAAK,QAAQ,IAAK,QAA6B,EAAE,eAAe,CAAC;AACzF,CAAC"}

@@ -1,10 +1,7 @@
-import {
-  KeyStore,
-  PERMISSIONS_URL
-} from "../../chunk-BLORCE2A.js";
-import "../../chunk-LQXP7TCC.js";
-export {
-  KeyStore,
-  PERMISSIONS_URL
-};
+export const PERMISSIONS_URL = 'https://qa-permissions.etherspot.io';
+export var KeyStore;
+(function (KeyStore) {
+    KeyStore["AWS"] = "AWS";
+    KeyStore["TEE"] = "TEE";
+})(KeyStore || (KeyStore = {}));
 //# sourceMappingURL=constants.js.map

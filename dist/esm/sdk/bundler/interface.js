@@ -1,2 +1,2 @@
-import "../../chunk-AD5PGUYK.js";
+export {};
 //# sourceMappingURL=interface.js.map

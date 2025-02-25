@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/sdk/SessionKeyValidator/constants.ts"],"sourcesContent":["export const PERMISSIONS_URL = 'https://qa-permissions.etherspot.io';\n\nexport enum KeyStore {\n    AWS = 'AWS',\n    TEE = 'TEE',\n}"],"mappings":";AAAO,IAAM,kBAAkB;AAExB,IAAK,WAAL,kBAAKA,cAAL;AACH,EAAAA,UAAA,SAAM;AACN,EAAAA,UAAA,SAAM;AAFE,SAAAA;AAAA,GAAA;","names":["KeyStore"]}

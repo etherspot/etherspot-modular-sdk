@@ -3,7 +3,7 @@ import { Network } from "./network/index.js";
 import {
   BatchUserOpsRequest, Exception, getGasFee,
   getViemAddress, MODULE_TYPE,
-  UserOperation, UserOpsRequest
+  UserOperation, UserOpsRequest, getPublicClient
 } from "./common/index.js";
 import {
   EthereumProvider,
@@ -13,15 +13,12 @@ import {
   WalletConnect2WalletProvider,
   WalletProviderLike
 } from './wallet/index.js';
-import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/constants.js';
-import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base/index.js';
-import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp.js';
+import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/index.js';
+import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI, TransactionDetailsForUserOp, TransactionGasInfoForUserOp, ModuleInfo } from './base/index.js';
 import { SignMessageDto, validateDto } from './dto/index.js';
 import { ErrorHandler } from './errorHandler/errorHandler.service.js';
 import { EtherspotBundler } from './bundler/index.js';
-import { ModuleInfo } from './base/EtherspotWalletAPI.js';
 import { Account, formatEther, Hex, http, type PublicClient } from 'viem';
-import { getPublicClient } from './common/utils/viem-utils.js';
 import { BigNumber, BigNumberish } from './types/bignumber.js';
 
 /**

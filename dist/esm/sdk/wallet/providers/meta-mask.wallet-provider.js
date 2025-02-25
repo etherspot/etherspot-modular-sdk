@@ -1,54 +1,96 @@
-import {
-  MetaMaskWalletProvider
-} from "../../../chunk-R4ON74AM.js";
-import "../../../chunk-VMUO65NX.js";
-import "../../../chunk-4TDNRCY6.js";
-import "../../../chunk-53QCOEFK.js";
-import "../../../chunk-CDDQB6W3.js";
-import "../../../chunk-645BWKCR.js";
-import "../../../chunk-R3K76433.js";
-import "../../../chunk-7Y4ZOR77.js";
-import "../../../chunk-B2GURONC.js";
-import "../../../chunk-V624XYS3.js";
-import "../../../chunk-P3ASQGGB.js";
-import "../../../chunk-WMTRHLCY.js";
-import "../../../chunk-S2454LNH.js";
-import "../../../chunk-TFOPGRAD.js";
-import "../../../chunk-ZHWY46SJ.js";
-import "../../../chunk-IRK7BPGT.js";
-import "../../../chunk-EX2L45PO.js";
-import "../../../chunk-XMZSJVAW.js";
-import "../../../chunk-JGJFWWZ2.js";
-import "../../../chunk-LY6TS44P.js";
-import "../../../chunk-KE62UF5Z.js";
-import "../../../chunk-S7PPKJF3.js";
-import "../../../chunk-CIQTVOVJ.js";
-import "../../../chunk-BVR3U5P6.js";
-import "../../../chunk-VJKFSPZG.js";
-import "../../../chunk-FB5DCH4I.js";
-import "../../../chunk-6KKS3Q5S.js";
-import "../../../chunk-ZOZG64B5.js";
-import "../../../chunk-PEMLSLBC.js";
-import "../../../chunk-AXCSRNW4.js";
-import "../../../chunk-4KVEROXU.js";
-import "../../../chunk-N2P4NRH3.js";
-import "../../../chunk-QN43T53T.js";
-import "../../../chunk-AR3EM3EV.js";
-import "../../../chunk-QWCJZTVT.js";
-import "../../../chunk-BFP3WTVA.js";
-import "../../../chunk-XZTC7YZW.js";
-import "../../../chunk-EDY4DXI5.js";
-import "../../../chunk-IXDF7SOZ.js";
-import "../../../chunk-PLQWNRTZ.js";
-import "../../../chunk-DDDNIC7V.js";
-import "../../../chunk-LWM5MV7Z.js";
-import "../../../chunk-BK72YQKX.js";
-import "../../../chunk-EFSON5UP.js";
-import "../../../chunk-VOPA75Q5.js";
-import "../../../chunk-UFWBG2KU.js";
-import "../../../chunk-5ZBZ6BDF.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  MetaMaskWalletProvider
-};
+import { DynamicWalletProvider } from './dynamic.wallet-provider.js';
+import { toBytes, hashMessage, toHex, encodeAbiParameters, parseAbiParameters, concat } from 'viem';
+export class MetaMaskWalletProvider extends DynamicWalletProvider {
+    static get ethereum() {
+        return this.detect() ? window.ethereum : null;
+    }
+    static detect() {
+        return !!window?.ethereum?.isMetaMask;
+    }
+    static async connect() {
+        if (!this.instance) {
+            if (!this.detect()) {
+                throw new Error('MetaMask not found');
+            }
+            this.instance = new MetaMaskWalletProvider();
+            await this.instance.connect();
+        }
+        if (!this.instance.address) {
+            throw new Error('Can not connect to MetaMask');
+        }
+        return this.instance;
+    }
+    constructor() {
+        super('MetaMask');
+    }
+    async signMessage(message, validatorAddress, factoryAddress, initCode) {
+        const msg = toBytes(hashMessage({ raw: toBytes(message) }));
+        const signature = await this.sendRequest('personal_sign', [
+            msg,
+            this.address,
+        ]);
+        if (initCode !== '0x') {
+            const abiCoderResult = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [factoryAddress, initCode, concat([validatorAddress, signature])]);
+            return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+        }
+        return validatorAddress + signature.slice(2);
+    }
+    async signUserOp(message) {
+        return this.sendRequest('personal_sign', [
+            toHex(message),
+            this.address
+        ]);
+    }
+    async signTypedData(msg, validatorAddress, factoryAddress, initCode) {
+        const signature = await this.sendRequest('eth_signTypedData_v4', [
+            this.address,
+            msg
+        ]);
+        if (initCode !== '0x') {
+            const abiCoderResult = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [factoryAddress, initCode, concat([validatorAddress, signature])]);
+            return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+        }
+        return validatorAddress + signature.slice(2);
+    }
+    async eth_requestAccounts(address) {
+        return [address];
+    }
+    async eth_accounts(address) {
+        return [address];
+    }
+    async eth_sendTransaction(transaction) {
+        return this.sendRequest('eth_sendTransaction', [
+            transaction
+        ]);
+    }
+    async eth_signTransaction(transaction) {
+        return this.sendRequest('eth_signTransaction', [
+            transaction
+        ]);
+    }
+    async connect() {
+        const { ethereum } = window;
+        ethereum.autoRefreshOnNetworkChange = false;
+        ethereum.on('accountsChanged', ([address]) => this.setAddress(address));
+        ethereum.on('chainChanged', () => {
+            window.location.reload();
+        });
+        try {
+            const chainId = await this.sendRequest('eth_chainId');
+            this.setNetworkName(chainId);
+            const [address] = await this.sendRequest('eth_requestAccounts');
+            this.setAddress(address);
+        }
+        catch (err) {
+            //
+        }
+    }
+    async sendRequest(method, params) {
+        const { ethereum } = window;
+        return ethereum.request({
+            method,
+            params,
+        });
+    }
+}
 //# sourceMappingURL=meta-mask.wallet-provider.js.map

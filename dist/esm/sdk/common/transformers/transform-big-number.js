@@ -1,27 +1,25 @@
-import {
-  TransformBigNumber
-} from "../../../chunk-P3ASQGGB.js";
-import "../../../chunk-FB5DCH4I.js";
-import "../../../chunk-6KKS3Q5S.js";
-import "../../../chunk-ZOZG64B5.js";
-import "../../../chunk-PEMLSLBC.js";
-import "../../../chunk-AXCSRNW4.js";
-import "../../../chunk-4KVEROXU.js";
-import "../../../chunk-N2P4NRH3.js";
-import "../../../chunk-QN43T53T.js";
-import "../../../chunk-AR3EM3EV.js";
-import "../../../chunk-BFP3WTVA.js";
-import "../../../chunk-XZTC7YZW.js";
-import "../../../chunk-EDY4DXI5.js";
-import "../../../chunk-IXDF7SOZ.js";
-import "../../../chunk-LWM5MV7Z.js";
-import "../../../chunk-BK72YQKX.js";
-import "../../../chunk-EFSON5UP.js";
-import "../../../chunk-VOPA75Q5.js";
-import "../../../chunk-UFWBG2KU.js";
-import "../../../chunk-5ZBZ6BDF.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  TransformBigNumber
-};
+import { Transform, TransformationType } from 'class-transformer';
+import { isBigNumber } from '../utils/index.js';
+import { BigNumber } from '../../types/bignumber.js';
+/**
+ * @ignore
+ */
+export function TransformBigNumber() {
+    return Transform((params) => {
+        const { type, value } = params;
+        let result = null;
+        switch (type) {
+            case TransformationType.PLAIN_TO_CLASS:
+                result = value ? BigNumber.from(value) : null;
+                break;
+            case TransformationType.CLASS_TO_CLASS:
+                result = value;
+                break;
+            case TransformationType.CLASS_TO_PLAIN:
+                result = isBigNumber(value) ? BigNumber.from(value).toHexString() : '0x00';
+                break;
+        }
+        return result;
+    });
+}
 //# sourceMappingURL=transform-big-number.js.map

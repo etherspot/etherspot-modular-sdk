@@ -1,29 +1,18 @@
-import {
-  SynchronizedSubject
-} from "../../../chunk-EX2L45PO.js";
-import "../../../chunk-LY6TS44P.js";
-import "../../../chunk-KE62UF5Z.js";
-import "../../../chunk-FB5DCH4I.js";
-import "../../../chunk-6KKS3Q5S.js";
-import "../../../chunk-ZOZG64B5.js";
-import "../../../chunk-PEMLSLBC.js";
-import "../../../chunk-AXCSRNW4.js";
-import "../../../chunk-4KVEROXU.js";
-import "../../../chunk-N2P4NRH3.js";
-import "../../../chunk-QN43T53T.js";
-import "../../../chunk-AR3EM3EV.js";
-import "../../../chunk-BFP3WTVA.js";
-import "../../../chunk-XZTC7YZW.js";
-import "../../../chunk-EDY4DXI5.js";
-import "../../../chunk-IXDF7SOZ.js";
-import "../../../chunk-LWM5MV7Z.js";
-import "../../../chunk-BK72YQKX.js";
-import "../../../chunk-EFSON5UP.js";
-import "../../../chunk-VOPA75Q5.js";
-import "../../../chunk-UFWBG2KU.js";
-import "../../../chunk-5ZBZ6BDF.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  SynchronizedSubject
-};
+import { ObjectSubject } from './object.subject.js';
+/**
+ * @ignore
+ */
+export class SynchronizedSubject extends ObjectSubject {
+    prepareForCompare(value) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { synchronizedAt, ...data } = value;
+        return data;
+    }
+    prepareForNext(value) {
+        if (value !== null && value.synchronizedAt !== null) {
+            value.synchronizedAt = new Date();
+        }
+        return value;
+    }
+}
 //# sourceMappingURL=synchronized.subject.js.map

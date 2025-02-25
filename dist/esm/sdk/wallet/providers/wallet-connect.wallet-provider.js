@@ -1,54 +1,94 @@
-import {
-  WalletConnectWalletProvider
-} from "../../../chunk-7FE6CGVE.js";
-import "../../../chunk-VMUO65NX.js";
-import "../../../chunk-4TDNRCY6.js";
-import "../../../chunk-53QCOEFK.js";
-import "../../../chunk-CDDQB6W3.js";
-import "../../../chunk-645BWKCR.js";
-import "../../../chunk-R3K76433.js";
-import "../../../chunk-7Y4ZOR77.js";
-import "../../../chunk-B2GURONC.js";
-import "../../../chunk-V624XYS3.js";
-import "../../../chunk-P3ASQGGB.js";
-import "../../../chunk-WMTRHLCY.js";
-import "../../../chunk-S2454LNH.js";
-import "../../../chunk-TFOPGRAD.js";
-import "../../../chunk-ZHWY46SJ.js";
-import "../../../chunk-IRK7BPGT.js";
-import "../../../chunk-EX2L45PO.js";
-import "../../../chunk-XMZSJVAW.js";
-import "../../../chunk-JGJFWWZ2.js";
-import "../../../chunk-LY6TS44P.js";
-import "../../../chunk-KE62UF5Z.js";
-import "../../../chunk-S7PPKJF3.js";
-import "../../../chunk-CIQTVOVJ.js";
-import "../../../chunk-BVR3U5P6.js";
-import "../../../chunk-VJKFSPZG.js";
-import "../../../chunk-FB5DCH4I.js";
-import "../../../chunk-6KKS3Q5S.js";
-import "../../../chunk-ZOZG64B5.js";
-import "../../../chunk-PEMLSLBC.js";
-import "../../../chunk-AXCSRNW4.js";
-import "../../../chunk-4KVEROXU.js";
-import "../../../chunk-N2P4NRH3.js";
-import "../../../chunk-QN43T53T.js";
-import "../../../chunk-AR3EM3EV.js";
-import "../../../chunk-QWCJZTVT.js";
-import "../../../chunk-BFP3WTVA.js";
-import "../../../chunk-XZTC7YZW.js";
-import "../../../chunk-EDY4DXI5.js";
-import "../../../chunk-IXDF7SOZ.js";
-import "../../../chunk-PLQWNRTZ.js";
-import "../../../chunk-DDDNIC7V.js";
-import "../../../chunk-LWM5MV7Z.js";
-import "../../../chunk-BK72YQKX.js";
-import "../../../chunk-EFSON5UP.js";
-import "../../../chunk-VOPA75Q5.js";
-import "../../../chunk-UFWBG2KU.js";
-import "../../../chunk-5ZBZ6BDF.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  WalletConnectWalletProvider
-};
+import { concat, encodeAbiParameters, hashMessage, parseAbiParameters, toBytes, toHex } from 'viem';
+import { DynamicWalletProvider } from './dynamic.wallet-provider.js';
+export class WalletConnectWalletProvider extends DynamicWalletProvider {
+    static connect(connector) {
+        return new WalletConnectWalletProvider(connector);
+    }
+    constructor(connector) {
+        super('WalletConnect');
+        this.connector = connector;
+        try {
+            const { accounts: [address], chainId, } = connector;
+            this.setAddress(address);
+            this.setNetworkName(chainId);
+        }
+        catch (err) {
+            //
+        }
+        this.updateSessionHandler = this.updateSessionHandler.bind(this);
+        connector.on('connect', this.updateSessionHandler);
+        connector.on('session_update', this.updateSessionHandler);
+        connector.on('disconnect', () => {
+            this.setAddress(null);
+            this.setNetworkName(null);
+        });
+    }
+    async signMessage(message, validatorAddress, factoryAddress, initCode) {
+        const msg = toBytes(hashMessage({ raw: toBytes(message) }));
+        const response = await this.connector.signPersonalMessage([
+            msg, //
+            this.address,
+        ]);
+        if (initCode !== '0x') {
+            const abiCoderResult = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [factoryAddress, initCode, concat([validatorAddress, response])]);
+            return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+        }
+        return typeof response === 'string' ? validatorAddress + response.slice(2) : null;
+    }
+    async signUserOp(message) {
+        return this.connector.signPersonalMessage([
+            toHex(message), //
+            this.address,
+        ]);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async signTypedData(msg, validatorAddress, factoryAddress, initCode) {
+        const signature = await this.connector.request({
+            method: 'eth_signTypedData_v4',
+            params: [
+                this.address,
+                msg
+            ]
+        });
+        if (initCode !== '0x') {
+            const abiCoderResult = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [factoryAddress, initCode, concat([validatorAddress, signature])]);
+            return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
+        }
+        return typeof signature === 'string' ? validatorAddress + signature.slice(2) : null;
+    }
+    async eth_requestAccounts() {
+        return [this.address];
+    }
+    async eth_accounts() {
+        return [this.address];
+    }
+    async eth_sendTransaction(transaction) {
+        return this.connector.request({ method: 'eth_sendTransaction', params: [
+                transaction
+            ] });
+    }
+    async eth_signTransaction(transaction) {
+        return this.connector.request({ method: 'eth_signTransaction', params: [
+                transaction
+            ] });
+    }
+    updateSessionHandler(error, payload) {
+        let address = null;
+        let chainId = null;
+        if (!error) {
+            try {
+                ({
+                    accounts: [address],
+                    chainId,
+                } = payload.params[0]);
+            }
+            catch (err) {
+                address = null;
+                chainId = null;
+            }
+        }
+        this.setAddress(address);
+        this.setNetworkName(chainId);
+    }
+}
 //# sourceMappingURL=wallet-connect.wallet-provider.js.map

@@ -1,6 +1,6 @@
 "use strict";
 
-import { Bytes, BytesLike } from "../types.js";
+import { Bytes, BytesLike } from "../index.js";
 
 ///////////////////////////////
 // Exported Types

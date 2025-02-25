@@ -1,2 +1,2 @@
-import "../../chunk-PLQWNRTZ.js";
+export {};
 //# sourceMappingURL=interfaces.js.map

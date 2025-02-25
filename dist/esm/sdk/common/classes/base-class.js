@@ -1,8 +1,11 @@
-import {
-  BaseClass
-} from "../../../chunk-CIQTVOVJ.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  BaseClass
-};
+/**
+ * @ignore
+ */
+export class BaseClass {
+    constructor(raw) {
+        if (raw) {
+            Object.assign(this, raw);
+        }
+    }
+}
 //# sourceMappingURL=base-class.js.map

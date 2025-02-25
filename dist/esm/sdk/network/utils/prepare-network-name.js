@@ -1,12 +1,20 @@
-import {
-  prepareNetworkName
-} from "../../../chunk-645BWKCR.js";
-import "../../../chunk-EDY4DXI5.js";
-import "../../../chunk-VOPA75Q5.js";
-import "../../../chunk-UFWBG2KU.js";
-import "../../../chunk-5ZBZ6BDF.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  prepareNetworkName
-};
+import { NETWORK_NAME_TO_CHAIN_ID, CHAIN_ID_TO_NETWORK_NAME } from '../constants.js';
+export function prepareNetworkName(networkNameOrChainId) {
+    let result = null;
+    if (networkNameOrChainId) {
+        if (typeof networkNameOrChainId === 'string') {
+            if (networkNameOrChainId.startsWith('0x')) {
+                networkNameOrChainId = parseInt(networkNameOrChainId.slice(2), 16) || 0;
+            }
+            else {
+                const chainId = NETWORK_NAME_TO_CHAIN_ID[networkNameOrChainId];
+                networkNameOrChainId = chainId ? chainId : parseInt(networkNameOrChainId, 10) || 0;
+            }
+        }
+        if (typeof networkNameOrChainId === 'number') {
+            result = CHAIN_ID_TO_NETWORK_NAME[networkNameOrChainId] || null;
+        }
+    }
+    return result;
+}
 //# sourceMappingURL=prepare-network-name.js.map

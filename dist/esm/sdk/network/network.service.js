@@ -1,47 +1,53 @@
-import {
-  NetworkService
-} from "../../chunk-7Y4ZOR77.js";
-import "../../chunk-B2GURONC.js";
-import "../../chunk-V624XYS3.js";
-import "../../chunk-P3ASQGGB.js";
-import "../../chunk-WMTRHLCY.js";
-import "../../chunk-S2454LNH.js";
-import "../../chunk-TFOPGRAD.js";
-import "../../chunk-ZHWY46SJ.js";
-import "../../chunk-IRK7BPGT.js";
-import "../../chunk-EX2L45PO.js";
-import "../../chunk-XMZSJVAW.js";
-import "../../chunk-JGJFWWZ2.js";
-import "../../chunk-LY6TS44P.js";
-import "../../chunk-KE62UF5Z.js";
-import "../../chunk-S7PPKJF3.js";
-import "../../chunk-CIQTVOVJ.js";
-import "../../chunk-BVR3U5P6.js";
-import "../../chunk-VJKFSPZG.js";
-import "../../chunk-FB5DCH4I.js";
-import "../../chunk-6KKS3Q5S.js";
-import "../../chunk-ZOZG64B5.js";
-import "../../chunk-PEMLSLBC.js";
-import "../../chunk-AXCSRNW4.js";
-import "../../chunk-4KVEROXU.js";
-import "../../chunk-N2P4NRH3.js";
-import "../../chunk-QN43T53T.js";
-import "../../chunk-AR3EM3EV.js";
-import "../../chunk-QWCJZTVT.js";
-import "../../chunk-BFP3WTVA.js";
-import "../../chunk-XZTC7YZW.js";
-import "../../chunk-EDY4DXI5.js";
-import "../../chunk-IXDF7SOZ.js";
-import "../../chunk-PLQWNRTZ.js";
-import "../../chunk-DDDNIC7V.js";
-import "../../chunk-LWM5MV7Z.js";
-import "../../chunk-BK72YQKX.js";
-import "../../chunk-EFSON5UP.js";
-import "../../chunk-VOPA75Q5.js";
-import "../../chunk-UFWBG2KU.js";
-import "../../chunk-5ZBZ6BDF.js";
-import "../../chunk-LQXP7TCC.js";
-export {
-  NetworkService
-};
+import { ObjectSubject, Service, Exception } from '../common/index.js';
+import { Networks, CHAIN_ID_TO_NETWORK_NAME, SupportedNetworks } from './constants.js';
+export class NetworkService extends Service {
+    constructor(defaultChainId) {
+        super();
+        this.network$ = new ObjectSubject(null);
+        this.externalContractAddresses = new Map();
+        this.supportedNetworks = SupportedNetworks
+            .map((chainId) => {
+            const name = CHAIN_ID_TO_NETWORK_NAME[chainId];
+            return !name
+                ? null
+                : {
+                    chainId,
+                    name,
+                };
+        })
+            .filter((value) => !!value);
+        if (!this.supportedNetworks.length) {
+            throw new Exception('Invalid network config');
+        }
+        this.defaultNetwork = defaultChainId
+            ? this.supportedNetworks.find(({ chainId }) => chainId === defaultChainId)
+            : this.supportedNetworks[0];
+        if (!this.defaultNetwork) {
+            this.defaultNetwork = this.supportedNetworks.find(({ chainId }) => chainId === 1);
+        }
+        this.chainId$ = this.network$.observeKey('chainId');
+    }
+    get network() {
+        return this.network$.value;
+    }
+    get chainId() {
+        return this.network ? this.network.chainId : null;
+    }
+    useDefaultNetwork() {
+        this.network$.next(this.defaultNetwork);
+    }
+    switchNetwork(networkName) {
+        this.network$.next(this.supportedNetworks.find(({ name }) => name === networkName) || null);
+    }
+    isNetworkSupported(chainId) {
+        return SupportedNetworks.includes(chainId);
+    }
+    getNetworkConfig(chainId) {
+        const networkConfig = Networks[chainId];
+        if (!networkConfig) {
+            throw new Error(`No network config found for network '${chainId}'`);
+        }
+        return networkConfig;
+    }
+}
 //# sourceMappingURL=network.service.js.map

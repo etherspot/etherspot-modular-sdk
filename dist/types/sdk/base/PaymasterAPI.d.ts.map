@@ -1,0 +1,1 @@
+{"version":3,"file":"PaymasterAPI.d.ts","sourceRoot":"","sources":["../../../../src/sdk/base/PaymasterAPI.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,kCAAkC,CAAC;AACvE,OAAO,EAAE,iBAAiB,EAAE,MAAM,4BAA4B,CAAC;AAE/D;;GAEG;AACH,qBAAa,YAAY;IACvB;;;;;OAKG;IAEG,gBAAgB,CAAC,MAAM,EAAE,OAAO,CAAC,mBAAmB,CAAC,GAAG,OAAO,CAAC,iBAAiB,GAAG,SAAS,CAAC;CAGrG"}

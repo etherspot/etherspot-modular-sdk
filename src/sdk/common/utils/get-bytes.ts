@@ -1,4 +1,4 @@
-import { BytesLike } from '../types.js';
+import { BytesLike } from '../index.js';
 
 /**
  * @ignore

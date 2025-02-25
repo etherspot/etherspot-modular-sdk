@@ -1,11 +1,43 @@
-import {
-  IsBytesLike
-} from "../../../chunk-MZTFRCWQ.js";
-import "../../../chunk-VOPA75Q5.js";
-import "../../../chunk-UFWBG2KU.js";
-import "../../../chunk-5ZBZ6BDF.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  IsBytesLike
-};
+import { registerDecorator } from 'class-validator';
+import { isHex } from 'viem';
+export function IsBytesLike(options = {}) {
+    return (object, propertyName) => {
+        registerDecorator({
+            propertyName,
+            options: {
+                message: `${propertyName} must be bytes like`,
+                ...options,
+            },
+            name: 'IsBytesLike',
+            target: object ? object.constructor : undefined,
+            constraints: [],
+            validator: {
+                validate(value) {
+                    let result = false;
+                    try {
+                        if (value) {
+                            switch (typeof value) {
+                                case 'string':
+                                    if (options.acceptText) {
+                                        result = true;
+                                    }
+                                    else {
+                                        result = isHex(value) && value.length % 2 === 0;
+                                    }
+                                    break;
+                                case 'object':
+                                    result = isHex(value);
+                                    break;
+                            }
+                        }
+                    }
+                    catch (err) {
+                        //
+                    }
+                    return result;
+                },
+            },
+        });
+    };
+}
 //# sourceMappingURL=is-bytes-like.validator.js.map

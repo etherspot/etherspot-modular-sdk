@@ -1,2 +1,3 @@
-import "../../chunk-R3K76433.js";
+;
+export {};
 //# sourceMappingURL=interfaces.js.map

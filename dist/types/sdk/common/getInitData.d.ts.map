@@ -1,0 +1,1 @@
+{"version":3,"file":"getInitData.d.ts","sourceRoot":"","sources":["../../../../src/sdk/common/getInitData.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,GAAG,EAKJ,MAAM,MAAM,CAAA;AACb,OAAO,EAAE,cAAc,EAAU,MAAM,YAAY,CAAA;AAGnD,eAAO,MAAM,WAAW,kBAErB;IACD,QAAQ,EAAE,GAAG,CAAA;CACd,KAAG,cAiCH,CAAA"}

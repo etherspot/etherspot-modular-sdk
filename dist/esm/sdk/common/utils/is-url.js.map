@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"sourcesContent":[],"mappings":"","names":[]}
+{"version":3,"file":"is-url.js","sourceRoot":"","sources":["../../../../../src/sdk/common/utils/is-url.ts"],"names":[],"mappings":"AAAA,OAAO,SAAS,MAAM,WAAW,CAAC;AAElC;;GAEG;AACH,MAAM,UAAU,KAAK,CAAC,GAAW;IAC/B,OAAO,SAAS,CAAC,KAAK,CAAC,GAAG,EAAE;QAC1B,SAAS,EAAE,CAAC,MAAM,EAAE,OAAO,CAAC;QAC5B,WAAW,EAAE,KAAK;QAClB,YAAY,EAAE,IAAI;QAClB,gBAAgB,EAAE,IAAI;KACvB,CAAC,CAAC;AACL,CAAC"}

@@ -1,8 +1,5 @@
-import {
-  Factory
-} from "../chunk-ADKYMEBK.js";
-import "../chunk-LQXP7TCC.js";
-export {
-  Factory
-};
+export var Factory;
+(function (Factory) {
+    Factory["ETHERSPOT"] = "etherspot";
+})(Factory || (Factory = {}));
 //# sourceMappingURL=interfaces.js.map

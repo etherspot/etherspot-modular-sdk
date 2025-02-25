@@ -1,8 +1,3 @@
-import {
-  Exception
-} from "../../../chunk-ZHWY46SJ.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  Exception
-};
+export class Exception extends Error {
+}
 //# sourceMappingURL=exception.js.map

@@ -1,1 +1,1 @@
-{"version":3,"sources":["../../../../../src/sdk/common/classes/pagination-result.ts"],"sourcesContent":["/**\n * @ignore\n */\nexport abstract class PaginationResult<T = any> {\n  items?: T[];\n\n  currentPage: number;\n\n  nextPage: number;\n}\n"],"mappings":";;;AAGO,IAAe,mBAAf,MAAyC;AAAA,EAC9C;AAAA,EAEA;AAAA,EAEA;AACF;","names":[]}
+{"version":3,"file":"pagination-result.js","sourceRoot":"","sources":["../../../../../src/sdk/common/classes/pagination-result.ts"],"names":[],"mappings":"AAAA;;GAEG;AACH,MAAM,OAAgB,gBAAgB;CAMrC"}

@@ -1,4 +1,4 @@
-import { BytesLike } from "../common/types.js";
+import { BytesLike } from "../common/index.js";
 import { BigNumber, BigNumberish } from "./bignumber.js";
 
 export type PromiseOrValue<T> = T | Promise<T>;

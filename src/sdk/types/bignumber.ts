@@ -21,7 +21,7 @@ export interface Hexable {
 
 import { isHex, isBytes } from "viem";
 import { Logger } from "./bignumber-logger.js";
-import { hexlifyValue } from "../common/utils/hexlify.js";
+import { hexlifyValue } from "../common/index.js";
 
 const logger = new Logger(version);
 

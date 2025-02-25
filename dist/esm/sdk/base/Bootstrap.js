@@ -1,14 +1,31 @@
-import {
-  _makeBootstrapConfig,
-  makeBootstrapConfig
-} from "../../chunk-RNSEOPYU.js";
-import "../../chunk-ZJ2O6KOQ.js";
-import "../../chunk-VOPA75Q5.js";
-import "../../chunk-UFWBG2KU.js";
-import "../../chunk-5ZBZ6BDF.js";
-import "../../chunk-LQXP7TCC.js";
-export {
-  _makeBootstrapConfig,
-  makeBootstrapConfig
-};
+import { encodeFunctionData, parseAbi } from "viem";
+import { modulesAbi } from "../common/abis.js";
+export function _makeBootstrapConfig(module, data) {
+    const config = {
+        module: "",
+        data: ""
+    };
+    config.module = module;
+    const encodedFunctionData = encodeFunctionData({
+        functionName: 'onInstall',
+        abi: parseAbi(modulesAbi),
+        args: [data],
+    });
+    config.data = encodedFunctionData;
+    return config;
+}
+export function makeBootstrapConfig(module, data) {
+    const config = [];
+    const encodedFunctionData = encodeFunctionData({
+        functionName: 'onInstall',
+        abi: parseAbi(modulesAbi),
+        args: [data],
+    });
+    const newConfig = {
+        module: module,
+        data: encodedFunctionData
+    };
+    config.push(newConfig);
+    return config;
+}
 //# sourceMappingURL=Bootstrap.js.map

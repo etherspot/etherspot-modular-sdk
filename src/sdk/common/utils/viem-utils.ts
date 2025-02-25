@@ -1,7 +1,7 @@
 import { PublicClient, Address, createPublicClient, createWalletClient, http, Account, Chain, getAddress, extractChain, Hex, Transport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts';
 import * as chains from "viem/chains";
-import { Networks } from '../../network/constants.js';
+import { Networks } from '../../network/index.js';
 import { AddressZero } from '../constants.js';
 
 export const isContract = async ({

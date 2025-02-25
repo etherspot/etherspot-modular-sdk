@@ -1,52 +1,79 @@
-import {
-  VerifyingPaymasterAPI,
-  getVerifyingPaymaster
-} from "../../chunk-IUUB4F7U.js";
-import "../../chunk-4JU7XSFU.js";
-import "../../chunk-VJN3GYFI.js";
-import "../../chunk-WZQO5STN.js";
-import "../../chunk-B2GURONC.js";
-import "../../chunk-V624XYS3.js";
-import "../../chunk-P3ASQGGB.js";
-import "../../chunk-WMTRHLCY.js";
-import "../../chunk-S2454LNH.js";
-import "../../chunk-TFOPGRAD.js";
-import "../../chunk-ZHWY46SJ.js";
-import "../../chunk-IRK7BPGT.js";
-import "../../chunk-EX2L45PO.js";
-import "../../chunk-XMZSJVAW.js";
-import "../../chunk-JGJFWWZ2.js";
-import "../../chunk-LY6TS44P.js";
-import "../../chunk-KE62UF5Z.js";
-import "../../chunk-S7PPKJF3.js";
-import "../../chunk-CIQTVOVJ.js";
-import "../../chunk-BVR3U5P6.js";
-import "../../chunk-VJKFSPZG.js";
-import "../../chunk-FB5DCH4I.js";
-import "../../chunk-6KKS3Q5S.js";
-import "../../chunk-ZOZG64B5.js";
-import "../../chunk-PEMLSLBC.js";
-import "../../chunk-AXCSRNW4.js";
-import "../../chunk-4KVEROXU.js";
-import "../../chunk-N2P4NRH3.js";
-import "../../chunk-QN43T53T.js";
-import "../../chunk-AR3EM3EV.js";
-import "../../chunk-QWCJZTVT.js";
-import "../../chunk-BFP3WTVA.js";
-import "../../chunk-XZTC7YZW.js";
-import "../../chunk-EDY4DXI5.js";
-import "../../chunk-IXDF7SOZ.js";
-import "../../chunk-PLQWNRTZ.js";
-import "../../chunk-DDDNIC7V.js";
-import "../../chunk-LWM5MV7Z.js";
-import "../../chunk-BK72YQKX.js";
-import "../../chunk-EFSON5UP.js";
-import "../../chunk-VOPA75Q5.js";
-import "../../chunk-UFWBG2KU.js";
-import "../../chunk-5ZBZ6BDF.js";
-import "../../chunk-LQXP7TCC.js";
-export {
-  VerifyingPaymasterAPI,
-  getVerifyingPaymaster
-};
+import fetch from 'cross-fetch';
+import { calcPreVerificationGas } from './calcPreVerificationGas.js';
+import { PaymasterAPI } from './PaymasterAPI.js';
+import { toJSON } from '../common/OperationUtils.js';
+import { resolveProperties } from '../common/utils/index.js';
+import { BigNumber } from '../types/bignumber.js';
+const DUMMY_SIGNATURE = '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c';
+export class VerifyingPaymasterAPI extends PaymasterAPI {
+    constructor(paymasterUrl, entryPoint, context) {
+        super();
+        this.paymasterUrl = paymasterUrl;
+        this.entryPoint = entryPoint;
+        this.context = context;
+    }
+    async getPaymasterData(userOp) {
+        // Hack: userOp includes empty paymasterData which calcPreVerificationGas requires.
+        try {
+            // userOp.preVerificationGas contains a promise that will resolve to an error.
+            await resolveProperties(userOp);
+            // eslint-disable-next-line no-empty
+        }
+        catch (_) { }
+        let pmOp;
+        if (userOp.factoryData !== "0x") {
+            pmOp = {
+                sender: userOp.sender,
+                nonce: userOp.nonce,
+                factory: userOp.factory,
+                factoryData: userOp.factoryData,
+                callData: userOp.callData,
+                callGasLimit: userOp.callGasLimit,
+                verificationGasLimit: userOp.verificationGasLimit,
+                maxFeePerGas: userOp.maxFeePerGas,
+                maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
+                signature: DUMMY_SIGNATURE,
+            };
+        }
+        else {
+            pmOp = {
+                sender: userOp.sender,
+                nonce: userOp.nonce,
+                factoryData: userOp.factoryData,
+                callData: userOp.callData,
+                callGasLimit: userOp.callGasLimit,
+                verificationGasLimit: userOp.verificationGasLimit,
+                maxFeePerGas: userOp.maxFeePerGas,
+                maxPriorityFeePerGas: userOp.maxPriorityFeePerGas,
+                signature: DUMMY_SIGNATURE,
+            };
+        }
+        const op = await resolveProperties(pmOp);
+        op.preVerificationGas = calcPreVerificationGas(op);
+        // Ask the paymaster to sign the transaction and return a valid paymasterData value.
+        const paymasterData = await fetch(this.paymasterUrl, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ method: 'pm_sponsorUserOperation', params: [await toJSON(op), this.entryPoint, this.context], jsonrpc: '2', id: 2 }),
+        })
+            .then(async (res) => {
+            const response = await await res.json();
+            if (response.error) {
+                throw new Error(response.error);
+            }
+            // Since the value of paymasterVerificationGasLimit is defined by the paymaster provider itself, it could be number in string
+            if (response.result && response.result.paymasterVerificationGasLimit)
+                response.result.paymasterVerificationGasLimit = BigNumber.from(response.result.paymasterVerificationGasLimit).toHexString();
+            return response;
+        })
+            .catch((err) => {
+            throw new Error(err.message);
+        });
+        return paymasterData;
+    }
+}
+export const getVerifyingPaymaster = (paymasterUrl, entryPoint, context) => new VerifyingPaymasterAPI(paymasterUrl, entryPoint, context);
 //# sourceMappingURL=VerifyingPaymasterAPI.js.map

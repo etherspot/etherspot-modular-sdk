@@ -1,6 +1,6 @@
 import { encodePacked, Hex } from "viem";
 import { isAddress } from "./viem-utils.js";
-import { BytesLike } from "../types.js";
+import { BytesLike } from "../index.js";
 import { isHex as isAHex, stringToBytes} from 'viem';
 
 export function keccak256(data: BytesLike): string {

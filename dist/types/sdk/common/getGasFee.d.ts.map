@@ -1,0 +1,1 @@
+{"version":3,"file":"getGasFee.d.ts","sourceRoot":"","sources":["../../../../src/sdk/common/getGasFee.ts"],"names":[],"mappings":"AAAA,OAAO,EAAa,YAAY,EAAE,MAAM,uBAAuB,CAAC;AAEhE,OAAO,EAAE,YAAY,EAAE,MAAM,MAAM,CAAC;AAEpC,MAAM,WAAW,GAAG;IAClB,YAAY,EAAE,YAAY,CAAC;IAC3B,oBAAoB,EAAE,YAAY,CAAC;CACpC;AAED,wBAAsB,SAAS,CAAC,YAAY,EAAE,YAAY,GAAG,OAAO,CAAC,GAAG,CAAC,CAkCxE"}

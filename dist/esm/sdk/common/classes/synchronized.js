@@ -1,8 +1,6 @@
-import {
-  Synchronized
-} from "../../../chunk-BVR3U5P6.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  Synchronized
-};
+/**
+ * @ignore
+ */
+export class Synchronized {
+}
 //# sourceMappingURL=synchronized.js.map

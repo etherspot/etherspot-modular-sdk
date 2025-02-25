@@ -1,18 +1,23 @@
-import {
-  bigNumberishToBigInt,
-  fromBigInt,
-  isBigNumber
-} from "../../../chunk-QN43T53T.js";
-import "../../../chunk-LWM5MV7Z.js";
-import "../../../chunk-BK72YQKX.js";
-import "../../../chunk-EFSON5UP.js";
-import "../../../chunk-VOPA75Q5.js";
-import "../../../chunk-UFWBG2KU.js";
-import "../../../chunk-5ZBZ6BDF.js";
-import "../../../chunk-LQXP7TCC.js";
-export {
-  bigNumberishToBigInt,
-  fromBigInt,
-  isBigNumber
-};
+import { BigNumber } from '../../types/bignumber.js';
+// Function to convert BigNumberish to bigint
+export function bigNumberishToBigInt(value) {
+    if (typeof value === 'bigint') {
+        return value;
+    }
+    else if (typeof value === 'string' || typeof value === 'number') {
+        return BigInt(value);
+    }
+    else if (BigNumber.isBigNumber(value)) {
+        return BigInt(value.toString());
+    }
+    else {
+        throw new Error('Unsupported BigNumberish type');
+    }
+}
+export function isBigNumber(value) {
+    return value instanceof BigNumber;
+}
+export function fromBigInt(value) {
+    return BigNumber.from(value.toString());
+}
 //# sourceMappingURL=bignumber-utils.js.map
