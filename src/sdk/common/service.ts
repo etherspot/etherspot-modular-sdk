@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { Context } from '../context';
+import { Context } from '../context.js';
 
 export abstract class Service {
   protected context: Context;

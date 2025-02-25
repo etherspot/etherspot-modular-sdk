@@ -1,5 +1,5 @@
 import { Address, concat, encodeAbiParameters, Hash, hashMessage, hashTypedData, Hex, parseAbiParameters, toBytes, TransactionRequest, WalletClient } from 'viem';
-import { MessagePayload, WalletProvider } from './interfaces';
+import { MessagePayload, WalletProvider } from './interfaces.js';
 
 export class WalletClientProvider implements WalletProvider {
   readonly type = 'WalletClient';

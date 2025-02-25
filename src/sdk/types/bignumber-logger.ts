@@ -179,6 +179,7 @@ export class Logger {
             this.throwArgumentError("invalid log level name", "logLevel", logLevel);
         }
         if (_logLevel > LogLevels[level]) { return; }
+        // eslint-disable-next-line prefer-spread
         console.log.apply(console, args);
     }
 

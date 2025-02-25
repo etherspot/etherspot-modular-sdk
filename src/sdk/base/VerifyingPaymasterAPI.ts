@@ -1,10 +1,10 @@
 import fetch from 'cross-fetch';
-import { calcPreVerificationGas } from './calcPreVerificationGas';
-import { PaymasterAPI } from './PaymasterAPI';
-import { toJSON } from '../common/OperationUtils';
-import { UserOperation } from '../common';
-import { resolveProperties } from '../common/utils';
-import { BigNumber } from '../types/bignumber';
+import { calcPreVerificationGas } from './calcPreVerificationGas.js';
+import { PaymasterAPI } from './PaymasterAPI.js';
+import { toJSON } from '../common/OperationUtils.js';
+import { UserOperation } from '../common/index.js';
+import { resolveProperties } from '../common/utils/index.js';
+import { BigNumber } from '../types/bignumber.js';
 
 const DUMMY_SIGNATURE =
   '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c';

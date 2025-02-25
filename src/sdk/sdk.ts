@@ -1,10 +1,10 @@
-import { Factory, PaymasterApi, SdkOptions } from './interfaces';
-import { Network } from "./network";
+import { Factory, PaymasterApi, SdkOptions } from './interfaces.js';
+import { Network } from "./network/index.js";
 import {
   BatchUserOpsRequest, Exception, getGasFee,
   getViemAddress, MODULE_TYPE,
   UserOperation, UserOpsRequest
-} from "./common";
+} from "./common/index.js";
 import {
   EthereumProvider,
   isWalletConnectProvider,
@@ -12,17 +12,17 @@ import {
   MessagePayload,
   WalletConnect2WalletProvider,
   WalletProviderLike
-} from './wallet';
-import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/constants';
-import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
-import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
-import { SignMessageDto, validateDto } from './dto';
-import { ErrorHandler } from './errorHandler/errorHandler.service';
-import { EtherspotBundler } from './bundler';
-import { ModuleInfo } from './base/EtherspotWalletAPI';
+} from './wallet/index.js';
+import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/constants.js';
+import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base/index.js';
+import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp.js';
+import { SignMessageDto, validateDto } from './dto/index.js';
+import { ErrorHandler } from './errorHandler/errorHandler.service.js';
+import { EtherspotBundler } from './bundler/index.js';
+import { ModuleInfo } from './base/EtherspotWalletAPI.js';
 import { Account, formatEther, Hex, http, type PublicClient } from 'viem';
-import { getPublicClient } from './common/utils/viem-utils';
-import { BigNumber, BigNumberish } from './types/bignumber';
+import { getPublicClient } from './common/utils/viem-utils.js';
+import { BigNumber, BigNumberish } from './types/bignumber.js';
 
 /**
  * Modular-Sdk

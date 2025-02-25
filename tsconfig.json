@@ -6,7 +6,7 @@
     "removeComments": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "target": "ES2020",
+    "target": "ESNext",
     "sourceMap": false,
     "baseUrl": "./",
     "rootDir": "./",
@@ -19,7 +19,8 @@
       "ES5",
       "es2015.collection",
       "es2015.iterable"
-    ]
+    ],
+    "typeRoots": []
   },
   "include": [
     "./examples/**/*.ts",

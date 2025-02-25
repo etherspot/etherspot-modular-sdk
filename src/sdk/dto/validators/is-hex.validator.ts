@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { isHex } from '../../common';
+import { isHex } from '../../common/index.js';
 
 export function IsHex(
   options: {

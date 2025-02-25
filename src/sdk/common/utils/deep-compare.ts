@@ -1,5 +1,5 @@
-import { BigNumber } from '../../types/bignumber';
-import { isBigNumber } from './bignumber-utils';
+import { BigNumber } from '../../types/bignumber.js';
+import { isBigNumber } from './bignumber-utils.js';
 
 /**
  * @ignore

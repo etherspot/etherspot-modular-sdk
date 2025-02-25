@@ -1,7 +1,7 @@
 import { Address, Hash, Hex, TransactionRequest, TypedDataDomain, WalletClient } from 'viem';
-import type UniversalProvider from '@walletconnect/universal-provider';
-import { UniqueSubject } from '../../common';
-import { NetworkNames } from '../../network';
+import { UniversalProvider } from '@walletconnect/universal-provider';
+import { UniqueSubject } from '../../common/index.js';
+import { NetworkNames } from '../../network/index.js';
 
 export interface WalletProvider {
   readonly type?: string;

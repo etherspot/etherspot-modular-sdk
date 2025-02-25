@@ -1,4 +1,4 @@
-import { BigNumberish } from "../types/bignumber";
+import { BigNumberish } from "../types/bignumber.js";
 
 export interface BatchUserOpsRequest {
   to: string[];

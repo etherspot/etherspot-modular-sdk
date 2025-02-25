@@ -1,6 +1,6 @@
 import { Address, concat, encodeAbiParameters, Hash, hashMessage, Hex, parseAbiParameters, toBytes, toHex, TransactionRequest } from 'viem';
-import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { EthereumProvider } from './interfaces';
+import { DynamicWalletProvider } from './dynamic.wallet-provider.js';
+import { EthereumProvider } from './interfaces.js';
 
 export class WalletConnect2WalletProvider extends DynamicWalletProvider {
   constructor(readonly provider: EthereumProvider) {

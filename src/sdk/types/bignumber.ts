@@ -1,3 +1,4 @@
+/* eslint-disable prefer-rest-params */
 "use strict";
 
 /**
@@ -19,8 +20,8 @@ export interface Hexable {
 }
 
 import { isHex, isBytes } from "viem";
-import { Logger } from "./bignumber-logger";
-import { hexlifyValue } from "../common/utils/hexlify";
+import { Logger } from "./bignumber-logger.js";
+import { hexlifyValue } from "../common/utils/hexlify.js";
 
 const logger = new Logger(version);
 

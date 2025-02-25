@@ -1,7 +1,7 @@
 import { Hash, Hex, TransactionRequest, WalletClient, createWalletClient, http, concat, Address, encodeAbiParameters, parseAbiParameters, hashMessage, toBytes } from 'viem';
-import { MessagePayload, WalletProvider } from './interfaces';
+import { MessagePayload, WalletProvider } from './interfaces.js';
 import { privateKeyToAccount } from 'viem/accounts';
-import { Networks } from '../../network/constants';
+import { Networks } from '../../network/constants.js';
 
 export class KeyWalletProvider implements WalletProvider {
   readonly type = 'Key';

@@ -17,11 +17,8 @@
   ],
   "license": "MIT",
   "homepage": "https://etherspot.io",
-  "main": "./dist/cjs/index.js",
-  "browser": {
-    "./dist/browser.js": "./dist/cjs/browser.js",
-    "child_process": false
-  },
+  "type": "module",
+  "module": "./dist/esm/index.js",
   "types": "./dist/cjs/index.d.ts",
   "scripts": {
     "start": "exit 1",
@@ -78,6 +75,17 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
+    "prool": "^0.0.12",
+    "async-mutex": "^0.5.0",
+    "get-port": "^7.0.0",
+    "tsc-alias": "^1.8.8",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "buffer": "^6.0.3",
+    "@tanstack/react-query": "5.45.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "@types/node": "18.11.9",
     "@types/prettier": "2.7.3",
     "@typescript-eslint/eslint-plugin": "5.45.0",
@@ -91,7 +99,7 @@
     "tsup": "^8.2.4",
     "typedoc": "^0.17.8",
     "typescript": "5.5.3",
-    "viem": "2.21.53"
+    "viem": "2.21.54"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "*"

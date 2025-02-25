@@ -1,12 +1,12 @@
-import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI';
-import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap';
-import { DEFAULT_BOOTSTRAP_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants';
-import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common';
+import { BaseApiParams, BaseAccountAPI } from './BaseAccountAPI.js';
+import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap.js';
+import { DEFAULT_BOOTSTRAP_ADDRESS, Networks, DEFAULT_QUERY_PAGE_SIZE } from '../network/constants.js';
+import { CALL_TYPE, EXEC_TYPE, MODULE_TYPE, getExecuteMode } from '../common/index.js';
 import { encodeFunctionData, parseAbi, encodeAbiParameters, parseAbiParameters, concat, getAddress, pad, toHex, isBytes, Hex, isAddress } from 'viem';
-import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis';
-import { getInstalledModules } from '../common/getInstalledModules';
-import { getViemAddress } from '../common/utils/viem-utils';
-import { BigNumber, BigNumberish } from '../types/bignumber';
+import { accountAbi, bootstrapAbi, entryPointAbi, factoryAbi } from '../common/abis.js';
+import { getInstalledModules } from '../common/getInstalledModules.js';
+import { getViemAddress } from '../common/utils/viem-utils.js';
+import { BigNumber, BigNumberish } from '../types/bignumber.js';
 
 // Creating a constant for the sentinel address using viem
 const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");

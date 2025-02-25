@@ -1,5 +1,5 @@
-import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { MessagePayload } from './interfaces';
+import { DynamicWalletProvider } from './dynamic.wallet-provider.js';
+import { MessagePayload } from './interfaces.js';
 import { TransactionRequest, Hex, toBytes, hashMessage, toHex, Hash, encodeAbiParameters, parseAbiParameters, concat, Address } from 'viem';
 
 declare const window: Window & {

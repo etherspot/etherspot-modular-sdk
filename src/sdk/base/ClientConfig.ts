@@ -1,4 +1,4 @@
-import { PaymasterAPI } from './PaymasterAPI';
+import { PaymasterAPI } from './PaymasterAPI.js';
 
 /**
  * configuration params for wrapProvider

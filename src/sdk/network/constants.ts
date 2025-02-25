@@ -1,5 +1,5 @@
 import { bsc, gnosis } from "viem/chains";
-import { NetworkConfig } from ".";
+import { NetworkConfig } from "./index.js";
 import * as Chain from "viem/chains";
 import { defineChain } from "viem";
 

@@ -1,2 +1,2 @@
-export * from './is-wallet-provider';
-export * from './is-wallet-connect-provider';
+export * from './is-wallet-provider.js';
+export * from './is-wallet-connect-provider.js';

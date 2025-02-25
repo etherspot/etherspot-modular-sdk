@@ -1,3 +1,3 @@
-export * from './interfaces';
-export * from './providers';
-export * from './wallet.service';
+export * from './interfaces.js';
+export * from './providers/index.js';
+export * from './wallet.service.js';

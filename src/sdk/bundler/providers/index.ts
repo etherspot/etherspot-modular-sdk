@@ -1,2 +1,2 @@
-export * from './GenericBundler';
-export * from './EtherspotBundler';
+export * from './GenericBundler.js';
+export * from './EtherspotBundler.js';

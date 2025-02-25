@@ -1,5 +1,5 @@
-import { type BytesLike } from '../common/types';
-import { IsBytesLike } from './validators';
+import { type BytesLike } from '../common/types.js';
+import { IsBytesLike } from './validators/index.js';
 
 export class SignMessageDto {
   @IsBytesLike({

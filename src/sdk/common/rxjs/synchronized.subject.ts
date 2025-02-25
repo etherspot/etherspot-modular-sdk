@@ -1,5 +1,5 @@
-import { Synchronized } from '../classes';
-import { ObjectSubject } from './object.subject';
+import { Synchronized } from '../classes/index.js';
+import { ObjectSubject } from './object.subject.js';
 
 /**
  * @ignore

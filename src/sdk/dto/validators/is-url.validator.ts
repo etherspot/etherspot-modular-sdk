@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { isUrl } from '../../common';
+import { isUrl } from '../../common/index.js';
 
 export function IsUrl(validationOptions: ValidationOptions = {}) {
   return (object: any, propertyName: string) => {

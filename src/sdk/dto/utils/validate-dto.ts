@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { ValidationException, prepareAddresses } from '../../common';
+import { ValidationException, prepareAddresses } from '../../common/index.js';
 
 /**
  * @ignore

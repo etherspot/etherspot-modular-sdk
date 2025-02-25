@@ -1,4 +1,4 @@
 import 'reflect-metadata';
-import './browser-polyfill';
+import './browser-polyfill.js';
 
-export * from './sdk';
+export * from './sdk/index.js';

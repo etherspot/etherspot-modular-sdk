@@ -1,1 +1,1 @@
-export * from './validate-dto';
+export * from './validate-dto.js';

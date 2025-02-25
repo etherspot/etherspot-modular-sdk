@@ -1,5 +1,5 @@
 import { Account, concat, Hex, keccak256, pad, PublicClient, toHex, WalletClient } from 'viem'
-import { BigNumber, BigNumberish } from '../types/bignumber'
+import { BigNumber, BigNumberish } from '../types/bignumber.js'
 
 export type TransactionRequest = {
   to: Hex,

@@ -1,5 +1,5 @@
 import { isHex } from 'viem';
-import { WalletLike, WalletProvider, WalletProviderLike } from '../interfaces';
+import { WalletLike, WalletProvider, WalletProviderLike } from '../interfaces.js';
 
 export function isWalletProvider(provider: WalletProviderLike): boolean {
   let result = false;

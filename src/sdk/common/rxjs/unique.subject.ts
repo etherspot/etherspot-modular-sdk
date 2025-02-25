@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { deepCompare } from '../utils';
+import { deepCompare } from '../utils/index.js';
 
 /**
  * @ignore

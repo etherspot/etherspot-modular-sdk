@@ -1,4 +1,4 @@
-import { BigNumberish } from "../types/bignumber";
+import { BigNumberish } from "../types/bignumber.js";
 
 /**
  * basic struct to create a UserOperation from

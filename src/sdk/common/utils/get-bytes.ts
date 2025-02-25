@@ -1,4 +1,4 @@
-import { BytesLike } from "ethers";
+import { BytesLike } from '../types.js';
 
 /**
  * @ignore

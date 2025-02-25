@@ -1,4 +1,4 @@
-import { BigNumber } from '../../types/bignumber';
+import { BigNumber } from '../../types/bignumber.js';
 import { registerDecorator, ValidationOptions } from 'class-validator';
 
 export function IsBigNumberish(

@@ -1,9 +1,9 @@
 import { Address, PublicClient, parseAbi, zeroAddress } from 'viem'
-import { ModuleType } from './types'
-import { VIEM_SENTINEL_ADDRESS } from './constants'
-import { isContract } from './utils/viem-utils'
-import { accountAbi } from './abis'
-import { DEFAULT_QUERY_PAGE_SIZE } from '../network/constants'
+import { ModuleType } from './types.js'
+import { VIEM_SENTINEL_ADDRESS } from './constants.js'
+import { isContract } from './utils/viem-utils.js'
+import { accountAbi } from './abis.js'
+import { DEFAULT_QUERY_PAGE_SIZE } from '../network/constants.js'
 
 export const getInstalledModules = async ({
   client,

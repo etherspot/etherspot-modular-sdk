@@ -1,6 +1,6 @@
 "use strict";
 
-import { Bytes, BytesLike } from "../types";
+import { Bytes, BytesLike } from "../types.js";
 
 ///////////////////////////////
 // Exported Types
@@ -68,7 +68,7 @@ export function checkSafeUint53(value: number, message?: string): void {
     }
 }
 
-const HexCharacters: string = "0123456789abcdef";
+const HexCharacters = "0123456789abcdef";
 
 export function hexlifyValue(value: BytesLike | Hexable | number | bigint, options?: DataOptions): string {
     if (!options) { options = {}; }
@@ -118,7 +118,7 @@ export function hexlifyValue(value: BytesLike | Hexable | number | bigint, optio
     if (isBytes(value)) {
         let result = "0x";
         for (let i = 0; i < value.length; i++) {
-            let v = value[i];
+            const v = value[i];
             result += HexCharacters[(v & 0xf0) >> 4] + HexCharacters[v & 0x0f];
         }
         return result;

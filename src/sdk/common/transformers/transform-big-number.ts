@@ -1,6 +1,6 @@
 import { Transform, TransformationType } from 'class-transformer';
-import { isBigNumber } from '../utils';
-import { BigNumber } from '../../types/bignumber';
+import { isBigNumber } from '../utils/index.js';
+import { BigNumber } from '../../types/bignumber.js';
 /**
  * @ignore
  */

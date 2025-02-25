@@ -1,4 +1,4 @@
-import { CALL_TYPE, EXEC_TYPE } from "../constants";
+import { CALL_TYPE, EXEC_TYPE } from "../constants.js";
 import { concat, pad } from "viem";
 
 export type Result = { key: string, value: any };

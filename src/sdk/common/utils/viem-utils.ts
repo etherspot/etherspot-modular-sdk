@@ -1,8 +1,8 @@
 import { PublicClient, Address, createPublicClient, createWalletClient, http, Account, Chain, getAddress, extractChain, Hex, Transport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts';
 import * as chains from "viem/chains";
-import { Networks } from '../../network/constants';
-import { AddressZero } from '../constants';
+import { Networks } from '../../network/constants.js';
+import { AddressZero } from '../constants.js';
 
 export const isContract = async ({
   client,
@@ -26,7 +26,7 @@ export const getPublicClient = ({ chainId, transport }: { chainId: number, trans
   return publicClient;
 }
 
-export const getWalletClientFromPrivateKey = ({ rpcUrl, chainId, privateKey }: { rpcUrl: string,  chainId: number, privateKey: string }) => {
+export const getWalletClientFromPrivateKey = ({ rpcUrl, chainId, privateKey }: { rpcUrl: string, chainId: number, privateKey: string }): ReturnType<typeof createWalletClient> => {
   return createWalletClient({
     account: privateKeyToAccount(privateKey as Hex),
     chain: Networks[chainId].chain,
@@ -34,14 +34,13 @@ export const getWalletClientFromPrivateKey = ({ rpcUrl, chainId, privateKey }: {
   });
 }
 
-export const getWalletClientFromAccount = ({ rpcUrl, chainId, account }: { rpcUrl: string,  chainId: number, account: Account }) => {
+export const getWalletClientFromAccount = ({ rpcUrl, chainId, account }: { rpcUrl: string, chainId: number, account: Account }): ReturnType<typeof createWalletClient> => {
   return createWalletClient({
     account: account,
     chain: Networks[chainId].chain,
     transport: http(rpcUrl) as any, // Asserting to `any` to bypass the deep instantiation check
   });
 }
-
 export const getViemAccount = (privateKey: string): Account => {
   return privateKeyToAccount(privateKey as Hex);
 }
