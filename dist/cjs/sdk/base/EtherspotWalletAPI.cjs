@@ -13601,12 +13601,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version5) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -13842,6 +13839,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -14180,12 +14179,11 @@ var VIEM_SENTINEL_ADDRESS = "0x0000000000000000000000000000000000000001";
 
 // src/sdk/common/service.ts
 var Service = class {
-  constructor() {
-    this.inited = false;
-    this.destroyed = false;
-    this.attachedCounter = 0;
-    this.subscriptions = [];
-  }
+  context;
+  inited = false;
+  destroyed = false;
+  attachedCounter = 0;
+  subscriptions = [];
   init(context) {
     if (!this.inited) {
       this.inited = true;
@@ -16607,10 +16605,13 @@ var accountAbi = [
 
 // src/sdk/network/network.service.ts
 var NetworkService = class extends Service {
+  network$ = new ObjectSubject(null);
+  chainId$;
+  defaultNetwork;
+  supportedNetworks;
+  externalContractAddresses = /* @__PURE__ */ new Map();
   constructor(defaultChainId) {
     super();
-    this.network$ = new ObjectSubject(null);
-    this.externalContractAddresses = /* @__PURE__ */ new Map();
     this.supportedNetworks = SupportedNetworks.map((chainId) => {
       const name = CHAIN_ID_TO_NETWORK_NAME[chainId];
       return !name ? null : {
@@ -16653,8 +16654,11 @@ var NetworkService = class extends Service {
 
 // src/sdk/wallet/providers/key.wallet-provider.ts
 var KeyWalletProvider = class {
+  type = "Key";
+  address;
+  accountAddress;
+  wallet;
   constructor(chainId, privateKey) {
-    this.type = "Key";
     this.wallet = createWalletClient({
       account: privateKeyToAccount(privateKey),
       chain: Networks[chainId].chain,
@@ -16735,8 +16739,11 @@ var KeyWalletProvider = class {
 
 // src/sdk/wallet/providers/walletClient.provider.ts
 var WalletClientProvider = class {
+  type = "WalletClient";
+  address;
+  accountAddress;
+  wallet;
   constructor(walletClient) {
-    this.type = "WalletClient";
     this.wallet = walletClient;
     const { address } = this.wallet.account;
     this.address = address;
@@ -16819,10 +16826,13 @@ var WalletService = class extends Service {
     this.options = options;
     this.rpcUrl = rpcUrl;
     this.chain = chain;
-    this.wallet$ = new ObjectSubject();
     this.rpcBundlerUrl = rpcUrl;
     this.chainId = chain;
   }
+  wallet$ = new ObjectSubject();
+  rpcBundlerUrl;
+  chainId;
+  provider;
   get wallet() {
     return this.wallet$.value;
   }
@@ -16972,6 +16982,7 @@ var import_class_validator5 = require("class-validator");
 
 // src/sdk/dto/sign-message.dto.ts
 var SignMessageDto = class {
+  message;
 };
 __decorateClass([
   IsBytesLike({
@@ -17017,13 +17028,13 @@ async function validateDto(dto, DtoConstructor, options = {}) {
 var Context = class {
   constructor(services) {
     this.services = services;
-    this.error$ = new ErrorSubject();
-    this.attached = [];
     const items = [...Object.values(services)];
     for (const item of items) {
       this.attach(item);
     }
   }
+  error$ = new ErrorSubject();
+  attached = [];
   attach(service) {
     this.attached.push(service);
     service.init(this);
@@ -17037,12 +17048,24 @@ var Context = class {
 
 // src/sdk/base/BaseAccountAPI.ts
 var BaseAccountAPI = class {
+  senderAddress;
+  isPhantom = true;
+  services;
+  context;
+  overheads;
+  entryPointAddress;
+  accountAddress;
+  paymasterAPI;
+  factoryUsed;
+  factoryAddress;
+  validatorAddress;
+  wallet;
+  publicClient;
   /**
    * base constructor.
    * subclass SHOULD add parameters that define the owner (signer) of this wallet
    */
   constructor(params) {
-    this.isPhantom = true;
     const optionsLike = params.optionsLike;
     const {
       chainId,
@@ -17502,6 +17525,10 @@ var getModulesPaginated = async ({
 var SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
 var ADDRESS_ZERO = getAddress("0x0000000000000000000000000000000000000000");
 var EtherspotWalletAPI = class extends BaseAccountAPI {
+  index;
+  predefinedAccountAddress;
+  bootstrapAddress;
+  eoaAddress;
   constructor(params) {
     super(params);
     this.index = params.index ?? 0;

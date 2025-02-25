@@ -6463,12 +6463,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version4) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -6784,7 +6781,6 @@ var ErrorHandler = class extends Error {
     super(error);
     this.error = error;
     this.code = code;
-    this.rawError = null;
     this.rawError = error;
     this.code = code;
     if (code) {
@@ -6794,6 +6790,7 @@ var ErrorHandler = class extends Error {
       }
     }
   }
+  rawError = null;
 };
 
 // node_modules/viem/_esm/op-stack/contracts.js
@@ -8731,6 +8728,8 @@ var HttpRpcClient = class {
       throw new Error(err.message);
     }
   }
+  publicClient;
+  initializing;
   async validateChainId() {
     try {
       const chain = await this.publicClient.request({

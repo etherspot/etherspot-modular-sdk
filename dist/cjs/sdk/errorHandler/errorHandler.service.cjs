@@ -82,7 +82,6 @@ var ErrorHandler = class extends Error {
     super(error);
     this.error = error;
     this.code = code;
-    this.rawError = null;
     this.rawError = error;
     this.code = code;
     if (code) {
@@ -92,5 +91,6 @@ var ErrorHandler = class extends Error {
       }
     }
   }
+  rawError = null;
 };
 //# sourceMappingURL=errorHandler.service.cjs.map

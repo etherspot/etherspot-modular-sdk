@@ -12986,12 +12986,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version5) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -13227,6 +13224,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -15645,9 +15644,9 @@ function prepareNetworkName(networkNameOrChainId) {
 var DynamicWalletProvider = class {
   constructor(type) {
     this.type = type;
-    this.address$ = new UniqueSubject();
-    this.networkName$ = new UniqueSubject();
   }
+  address$ = new UniqueSubject();
+  networkName$ = new UniqueSubject();
   get address() {
     return this.address$.value;
   }
@@ -15664,8 +15663,11 @@ var DynamicWalletProvider = class {
 
 // src/sdk/wallet/providers/key.wallet-provider.ts
 var KeyWalletProvider = class {
+  type = "Key";
+  address;
+  accountAddress;
+  wallet;
   constructor(chainId, privateKey) {
-    this.type = "Key";
     this.wallet = createWalletClient({
       account: privateKeyToAccount(privateKey),
       chain: Networks[chainId].chain,
@@ -15765,6 +15767,7 @@ var MetaMaskWalletProvider = class _MetaMaskWalletProvider extends DynamicWallet
     }
     return this.instance;
   }
+  static instance;
   constructor() {
     super("MetaMask");
   }
@@ -16284,8 +16287,11 @@ var Web3eip1193WalletProvider = class _Web3eip1193WalletProvider extends Dynamic
 
 // src/sdk/wallet/providers/walletClient.provider.ts
 var WalletClientProvider = class {
+  type = "WalletClient";
+  address;
+  accountAddress;
+  wallet;
   constructor(walletClient) {
-    this.type = "WalletClient";
     this.wallet = walletClient;
     const { address } = this.wallet.account;
     this.address = address;

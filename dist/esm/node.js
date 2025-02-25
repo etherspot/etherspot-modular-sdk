@@ -3,22 +3,45 @@ import "./chunk-P4BCYDPK.js";
 import "./chunk-EUHG65MZ.js";
 import {
   ModularSdk
-} from "./chunk-E7VJHVZX.js";
+} from "./chunk-ZPSQARNM.js";
 import "./chunk-KY7TQQTC.js";
-import "./chunk-CSCL43R7.js";
+import "./chunk-X43KF6FC.js";
+import {
+  WalletService
+} from "./chunk-EGN3VPUB.js";
 import "./chunk-RBVJQYWP.js";
-import "./chunk-XIHVQT3S.js";
+import {
+  Web3eip1193WalletProvider
+} from "./chunk-L6M4WISX.js";
 import "./chunk-677BG7LZ.js";
-import "./chunk-4C5GJCB6.js";
-import "./chunk-SI63LRN5.js";
+import {
+  isWalletConnectProvider
+} from "./chunk-4C5GJCB6.js";
+import {
+  isWalletProvider
+} from "./chunk-SI63LRN5.js";
 import "./chunk-NLZ3QXSG.js";
-import "./chunk-P52BQK4C.js";
-import "./chunk-R2AP7TF2.js";
-import "./chunk-SFO7SNAN.js";
-import "./chunk-VMTTOTSA.js";
-import "./chunk-CNVPIR4J.js";
-import "./chunk-JDQNWLLU.js";
-import "./chunk-MXCZZR5O.js";
+import {
+  KeyWalletProvider
+} from "./chunk-DIECYCKK.js";
+import {
+  MetaMaskWalletProvider
+} from "./chunk-R4ON74AM.js";
+import {
+  WalletConnect2WalletProvider
+} from "./chunk-CHR2G5TD.js";
+import {
+  WalletConnectWalletProvider
+} from "./chunk-7FE6CGVE.js";
+import {
+  WalletClientProvider
+} from "./chunk-BZJCUZRI.js";
+import {
+  Web3WalletProvider
+} from "./chunk-DDUMIWSZ.js";
+import {
+  DynamicWalletProvider
+} from "./chunk-VMUO65NX.js";
 import "./chunk-4TDNRCY6.js";
 import "./chunk-53QCOEFK.js";
 import {
@@ -30,9 +53,13 @@ import {
 import "./chunk-R3K76433.js";
 import {
   NetworkService
-} from "./chunk-5PDIONI2.js";
-import "./chunk-X43KF6FC.js";
-import "./chunk-ACHZ4ZIC.js";
+} from "./chunk-7Y4ZOR77.js";
+import "./chunk-RMYTR7WV.js";
+import "./chunk-NNQEX6PF.js";
+import "./chunk-R7Y35C7I.js";
+import "./chunk-IUUB4F7U.js";
+import "./chunk-4JU7XSFU.js";
+import "./chunk-VJN3GYFI.js";
 import "./chunk-3MNK3TJ5.js";
 import "./chunk-ZSFEVHV3.js";
 import {
@@ -40,45 +67,40 @@ import {
 } from "./chunk-RYKQDQQJ.js";
 import {
   SignMessageDto
-} from "./chunk-7XKZV364.js";
+} from "./chunk-A5JWHM74.js";
 import "./chunk-UUIL3T3C.js";
 import "./chunk-ZFKMDGTX.js";
 import "./chunk-MHVYE5E2.js";
 import "./chunk-IA5TOLW2.js";
-import "./chunk-BFOX34S6.js";
+import "./chunk-FJPVIKCW.js";
 import "./chunk-MZTFRCWQ.js";
 import "./chunk-JKJUQEQ6.js";
+import "./chunk-RNSEOPYU.js";
+import "./chunk-K2LHOFME.js";
+import "./chunk-WZQO5STN.js";
+import "./chunk-ACHZ4ZIC.js";
 import "./chunk-BFF5QBNK.js";
-import "./chunk-UAWLE3Q3.js";
-import "./chunk-ZU4MMUOJ.js";
-import "./chunk-6LH2SJV2.js";
-import "./chunk-R7Y35C7I.js";
-import "./chunk-EUOFXAC3.js";
-import "./chunk-7WF64U7W.js";
-import "./chunk-4JU7XSFU.js";
-import "./chunk-5CB5SACS.js";
 import {
   SessionKeyValidator
-} from "./chunk-CTTDYXJU.js";
+} from "./chunk-5KZJ7WJ6.js";
+import "./chunk-ZJ2O6KOQ.js";
 import "./chunk-BLORCE2A.js";
+import "./chunk-UAWLE3Q3.js";
 import "./chunk-RIH2I2BE.js";
 import "./chunk-AQESWNQB.js";
 import {
   EtherspotBundler
-} from "./chunk-74UG2EF2.js";
+} from "./chunk-QRHPTBCF.js";
 import {
   GenericBundler
-} from "./chunk-2DG77NQO.js";
+} from "./chunk-Q7ECE72N.js";
 import "./chunk-AD5PGUYK.js";
-import "./chunk-RNSEOPYU.js";
-import "./chunk-ZJ2O6KOQ.js";
-import "./chunk-AL5X7NBP.js";
-import "./chunk-I5LT3ZYW.js";
+import "./chunk-LT6TVN3Y.js";
 import "./chunk-B2GURONC.js";
 import "./chunk-V624XYS3.js";
 import {
   TransformBigNumber
-} from "./chunk-CVG2XIBW.js";
+} from "./chunk-P3ASQGGB.js";
 import "./chunk-WMTRHLCY.js";
 import "./chunk-S2454LNH.js";
 import {
@@ -90,44 +112,29 @@ import {
 import "./chunk-IRK7BPGT.js";
 import {
   SynchronizedSubject
-} from "./chunk-PBOYRFBB.js";
+} from "./chunk-EX2L45PO.js";
 import {
   UniqueSubject
-} from "./chunk-3YWNDOEN.js";
+} from "./chunk-XMZSJVAW.js";
 import {
   ErrorSubject
 } from "./chunk-JGJFWWZ2.js";
 import {
   ObjectSubject
-} from "./chunk-CEKGUPTO.js";
+} from "./chunk-LY6TS44P.js";
 import {
   distinctUniqueKey
-} from "./chunk-PHJUEZEV.js";
+} from "./chunk-KE62UF5Z.js";
 import "./chunk-S7PPKJF3.js";
 import {
   BaseClass
 } from "./chunk-CIQTVOVJ.js";
 import {
   Synchronized
-} from "./chunk-B3IP73OS.js";
-import "./chunk-PLQWNRTZ.js";
+} from "./chunk-BVR3U5P6.js";
 import {
   Service
-} from "./chunk-2DVWPQWH.js";
-import {
-  getGasFee
-} from "./chunk-CX2KHWMD.js";
-import {
-  decodeErrorReason,
-  deepHexlify,
-  getUserOpHash,
-  packPaymasterData,
-  packUint,
-  packUserOp,
-  packUserOpData,
-  resolveHexlify,
-  rethrowError
-} from "./chunk-QDPQZ6SZ.js";
+} from "./chunk-VJKFSPZG.js";
 import "./chunk-FB5DCH4I.js";
 import {
   concatHex,
@@ -151,15 +158,18 @@ import {
 } from "./chunk-4KVEROXU.js";
 import {
   deepCompare
-} from "./chunk-PTN4HFUV.js";
+} from "./chunk-N2P4NRH3.js";
 import {
   bigNumberishToBigInt,
   fromBigInt,
   isBigNumber
-} from "./chunk-XRHVIBWK.js";
+} from "./chunk-QN43T53T.js";
 import {
   getBytes
 } from "./chunk-AR3EM3EV.js";
+import {
+  getGasFee
+} from "./chunk-QWCJZTVT.js";
 import {
   addressesEqual,
   getChain,
@@ -196,9 +206,21 @@ import {
   bufferPercent,
   onRampApiKey
 } from "./chunk-IXDF7SOZ.js";
-import "./chunk-56W7LDOD.js";
+import "./chunk-PLQWNRTZ.js";
+import {
+  decodeErrorReason,
+  deepHexlify,
+  getUserOpHash,
+  packPaymasterData,
+  packUint,
+  packUserOp,
+  packUserOpData,
+  resolveHexlify,
+  rethrowError
+} from "./chunk-DDDNIC7V.js";
+import "./chunk-LWM5MV7Z.js";
 import "./chunk-BK72YQKX.js";
-import "./chunk-MFE7IVZM.js";
+import "./chunk-EFSON5UP.js";
 import "./chunk-VOPA75Q5.js";
 import "./chunk-UFWBG2KU.js";
 import "./chunk-5ZBZ6BDF.js";
@@ -215,6 +237,7 @@ export {
   DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS,
   DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS,
   DEFAULT_QUERY_PAGE_SIZE,
+  DynamicWalletProvider,
   EXEC_TYPE,
   ErrorSubject,
   EtherspotBundler,
@@ -222,7 +245,9 @@ export {
   Factory,
   GenericBundler,
   HeaderNames,
+  KeyWalletProvider,
   MODULE_TYPE,
+  MetaMaskWalletProvider,
   ModularSdk,
   NETWORK_NAME_TO_CHAIN_ID,
   NetworkNames,
@@ -239,6 +264,12 @@ export {
   UniqueSubject,
   VIEM_SENTINEL_ADDRESS,
   ValidationException,
+  WalletClientProvider,
+  WalletConnect2WalletProvider,
+  WalletConnectWalletProvider,
+  WalletService,
+  Web3WalletProvider,
+  Web3eip1193WalletProvider,
   addressesEqual,
   bigNumberishToBigInt,
   bufferPercent,
@@ -264,6 +295,8 @@ export {
   isContract,
   isHex,
   isUrl,
+  isWalletConnectProvider,
+  isWalletProvider,
   keccak256,
   networkNameToChainId,
   onRampApiKey,

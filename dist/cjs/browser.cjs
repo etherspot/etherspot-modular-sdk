@@ -18012,6 +18012,7 @@ __export(browser_exports, {
   DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS: () => DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS,
   DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS: () => DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS,
   DEFAULT_QUERY_PAGE_SIZE: () => DEFAULT_QUERY_PAGE_SIZE,
+  DynamicWalletProvider: () => DynamicWalletProvider,
   EXEC_TYPE: () => EXEC_TYPE,
   ErrorSubject: () => ErrorSubject,
   EtherspotBundler: () => EtherspotBundler,
@@ -18019,7 +18020,9 @@ __export(browser_exports, {
   Factory: () => Factory,
   GenericBundler: () => GenericBundler,
   HeaderNames: () => HeaderNames,
+  KeyWalletProvider: () => KeyWalletProvider,
   MODULE_TYPE: () => MODULE_TYPE,
+  MetaMaskWalletProvider: () => MetaMaskWalletProvider,
   ModularSdk: () => ModularSdk,
   NETWORK_NAME_TO_CHAIN_ID: () => NETWORK_NAME_TO_CHAIN_ID,
   NetworkNames: () => NetworkNames,
@@ -18036,6 +18039,12 @@ __export(browser_exports, {
   UniqueSubject: () => UniqueSubject,
   VIEM_SENTINEL_ADDRESS: () => VIEM_SENTINEL_ADDRESS,
   ValidationException: () => ValidationException,
+  WalletClientProvider: () => WalletClientProvider,
+  WalletConnect2WalletProvider: () => WalletConnect2WalletProvider,
+  WalletConnectWalletProvider: () => WalletConnectWalletProvider,
+  WalletService: () => WalletService,
+  Web3WalletProvider: () => Web3WalletProvider,
+  Web3eip1193WalletProvider: () => Web3eip1193WalletProvider,
   addressesEqual: () => addressesEqual,
   bigNumberishToBigInt: () => bigNumberishToBigInt,
   bufferPercent: () => bufferPercent,
@@ -18061,6 +18070,8 @@ __export(browser_exports, {
   isContract: () => isContract,
   isHex: () => isHex2,
   isUrl: () => isUrl,
+  isWalletConnectProvider: () => isWalletConnectProvider,
+  isWalletProvider: () => isWalletProvider,
   keccak256: () => keccak2562,
   networkNameToChainId: () => networkNameToChainId,
   onRampApiKey: () => onRampApiKey,
@@ -37518,12 +37529,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version5) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -37759,6 +37767,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -38211,12 +38221,11 @@ async function getGasFee(publicClient) {
 
 // src/sdk/common/service.ts
 var Service = class {
-  constructor() {
-    this.inited = false;
-    this.destroyed = false;
-    this.attachedCounter = 0;
-    this.subscriptions = [];
-  }
+  context;
+  inited = false;
+  destroyed = false;
+  attachedCounter = 0;
+  subscriptions = [];
   init(context) {
     if (!this.inited) {
       this.inited = true;
@@ -38846,6 +38855,7 @@ var UniqueSubject = class extends import_rxjs3.BehaviorSubject {
 
 // src/sdk/common/classes/synchronized.ts
 var Synchronized = class {
+  synchronizedAt;
 };
 
 // src/sdk/common/classes/base-class.ts
@@ -38900,6 +38910,11 @@ function TransformBigNumber() {
 
 // src/sdk/SessionKeyValidator/SessionKeyValidator.ts
 var SessionKeyValidator = class _SessionKeyValidator {
+  modularSdk;
+  providerURL;
+  erc20SessionKeyValidator;
+  chainId;
+  publicClient;
   constructor(modularSdk) {
     this.modularSdk = modularSdk;
     this.publicClient = modularSdk.getPublicClient();
@@ -39324,10 +39339,13 @@ var Factory = /* @__PURE__ */ ((Factory3) => {
 
 // src/sdk/network/network.service.ts
 var NetworkService = class extends Service {
+  network$ = new ObjectSubject(null);
+  chainId$;
+  defaultNetwork;
+  supportedNetworks;
+  externalContractAddresses = /* @__PURE__ */ new Map();
   constructor(defaultChainId) {
     super();
-    this.network$ = new ObjectSubject(null);
-    this.externalContractAddresses = /* @__PURE__ */ new Map();
     this.supportedNetworks = SupportedNetworks.map((chainId) => {
       const name = CHAIN_ID_TO_NETWORK_NAME[chainId];
       return !name ? null : {
@@ -39396,9 +39414,9 @@ function networkNameToChainId(networkName) {
 var DynamicWalletProvider = class {
   constructor(type) {
     this.type = type;
-    this.address$ = new UniqueSubject();
-    this.networkName$ = new UniqueSubject();
   }
+  address$ = new UniqueSubject();
+  networkName$ = new UniqueSubject();
   get address() {
     return this.address$.value;
   }
@@ -39415,8 +39433,11 @@ var DynamicWalletProvider = class {
 
 // src/sdk/wallet/providers/key.wallet-provider.ts
 var KeyWalletProvider = class {
+  type = "Key";
+  address;
+  accountAddress;
+  wallet;
   constructor(chainId, privateKey) {
-    this.type = "Key";
     this.wallet = createWalletClient({
       account: privateKeyToAccount(privateKey),
       chain: Networks[chainId].chain,
@@ -39495,6 +39516,106 @@ var KeyWalletProvider = class {
   }
 };
 
+// src/sdk/wallet/providers/meta-mask.wallet-provider.ts
+var MetaMaskWalletProvider = class _MetaMaskWalletProvider extends DynamicWalletProvider {
+  static get ethereum() {
+    return this.detect() ? window.ethereum : null;
+  }
+  static detect() {
+    return !!window?.ethereum?.isMetaMask;
+  }
+  static async connect() {
+    if (!this.instance) {
+      if (!this.detect()) {
+        throw new Error("MetaMask not found");
+      }
+      this.instance = new _MetaMaskWalletProvider();
+      await this.instance.connect();
+    }
+    if (!this.instance.address) {
+      throw new Error("Can not connect to MetaMask");
+    }
+    return this.instance;
+  }
+  static instance;
+  constructor() {
+    super("MetaMask");
+  }
+  async signMessage(message, validatorAddress, factoryAddress, initCode) {
+    const msg = toBytes(hashMessage({ raw: toBytes(message) }));
+    const signature = await this.sendRequest("personal_sign", [
+      msg,
+      this.address
+    ]);
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return validatorAddress + signature.slice(2);
+  }
+  async signUserOp(message) {
+    return this.sendRequest("personal_sign", [
+      toHex(message),
+      this.address
+    ]);
+  }
+  async signTypedData(msg, validatorAddress, factoryAddress, initCode) {
+    const signature = await this.sendRequest("eth_signTypedData_v4", [
+      this.address,
+      msg
+    ]);
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return validatorAddress + signature.slice(2);
+  }
+  async eth_requestAccounts(address) {
+    return [address];
+  }
+  async eth_accounts(address) {
+    return [address];
+  }
+  async eth_sendTransaction(transaction) {
+    return this.sendRequest("eth_sendTransaction", [
+      transaction
+    ]);
+  }
+  async eth_signTransaction(transaction) {
+    return this.sendRequest("eth_signTransaction", [
+      transaction
+    ]);
+  }
+  async connect() {
+    const { ethereum } = window;
+    ethereum.autoRefreshOnNetworkChange = false;
+    ethereum.on("accountsChanged", ([address]) => this.setAddress(address));
+    ethereum.on("chainChanged", () => {
+      window.location.reload();
+    });
+    try {
+      const chainId = await this.sendRequest("eth_chainId");
+      this.setNetworkName(chainId);
+      const [address] = await this.sendRequest("eth_requestAccounts");
+      this.setAddress(address);
+    } catch (err) {
+    }
+  }
+  async sendRequest(method, params) {
+    const { ethereum } = window;
+    return ethereum.request({
+      method,
+      params
+    });
+  }
+};
+
 // src/sdk/wallet/providers/utils/is-wallet-provider.ts
 function isWalletProvider(provider) {
   let result = false;
@@ -39521,6 +39642,107 @@ function isWalletProvider(provider) {
 function isWalletConnectProvider(provider) {
   return typeof provider === "object" && provider?.isWalletConnect;
 }
+
+// src/sdk/wallet/providers/wallet-connect.wallet-provider.ts
+var WalletConnectWalletProvider = class _WalletConnectWalletProvider extends DynamicWalletProvider {
+  constructor(connector) {
+    super("WalletConnect");
+    this.connector = connector;
+    try {
+      const {
+        accounts: [address],
+        chainId
+      } = connector;
+      this.setAddress(address);
+      this.setNetworkName(chainId);
+    } catch (err) {
+    }
+    this.updateSessionHandler = this.updateSessionHandler.bind(this);
+    connector.on("connect", this.updateSessionHandler);
+    connector.on("session_update", this.updateSessionHandler);
+    connector.on("disconnect", () => {
+      this.setAddress(null);
+      this.setNetworkName(null);
+    });
+  }
+  static connect(connector) {
+    return new _WalletConnectWalletProvider(connector);
+  }
+  async signMessage(message, validatorAddress, factoryAddress, initCode) {
+    const msg = toBytes(hashMessage({ raw: toBytes(message) }));
+    const response = await this.connector.signPersonalMessage([
+      msg,
+      //
+      this.address
+    ]);
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, response])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return typeof response === "string" ? validatorAddress + response.slice(2) : null;
+  }
+  async signUserOp(message) {
+    return this.connector.signPersonalMessage([
+      toHex(message),
+      //
+      this.address
+    ]);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async signTypedData(msg, validatorAddress, factoryAddress, initCode) {
+    const signature = await this.connector.request({
+      method: "eth_signTypedData_v4",
+      params: [
+        this.address,
+        msg
+      ]
+    });
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return typeof signature === "string" ? validatorAddress + signature.slice(2) : null;
+  }
+  async eth_requestAccounts() {
+    return [this.address];
+  }
+  async eth_accounts() {
+    return [this.address];
+  }
+  async eth_sendTransaction(transaction) {
+    return this.connector.request({ method: "eth_sendTransaction", params: [
+      transaction
+    ] });
+  }
+  async eth_signTransaction(transaction) {
+    return this.connector.request({ method: "eth_signTransaction", params: [
+      transaction
+    ] });
+  }
+  updateSessionHandler(error, payload) {
+    let address = null;
+    let chainId = null;
+    if (!error) {
+      try {
+        ({
+          accounts: [address],
+          chainId
+        } = payload.params[0]);
+      } catch (err) {
+        address = null;
+        chainId = null;
+      }
+    }
+    this.setAddress(address);
+    this.setNetworkName(chainId);
+  }
+};
 
 // src/sdk/wallet/providers/wallet-connect-2.wallet-provider.ts
 var WalletConnect2WalletProvider = class extends DynamicWalletProvider {
@@ -39617,10 +39839,229 @@ var WalletConnect2WalletProvider = class extends DynamicWalletProvider {
   }
 };
 
+// src/sdk/wallet/providers/web3.wallet-provider.ts
+var Web3WalletProvider = class _Web3WalletProvider extends DynamicWalletProvider {
+  constructor(web3, type = "Web3") {
+    super(type);
+    this.web3 = web3;
+  }
+  static async connect(provider, type = "Web3") {
+    const result = new _Web3WalletProvider(provider, type);
+    const connected = await result.refresh();
+    return connected ? result : null;
+  }
+  get address() {
+    return this.address$.value;
+  }
+  get networkName() {
+    return this.networkName$.value;
+  }
+  async refresh() {
+    let result = false;
+    const chainId = await this.sendRequest("eth_chainId");
+    const networkName = prepareNetworkName(chainId);
+    if (networkName) {
+      const accounts = await this.sendRequest("eth_accounts");
+      if (Array.isArray(accounts) && accounts.length) {
+        const address = prepareAddress(accounts[0]);
+        if (address) {
+          this.setAddress(address);
+          this.setNetworkName(networkName);
+          result = true;
+        }
+      }
+    }
+    return result;
+  }
+  async signMessage(message, validatorAddress, factoryAddress, initCode) {
+    const msg = toBytes(hashMessage({ raw: toBytes(message) }));
+    const signature = await this.sendRequest(
+      "personal_sign",
+      [
+        msg,
+        this.address
+        //
+      ],
+      this.address
+    );
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return validatorAddress + signature.slice(2);
+  }
+  async signUserOp(message) {
+    return this.sendRequest(
+      "personal_sign",
+      [
+        toHex(message),
+        this.address
+        //
+      ],
+      this.address
+    );
+  }
+  async signTypedData(msg, validatorAddress, factoryAddress, initCode) {
+    const signature = await this.sendRequest("eth_signTypedData", [
+      this.address,
+      msg
+    ]);
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return validatorAddress + signature.slice(2);
+  }
+  async eth_requestAccounts() {
+    return [this.address];
+  }
+  async eth_accounts() {
+    return [this.address];
+  }
+  async eth_sendTransaction(transaction) {
+    return this.sendRequest("eth_sendTransaction", [
+      transaction
+    ]);
+  }
+  async eth_signTransaction(transaction) {
+    return this.sendRequest("eth_signTransaction", [
+      transaction
+    ]);
+  }
+  async sendRequest(method, params = [], from) {
+    return new Promise((resolve, reject) => {
+      const id = Date.now();
+      this.web3.send(
+        {
+          jsonrpc: "2.0",
+          method,
+          params,
+          id,
+          from
+        },
+        (err, response) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          let result;
+          try {
+            ({ result } = response);
+          } catch (err2) {
+            result = null;
+          }
+          resolve(result || null);
+        }
+      );
+    });
+  }
+};
+
+// src/sdk/wallet/providers/web3eip1193.wallet-provider.ts
+var Web3eip1193WalletProvider = class _Web3eip1193WalletProvider extends DynamicWalletProvider {
+  constructor(web3, type = "Web3") {
+    super(type);
+    this.web3 = web3;
+  }
+  static async connect(provider, type = "Web3") {
+    const result = new _Web3eip1193WalletProvider(provider, type);
+    const connected = await result.refresh();
+    return connected ? result : null;
+  }
+  get address() {
+    return this.address$.value;
+  }
+  get networkName() {
+    return this.networkName$.value;
+  }
+  async refresh() {
+    let result = false;
+    const chainId = await this.sendRequest("eth_chainId");
+    const networkName = prepareNetworkName(chainId);
+    if (networkName) {
+      const accounts = await this.sendRequest("eth_accounts");
+      if (Array.isArray(accounts) && accounts.length) {
+        const address = prepareAddress(accounts[0]);
+        if (address) {
+          this.setAddress(address);
+          this.setNetworkName(networkName);
+          result = true;
+        }
+      }
+    }
+    return result;
+  }
+  async signMessage(message, validatorAddress, factoryAddress, initCode) {
+    const msg = toBytes(hashMessage({ raw: toBytes(message) }));
+    const signature = await this.sendRequest("personal_sign", [msg, this.address]);
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return validatorAddress + signature.slice(2);
+  }
+  async signUserOp(message) {
+    return this.sendRequest("personal_sign", [toHex(message), this.address]);
+  }
+  async signTypedData(msg, validatorAddress, factoryAddress, initCode) {
+    const signature = await this.sendRequest("eth_signTypedData", [
+      this.address,
+      msg
+    ]);
+    if (initCode !== "0x") {
+      const abiCoderResult = encodeAbiParameters(
+        parseAbiParameters("address, bytes, bytes"),
+        [factoryAddress, initCode, concat([validatorAddress, signature])]
+      );
+      return abiCoderResult + "6492649264926492649264926492649264926492649264926492649264926492";
+    }
+    return validatorAddress + signature.slice(2);
+  }
+  async eth_requestAccounts() {
+    return [this.address];
+  }
+  async eth_accounts() {
+    return [this.address];
+  }
+  async eth_sendTransaction(transaction) {
+    return this.sendRequest("eth_sendTransaction", [
+      transaction
+    ]);
+  }
+  async eth_signTransaction(transaction) {
+    return this.sendRequest("eth_signTransaction", [
+      transaction
+    ]);
+  }
+  async sendRequest(method, params = []) {
+    try {
+      const result = await this.web3.request({
+        method,
+        params
+      });
+      return result || null;
+    } catch (error) {
+      return error;
+    }
+  }
+};
+
 // src/sdk/wallet/providers/walletClient.provider.ts
 var WalletClientProvider = class {
+  type = "WalletClient";
+  address;
+  accountAddress;
+  wallet;
   constructor(walletClient) {
-    this.type = "WalletClient";
     this.wallet = walletClient;
     const { address } = this.wallet.account;
     this.address = address;
@@ -39703,10 +40144,13 @@ var WalletService = class extends Service {
     this.options = options;
     this.rpcUrl = rpcUrl;
     this.chain = chain;
-    this.wallet$ = new ObjectSubject();
     this.rpcBundlerUrl = rpcUrl;
     this.chainId = chain;
   }
+  wallet$ = new ObjectSubject();
+  rpcBundlerUrl;
+  chainId;
+  provider;
   get wallet() {
     return this.wallet$.value;
   }
@@ -39826,13 +40270,13 @@ function calcPreVerificationGas(userOp, overheads) {
 var Context = class {
   constructor(services) {
     this.services = services;
-    this.error$ = new ErrorSubject();
-    this.attached = [];
     const items = [...Object.values(services)];
     for (const item of items) {
       this.attach(item);
     }
   }
+  error$ = new ErrorSubject();
+  attached = [];
   attach(service) {
     this.attached.push(service);
     service.init(this);
@@ -39846,12 +40290,24 @@ var Context = class {
 
 // src/sdk/base/BaseAccountAPI.ts
 var BaseAccountAPI = class {
+  senderAddress;
+  isPhantom = true;
+  services;
+  context;
+  overheads;
+  entryPointAddress;
+  accountAddress;
+  paymasterAPI;
+  factoryUsed;
+  factoryAddress;
+  validatorAddress;
+  wallet;
+  publicClient;
   /**
    * base constructor.
    * subclass SHOULD add parameters that define the owner (signer) of this wallet
    */
   constructor(params) {
-    this.isPhantom = true;
     const optionsLike = params.optionsLike;
     const {
       chainId,
@@ -40311,6 +40767,10 @@ var getModulesPaginated = async ({
 var SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
 var ADDRESS_ZERO = getAddress("0x0000000000000000000000000000000000000000");
 var EtherspotWalletAPI = class extends BaseAccountAPI {
+  index;
+  predefinedAccountAddress;
+  bootstrapAddress;
+  eoaAddress;
   constructor(params) {
     super(params);
     this.index = params.index ?? 0;
@@ -40661,7 +41121,6 @@ var ErrorHandler = class extends Error {
     super(error);
     this.error = error;
     this.code = code;
-    this.rawError = null;
     this.rawError = error;
     this.code = code;
     if (code) {
@@ -40671,6 +41130,7 @@ var ErrorHandler = class extends Error {
       }
     }
   }
+  rawError = null;
 };
 
 // src/sdk/base/HttpRpcClient.ts
@@ -40691,6 +41151,8 @@ var HttpRpcClient = class {
       throw new Error(err.message);
     }
   }
+  publicClient;
+  initializing;
   async validateChainId() {
     try {
       const chain = await this.publicClient.request({
@@ -40847,6 +41309,9 @@ function toJSON(op) {
 // src/sdk/base/VerifyingPaymasterAPI.ts
 var DUMMY_SIGNATURE = "0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
 var VerifyingPaymasterAPI = class extends PaymasterAPI {
+  paymasterUrl;
+  entryPoint;
+  context;
   constructor(paymasterUrl, entryPoint, context) {
     super();
     this.paymasterUrl = paymasterUrl;
@@ -40963,6 +41428,7 @@ var import_class_validator5 = require("class-validator");
 
 // src/sdk/dto/sign-message.dto.ts
 var SignMessageDto = class {
+  message;
 };
 __decorateClass([
   IsBytesLike({
@@ -41006,6 +41472,7 @@ async function validateDto(dto, DtoConstructor, options = {}) {
 
 // src/sdk/bundler/providers/GenericBundler.ts
 var GenericBundler = class {
+  url;
   constructor(bundlerUrl) {
     this.url = bundlerUrl;
   }
@@ -41013,6 +41480,9 @@ var GenericBundler = class {
 
 // src/sdk/bundler/providers/EtherspotBundler.ts
 var EtherspotBundler = class {
+  url;
+  apiKey;
+  chainId;
   constructor(chainId, apiKey, bundlerUrl) {
     if (!bundlerUrl) {
       const networkConfig = getNetworkConfig(chainId);
@@ -41029,8 +41499,16 @@ var EtherspotBundler = class {
 
 // src/sdk/sdk.ts
 var ModularSdk = class {
+  etherspotWallet;
+  bundler;
+  chainId;
+  factoryUsed;
+  index;
+  publicClient;
+  account;
+  providerUrl;
+  userOpsBatch = { to: [], data: [], value: [] };
   constructor(walletProvider, optionsLike) {
-    this.userOpsBatch = { to: [], data: [], value: [] };
     let walletConnectProvider;
     if (isWalletConnectProvider(walletProvider)) {
       walletConnectProvider = new WalletConnect2WalletProvider(walletProvider);

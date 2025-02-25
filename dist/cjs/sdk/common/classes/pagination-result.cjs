@@ -23,5 +23,8 @@ __export(pagination_result_exports, {
 });
 module.exports = __toCommonJS(pagination_result_exports);
 var PaginationResult = class {
+  items;
+  currentPage;
+  nextPage;
 };
 //# sourceMappingURL=pagination-result.cjs.map

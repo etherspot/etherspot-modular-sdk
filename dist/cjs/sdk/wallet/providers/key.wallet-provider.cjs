@@ -11925,8 +11925,11 @@ var CHAIN_ID_TO_NETWORK_NAME = Object.entries(
 
 // src/sdk/wallet/providers/key.wallet-provider.ts
 var KeyWalletProvider = class {
+  type = "Key";
+  address;
+  accountAddress;
+  wallet;
   constructor(chainId, privateKey) {
-    this.type = "Key";
     this.wallet = createWalletClient({
       account: privateKeyToAccount(privateKey),
       chain: Networks[chainId].chain,

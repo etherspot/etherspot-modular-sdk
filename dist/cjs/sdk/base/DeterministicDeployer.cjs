@@ -3720,12 +3720,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version4) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -4068,6 +4065,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -4324,12 +4323,6 @@ var DeterministicDeployer = class _DeterministicDeployer {
     this.walletClient = walletClient;
     this.account = account;
     this.publicClient = publicClient;
-    // from: https://github.com/Arachnid/deterministic-deployment-proxy
-    this.proxyAddress = "0x4e59b44847b379578588920ca78fbf26c0b4956c";
-    this.deploymentTransaction = "0xf8a58085174876e800830186a08080b853604580600e600039806000f350fe7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe03601600081602082378035828234f58015156039578182fd5b8082525050506014600cf31ba02222222222222222222222222222222222222222222222222222222222222222a02222222222222222222222222222222222222222222222222222222222222222";
-    this.deploymentSignerAddress = "0x3fab184622dc19b6109349b94811493bf2a45362";
-    this.deploymentGasPrice = 1e11;
-    this.deploymentGasLimit = 1e5;
   }
   /**
    * return the address this code will get deployed to.
@@ -4348,6 +4341,12 @@ var DeterministicDeployer = class _DeterministicDeployer {
   static async deploy(ctrCode, salt = 0) {
     return await _DeterministicDeployer.instance.deterministicDeploy(ctrCode, salt);
   }
+  // from: https://github.com/Arachnid/deterministic-deployment-proxy
+  proxyAddress = "0x4e59b44847b379578588920ca78fbf26c0b4956c";
+  deploymentTransaction = "0xf8a58085174876e800830186a08080b853604580600e600039806000f350fe7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe03601600081602082378035828234f58015156039578182fd5b8082525050506014600cf31ba02222222222222222222222222222222222222222222222222222222222222222a02222222222222222222222222222222222222222222222222222222222222222";
+  deploymentSignerAddress = "0x3fab184622dc19b6109349b94811493bf2a45362";
+  deploymentGasPrice = 1e11;
+  deploymentGasLimit = 1e5;
   async isContractDeployed(address) {
     return await this.publicClient.getCode({ address }).then((code) => code.length > 2);
   }
@@ -4415,6 +4414,7 @@ var DeterministicDeployer = class _DeterministicDeployer {
     }
     return addr;
   }
+  static _instance;
   static init(walletClient, account, publicClient) {
     this._instance = new _DeterministicDeployer(walletClient, account, publicClient);
   }

@@ -4,7 +4,7 @@ import {
 } from "../../../chunk-CIQTVOVJ.js";
 import {
   Synchronized
-} from "../../../chunk-B3IP73OS.js";
+} from "../../../chunk-BVR3U5P6.js";
 import "../../../chunk-LQXP7TCC.js";
 export {
   BaseClass,

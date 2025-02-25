@@ -1,6 +1,6 @@
 import {
   WalletClientProvider
-} from "../../../chunk-CNVPIR4J.js";
+} from "../../../chunk-BZJCUZRI.js";
 import "../../../chunk-VOPA75Q5.js";
 import "../../../chunk-UFWBG2KU.js";
 import "../../../chunk-5ZBZ6BDF.js";

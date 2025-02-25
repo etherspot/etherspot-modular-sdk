@@ -1,6 +1,6 @@
 import {
   KeyWalletProvider
-} from "../../../chunk-P52BQK4C.js";
+} from "../../../chunk-DIECYCKK.js";
 import "../../../chunk-XZTC7YZW.js";
 import "../../../chunk-EDY4DXI5.js";
 import "../../../chunk-VOPA75Q5.js";

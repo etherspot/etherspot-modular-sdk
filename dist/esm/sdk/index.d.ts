@@ -4,7 +4,7 @@ export { SignMessageDto } from './dto/sign-message.dto.js';
 export { validateDto } from './dto/utils/validate-dto.js';
 export { Factory, PaymasterApi, SdkOptions } from './interfaces.js';
 export { C as CHAIN_ID_TO_NETWORK_NAME, e as DEFAULT_BOOTSTRAP_ADDRESS, D as DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, f as DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, g as DEFAULT_QUERY_PAGE_SIZE, b as NETWORK_NAME_TO_CHAIN_ID, N as Network, a as NetworkConfig, c as NetworkNames, d as Networks, S as SupportedNetworks, h as getNetworkConfig } from '../interfaces-q-ZvJZS9.js';
-export { N as NetworkService, S as Service } from '../network.service-B7y3JNe3.js';
+export { N as NetworkService, S as Service, W as WalletService } from '../network.service-B7y3JNe3.js';
 export { prepareNetworkName } from './network/utils/prepare-network-name.js';
 export { networkNameToChainId } from './network/utils/network-name-to-chain-id.js';
 export { BundlerProvider, BundlerProviderLike } from './bundler/interface.js';
@@ -34,12 +34,22 @@ export { ValidationException } from './common/exceptions/validation.exception.js
 export { AddressZero, CALL_TYPE, EXEC_TYPE, HeaderNames, MODULE_TYPE, VIEM_SENTINEL_ADDRESS, bufferPercent, onRampApiKey } from './common/constants.js';
 export { BatchUserOpsRequest, UserOpsRequest } from './common/interfaces.js';
 export { TransformBigNumber } from './common/transformers/transform-big-number.js';
+export { Wallet, WalletOptions } from './wallet/interfaces.js';
+export { DynamicWalletProvider } from './wallet/providers/dynamic.wallet-provider.js';
+export { EthereumProvider, MessagePayload, RequestArguments, WalletConnectConnector, WalletLike, WalletProvider, WalletProviderLike, Web3Provider, Web3eip1193Provider } from './wallet/providers/interfaces.js';
+export { KeyWalletProvider } from './wallet/providers/key.wallet-provider.js';
+export { MetaMaskWalletProvider } from './wallet/providers/meta-mask.wallet-provider.js';
+export { isWalletProvider } from './wallet/providers/utils/is-wallet-provider.js';
+export { isWalletConnectProvider } from './wallet/providers/utils/is-wallet-connect-provider.js';
+export { WalletConnectWalletProvider } from './wallet/providers/wallet-connect.wallet-provider.js';
+export { WalletConnect2WalletProvider } from './wallet/providers/wallet-connect-2.wallet-provider.js';
+export { Web3WalletProvider } from './wallet/providers/web3.wallet-provider.js';
+export { Web3eip1193WalletProvider } from './wallet/providers/web3eip1193.wallet-provider.js';
+export { WalletClientProvider } from './wallet/providers/walletClient.provider.js';
 import './SessionKeyValidator/constants.js';
 import './SessionKeyValidator/interfaces.js';
 import './types/bignumber.js';
-import './wallet/providers/interfaces.js';
 import 'viem';
-import '@walletconnect/universal-provider';
 import './base/TransactionDetailsForUserOp.js';
 import './base/EtherspotWalletAPI.js';
 import './base/BaseAccountAPI.js';
@@ -49,8 +59,8 @@ import './common/types.js';
 import './base/calcPreVerificationGas.js';
 import 'viem/chains';
 import 'rxjs';
-import './wallet/interfaces.js';
 import 'node_modules/viem/_types/actions/siwe/verifySiweMessage.js';
+import '@walletconnect/universal-provider';
 
 
 

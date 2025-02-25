@@ -2091,8 +2091,11 @@ init_concat();
 
 // src/sdk/wallet/providers/walletClient.provider.ts
 var WalletClientProvider = class {
+  type = "WalletClient";
+  address;
+  accountAddress;
+  wallet;
   constructor(walletClient) {
-    this.type = "WalletClient";
     this.wallet = walletClient;
     const { address } = this.wallet.account;
     this.address = address;

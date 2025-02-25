@@ -23,12 +23,11 @@ __export(service_exports, {
 });
 module.exports = __toCommonJS(service_exports);
 var Service = class {
-  constructor() {
-    this.inited = false;
-    this.destroyed = false;
-    this.attachedCounter = 0;
-    this.subscriptions = [];
-  }
+  context;
+  inited = false;
+  destroyed = false;
+  attachedCounter = 0;
+  subscriptions = [];
   init(context) {
     if (!this.inited) {
       this.inited = true;

@@ -23,5 +23,6 @@ __export(synchronized_exports, {
 });
 module.exports = __toCommonJS(synchronized_exports);
 var Synchronized = class {
+  synchronizedAt;
 };
 //# sourceMappingURL=synchronized.cjs.map

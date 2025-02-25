@@ -5986,12 +5986,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version4) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -6227,6 +6224,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -8512,9 +8511,9 @@ function prepareNetworkName(networkNameOrChainId) {
 var DynamicWalletProvider = class {
   constructor(type) {
     this.type = type;
-    this.address$ = new UniqueSubject();
-    this.networkName$ = new UniqueSubject();
   }
+  address$ = new UniqueSubject();
+  networkName$ = new UniqueSubject();
   get address() {
     return this.address$.value;
   }

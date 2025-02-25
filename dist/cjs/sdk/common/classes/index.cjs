@@ -26,6 +26,7 @@ module.exports = __toCommonJS(classes_exports);
 
 // src/sdk/common/classes/synchronized.ts
 var Synchronized = class {
+  synchronizedAt;
 };
 
 // src/sdk/common/classes/base-class.ts

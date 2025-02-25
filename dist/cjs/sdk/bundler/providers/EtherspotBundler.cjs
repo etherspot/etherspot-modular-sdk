@@ -5859,12 +5859,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version4) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -8029,6 +8026,9 @@ var import_class_transformer = require("class-transformer");
 
 // src/sdk/bundler/providers/EtherspotBundler.ts
 var EtherspotBundler = class {
+  url;
+  apiKey;
+  chainId;
   constructor(chainId, apiKey, bundlerUrl) {
     if (!bundlerUrl) {
       const networkConfig = getNetworkConfig(chainId);

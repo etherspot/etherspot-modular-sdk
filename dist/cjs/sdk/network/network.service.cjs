@@ -5978,12 +5978,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version4) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -6219,6 +6216,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -6475,12 +6474,11 @@ var FailedOpSig = keccak256(import_buffer.Buffer.from("FailedOp(uint256,string)"
 
 // src/sdk/common/service.ts
 var Service = class {
-  constructor() {
-    this.inited = false;
-    this.destroyed = false;
-    this.attachedCounter = 0;
-    this.subscriptions = [];
-  }
+  context;
+  inited = false;
+  destroyed = false;
+  attachedCounter = 0;
+  subscriptions = [];
   init(context) {
     if (!this.inited) {
       this.inited = true;
@@ -8556,10 +8554,13 @@ var import_class_transformer = require("class-transformer");
 
 // src/sdk/network/network.service.ts
 var NetworkService = class extends Service {
+  network$ = new ObjectSubject(null);
+  chainId$;
+  defaultNetwork;
+  supportedNetworks;
+  externalContractAddresses = /* @__PURE__ */ new Map();
   constructor(defaultChainId) {
     super();
-    this.network$ = new ObjectSubject(null);
-    this.externalContractAddresses = /* @__PURE__ */ new Map();
     this.supportedNetworks = SupportedNetworks.map((chainId) => {
       const name = CHAIN_ID_TO_NETWORK_NAME[chainId];
       return !name ? null : {

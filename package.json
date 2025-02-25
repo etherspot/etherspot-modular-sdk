@@ -19,7 +19,7 @@
   "homepage": "https://etherspot.io",
   "type": "module",
   "module": "./dist/esm/index.js",
-  "types": "./dist/cjs/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "scripts": {
     "start": "exit 1",
     "get-address": "./node_modules/.bin/ts-node ./examples/basics/get-address",

@@ -6920,12 +6920,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version5) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -7161,6 +7158,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -9485,6 +9484,9 @@ function toJSON(op) {
 // src/sdk/base/VerifyingPaymasterAPI.ts
 var DUMMY_SIGNATURE = "0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
 var VerifyingPaymasterAPI = class extends PaymasterAPI {
+  paymasterUrl;
+  entryPoint;
+  context;
   constructor(paymasterUrl, entryPoint, context) {
     super();
     this.paymasterUrl = paymasterUrl;

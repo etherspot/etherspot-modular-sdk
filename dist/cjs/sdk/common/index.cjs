@@ -23281,12 +23281,9 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 var HEX = "0123456789abcdef";
 var Logger = class _Logger {
-  static {
-    this.errors = ErrorCode;
-  }
-  static {
-    this.levels = LogLevel;
-  }
+  version;
+  static errors = ErrorCode;
+  static levels = LogLevel;
   constructor(version5) {
     Object.defineProperty(this, "version", {
       enumerable: true,
@@ -23522,6 +23519,8 @@ var _constructorGuard = {};
 var MAX_SAFE = 9007199254740991;
 var _warnedToStringRadix = false;
 var BigNumber = class _BigNumber {
+  _hex;
+  _isBigNumber;
   constructor(constructorGuard, hex) {
     if (constructorGuard !== _constructorGuard) {
       logger.throwError("cannot call constructor directly; use BigNumber.from", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -23974,12 +23973,11 @@ async function getGasFee(publicClient) {
 
 // src/sdk/common/service.ts
 var Service = class {
-  constructor() {
-    this.inited = false;
-    this.destroyed = false;
-    this.attachedCounter = 0;
-    this.subscriptions = [];
-  }
+  context;
+  inited = false;
+  destroyed = false;
+  attachedCounter = 0;
+  subscriptions = [];
   init(context) {
     if (!this.inited) {
       this.inited = true;
@@ -38263,6 +38261,7 @@ var UniqueSubject = class extends import_rxjs3.BehaviorSubject {
 
 // src/sdk/common/classes/synchronized.ts
 var Synchronized = class {
+  synchronizedAt;
 };
 
 // src/sdk/common/classes/base-class.ts

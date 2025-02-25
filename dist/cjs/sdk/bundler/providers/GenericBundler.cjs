@@ -23,6 +23,7 @@ __export(GenericBundler_exports, {
 });
 module.exports = __toCommonJS(GenericBundler_exports);
 var GenericBundler = class {
+  url;
   constructor(bundlerUrl) {
     this.url = bundlerUrl;
   }
