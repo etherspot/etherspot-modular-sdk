@@ -10,27 +10,35 @@ jobs:
   install:
     working_directory: ~/etherspot-modular-sdk
     docker:
-      - image: cimg/node:18.16.1
+      - image: cimg/node:20.11.1
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - run:
+          name: Install Bun
+          command: |
+            curl -fsSL https://bun.sh/install | bash
+            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
+            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "bun.lockb" }}
       - run:
           name: Install dependencies
-          command: npm install
+          command: bun install
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "bun.lockb" }}
           paths:
             - ./node_modules
+            - ~/.bun
       - run:
           name: Dry run build
-          command: npm run build
+          command: bun run build
       # - slack/status:
       #     failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Ooops! The *$CIRCLE_JOB* job has failed! :circleci-fail:"
       #     webhook: "${SLACK_WEBHOOK_URL}"
@@ -38,7 +46,7 @@ jobs:
   e2e-tests:
     working_directory: ~/etherspot-modular-sdk
     docker:
-      - image: cimg/node:18.16.1
+      - image: cimg/node:20.11.1
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -47,18 +55,24 @@ jobs:
       - when:
           condition: <<pipeline.parameters.run_e2e_tests>>
           steps:
-          
+          - run:
+              name: Install Bun
+              command: |
+                curl -fsSL https://bun.sh/install | bash
+                echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
+                echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+                source $BASH_ENV
           - restore_cache:
-              key: dependency-cache-{{ checksum "package.json" }}
+              key: dependency-cache-{{ checksum "bun.lockb" }}
           - run:
               name: Authenticate with registry
               command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
           - run:
               name: Install dependencies
-              command: npm install
+              command: bun install
           - run:
               name: Build Etherpot Modular SDK
-              command: npm run build
+              command: bun run build
           - run:
               name: Checkout e2e repo and run tests
               no_output_timeout: 60m
@@ -155,28 +169,35 @@ jobs:
   publish-npm-package:
     working_directory: ~/etherspot-modular-sdk
     docker:
-      - image: cimg/node:18.16.1
+      - image: cimg/node:20.11.1
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
+      - run:
+          name: Install Bun
+          command: |
+            curl -fsSL https://bun.sh/install | bash
+            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
+            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "bun.lockb" }}
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
       - run:
           name: Install dependencies
-          command: npm install
+          command: bun install
       - run:
           name: Build Etherpot Prime SDK
-          command: npm run build
+          command: bun run build
       - run:
           name: Publish package to npm
           command: |
             cd ~/etherspot-modular-sdk
-            npm publish --access public
+            bun publish --access public
       - run:
           name: Announce Publish
           command: |
