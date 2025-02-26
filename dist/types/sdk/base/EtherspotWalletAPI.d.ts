@@ -32,8 +32,8 @@ export type FallbackInfo = {
  */
 export declare class EtherspotWalletAPI extends BaseAccountAPI {
     index: number;
-    predefinedAccountAddress?: string;
-    bootstrapAddress?: string;
+    predefinedAccountAddress?: string | null;
+    bootstrapAddress?: string | null;
     eoaAddress: Hex;
     constructor(params: EtherspotWalletApiParams);
     getEOAAddress(): Hex;

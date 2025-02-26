@@ -58,11 +58,11 @@ const getChain = (chainId) => {
 };
 exports.getChain = getChain;
 function prepareAddress(value, zeroAddressAsNull = false) {
-    let result = null;
+    let result = '';
     try {
         result = (0, viem_1.getAddress)(value);
         if (result === constants_js_1.AddressZero) {
-            result = null;
+            result = '';
         }
     }
     catch (err) {

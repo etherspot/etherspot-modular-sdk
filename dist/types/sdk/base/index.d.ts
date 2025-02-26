@@ -1,4 +1,4 @@
-export { EtherspotWalletAPI, ModuleInfo } from './EtherspotWalletAPI.js';
+export { EtherspotWalletAPI, type ModuleInfo } from './EtherspotWalletAPI.js';
 export { PaymasterAPI } from './PaymasterAPI.js';
 export type { ClientConfig } from './ClientConfig.js';
 export { HttpRpcClient } from './HttpRpcClient.js';

@@ -8,7 +8,7 @@ const viem_1 = require("viem");
 const viem_utils_js_1 = require("./viem-utils.js");
 const viem_2 = require("viem");
 function keccak256(data) {
-    let result = null;
+    let result = '';
     if (data) {
         switch (typeof data) {
             case 'string':
@@ -38,7 +38,7 @@ function isHex(hex, size = 0) {
     return result;
 }
 function toHexFromBytesLike(data) {
-    let result = null;
+    let result = '';
     if (data !== null) {
         switch (typeof data) {
             case 'string':
@@ -54,7 +54,7 @@ function toHexFromBytesLike(data) {
                     result = toHexFromBytesLike(data);
                 }
                 catch (err) {
-                    result = null;
+                    result = '';
                 }
                 break;
         }

@@ -1,4 +1,4 @@
-export function parseJson(raw, defaultValue = null) {
+export function parseJson(raw, defaultValue) {
     let result;
     try {
         result = JSON.parse(raw);

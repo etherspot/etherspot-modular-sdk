@@ -50,11 +50,11 @@ export const getChain = (chainId) => {
     });
 };
 export function prepareAddress(value, zeroAddressAsNull = false) {
-    let result = null;
+    let result = '';
     try {
         result = getAddress(value);
         if (result === AddressZero) {
-            result = null;
+            result = '';
         }
     }
     catch (err) {

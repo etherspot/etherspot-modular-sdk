@@ -22,10 +22,15 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
         super(params);
         this.index = params.index ?? 0;
         this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
-        this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
+        if (params?.optionsLike) {
+            this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
+        }
+        else {
+            this.bootstrapAddress = DEFAULT_BOOTSTRAP_ADDRESS;
+        }
     }
     getEOAAddress() {
-        return this.services.walletService.EOAAddress;
+        return this.services.walletService.EOAAddress ?? '0x';
     }
     async isModuleInstalled(moduleTypeId, module, initData = '0x') {
         const accountAddress = await this.getAccountAddress();
@@ -72,6 +77,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
         });
     }
     async getAllExecutors(pageSize = DEFAULT_QUERY_PAGE_SIZE) {
+        if (!this.accountAddress) {
+            throw new Error('Account address not found');
+        }
         return await getInstalledModules({ client: this.publicClient, moduleAddress: getViemAddress(this.accountAddress), moduleTypes: ['executor'], pageSize: pageSize });
     }
     async getPreviousAddress(targetAddress, moduleTypeId) {
@@ -107,6 +115,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     }
     // function to get validators
     async getAllValidators(pageSize = DEFAULT_QUERY_PAGE_SIZE) {
+        if (!this.accountAddress) {
+            throw new Error('Account address not found');
+        }
         return await getInstalledModules({ client: this.publicClient, moduleAddress: getViemAddress(this.accountAddress), moduleTypes: ['validator'], pageSize: pageSize });
     }
     // function to get active hook
@@ -152,6 +163,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
         }
     }
     async getInitCodeData() {
+        if (!this.validatorAddress) {
+            throw new Error('Validator address not found');
+        }
         const validators = makeBootstrapConfig(this.validatorAddress, '0x');
         const executors = makeBootstrapConfig(ADDRESS_ZERO, '0x');
         const hook = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
@@ -207,6 +221,9 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     async getNonce(key = BigNumber.from(0)) {
         const accountAddress = await this.getAccountAddress();
         const nonceKey = key.eq(0) ? this.validatorAddress : key.toHexString();
+        if (!nonceKey) {
+            throw new Error('nonce key not defined');
+        }
         if (!this.checkAccountPhantom()) {
             let isAddressIndicator = false;
             try {

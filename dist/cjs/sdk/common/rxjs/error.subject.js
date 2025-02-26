@@ -31,7 +31,6 @@ class ErrorSubject extends rxjs_1.Subject {
         const fireOnComplete = () => {
             if (onComplete) {
                 onComplete();
-                onComplete = null;
             }
         };
         try {

@@ -146,7 +146,6 @@ export class BigNumber {
         catch (error) {
             throwFault("overflow", "toNumber", this.toString());
         }
-        return null;
     }
     toBigInt() {
         try {
@@ -173,7 +172,7 @@ export class BigNumber {
                 logger.throwError("BigNumber.toString does not accept parameters", Logger.errors.UNEXPECTED_ARGUMENT, {});
             }
         }
-        return toBN(this).toString(10);
+        return toBN(this).toString(10) ?? throwFault("invalid-big-number", "toString");
     }
     toHexString() {
         return this._hex;
@@ -242,7 +241,7 @@ export class BigNumber {
 function toHex(value) {
     // For BN, call on the hex string
     if (typeof (value) !== "string") {
-        return toHex(value.toString(16));
+        return toHex(value.toString(16) ?? throwFault("toHex", "value failed to convert to string"));
     }
     // If negative, prepend the negative sign to the normalized positive value
     if (value[0] === "-") {

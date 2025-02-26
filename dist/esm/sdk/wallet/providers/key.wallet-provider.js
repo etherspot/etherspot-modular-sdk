@@ -9,14 +9,24 @@ export class KeyWalletProvider {
             chain: Networks[chainId].chain,
             transport: http()
         });
+        if (!this.wallet.account)
+            throw new Error('No account address set. Please provide a valid accountaddress');
         const { address } = this.wallet.account;
         this.address = address;
     }
     async signMessage(message, validatorAddress, factoryAddress, initCode) {
+        if (!this.wallet.account)
+            throw new Error('No account set');
         const signature = await this.wallet.signMessage({
             message: { raw: toBytes(hashMessage({ raw: toBytes(message) })) },
             account: this.wallet.account
         });
+        if (!validatorAddress)
+            throw new Error('No validator address provided');
+        if (!factoryAddress)
+            throw new Error('No factory address provided');
+        if (!initCode)
+            throw new Error('No init code provided');
         if (initCode !== '0x') {
             const abiCoderResult = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [factoryAddress, initCode, concat([validatorAddress, signature])]);
             return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
@@ -28,6 +38,8 @@ export class KeyWalletProvider {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async signTypedData(msg, validatorAddress, factoryAddress, initCode) {
+        if (!this.wallet.account)
+            throw new Error('No account set');
         const signature = await this.wallet.signTypedData({
             domain: msg.domain,
             types: msg.types,
@@ -35,6 +47,12 @@ export class KeyWalletProvider {
             message: msg.message,
             account: this.wallet.account
         });
+        if (!validatorAddress)
+            throw new Error('No validator address provided');
+        if (!factoryAddress)
+            throw new Error('No factory address provided');
+        if (!initCode)
+            throw new Error('No init code provided');
         if (initCode !== '0x') {
             const abiCoderResult = encodeAbiParameters(parseAbiParameters('address, bytes, bytes'), [factoryAddress, initCode, concat([validatorAddress, signature])]);
             return abiCoderResult + '6492649264926492649264926492649264926492649264926492649264926492'; //magicBytes
@@ -51,12 +69,16 @@ export class KeyWalletProvider {
         return [address];
     }
     async signUserOp(message) {
+        if (!this.wallet.account)
+            throw new Error('No account set');
         return this.wallet.signMessage({
             message: { raw: message },
             account: this.wallet.account
         });
     }
     async eth_sendTransaction(transaction) {
+        if (!this.wallet.account)
+            throw new Error('No account set');
         return this.wallet.sendTransaction({
             ...transaction,
             account: this.wallet.account,
@@ -65,6 +87,8 @@ export class KeyWalletProvider {
         });
     }
     async eth_signTransaction(transaction) {
+        if (!this.wallet.account)
+            throw new Error('No account set');
         return this.wallet.signTransaction({
             ...transaction,
             account: this.wallet.account,

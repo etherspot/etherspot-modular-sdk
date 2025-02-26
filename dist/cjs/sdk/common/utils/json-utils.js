@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseJson = parseJson;
 exports.stringifyJson = stringifyJson;
-function parseJson(raw, defaultValue = null) {
+function parseJson(raw, defaultValue) {
     let result;
     try {
         result = JSON.parse(raw);

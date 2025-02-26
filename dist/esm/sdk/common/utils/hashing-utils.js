@@ -2,7 +2,7 @@ import { encodePacked } from "viem";
 import { isAddress } from "./viem-utils.js";
 import { isHex as isAHex, stringToBytes } from 'viem';
 export function keccak256(data) {
-    let result = null;
+    let result = '';
     if (data) {
         switch (typeof data) {
             case 'string':
@@ -34,7 +34,7 @@ export function isHex(hex, size = 0) {
     return result;
 }
 export function toHexFromBytesLike(data) {
-    let result = null;
+    let result = '';
     if (data !== null) {
         switch (typeof data) {
             case 'string':
@@ -50,7 +50,7 @@ export function toHexFromBytesLike(data) {
                     result = toHexFromBytesLike(data);
                 }
                 catch (err) {
-                    result = null;
+                    result = '';
                 }
                 break;
         }

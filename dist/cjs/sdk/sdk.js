@@ -165,6 +165,9 @@ class ModularSdk {
         if (!this.etherspotWallet.accountAddress) {
             await this.getCounterFactualAddress();
         }
+        if (!this.etherspotWallet.accountAddress) {
+            throw new errorHandler_service_js_1.ErrorHandler('No account address found', 1);
+        }
         const balance = await this.publicClient.getBalance({ address: (0, index_js_1.getViemAddress)(this.etherspotWallet.accountAddress) });
         return (0, viem_1.formatEther)(balance);
     }
