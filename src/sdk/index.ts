@@ -6,6 +6,7 @@ export * from './interfaces.js';
 export * from './network/index.js';
 export * from './bundler/index.js';
 export * from './common/index.js';
+export * from './wallet/index.js';
 
 export { ModularSdk, SessionKeyValidator };
 export default ModularSdk;

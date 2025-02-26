@@ -1,7 +1,7 @@
 
 
-export function parseJson<T>(raw: string, defaultValue: T = null): T {
-    let result: T;
+export function parseJson<T>(raw: string, defaultValue?: T): T | undefined {
+    let result: T | undefined;
     try {
       result = JSON.parse(raw);
     } catch (err) {

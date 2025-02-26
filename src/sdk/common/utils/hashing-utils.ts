@@ -4,7 +4,7 @@ import { BytesLike } from "../index.js";
 import { isHex as isAHex, stringToBytes} from 'viem';
 
 export function keccak256(data: BytesLike): string {
-    let result: string = null;
+    let result = '';
   
     if (data) {
       switch (typeof data) {
@@ -40,7 +40,7 @@ export function keccak256(data: BytesLike): string {
   }
   
   export function toHexFromBytesLike(data: BytesLike): string {
-    let result: string = null;
+    let result = '';
   
     if (data !== null) {
       switch (typeof data) {
@@ -56,7 +56,7 @@ export function keccak256(data: BytesLike): string {
           try {
             result = toHexFromBytesLike(data as any);
           } catch (err) {
-            result = null;
+            result = '';
           }
           break;
       }

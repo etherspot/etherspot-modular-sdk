@@ -64,13 +64,13 @@ export const getChain = (chainId: number) : Chain => {
 }
 
 export function prepareAddress(value: string, zeroAddressAsNull = false): string {
-  let result: string = null;
+  let result = '';
 
   try {
     result = getAddress(value);
 
     if (result === AddressZero) {
-      result = null;
+      result = '';
     }
   } catch (err) {
     //

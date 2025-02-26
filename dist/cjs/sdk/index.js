@@ -11,5 +11,6 @@ tslib_1.__exportStar(require("./interfaces.js"), exports);
 tslib_1.__exportStar(require("./network/index.js"), exports);
 tslib_1.__exportStar(require("./bundler/index.js"), exports);
 tslib_1.__exportStar(require("./common/index.js"), exports);
+tslib_1.__exportStar(require("./wallet/index.js"), exports);
 exports.default = sdk_js_1.ModularSdk;
 //# sourceMappingURL=index.js.map

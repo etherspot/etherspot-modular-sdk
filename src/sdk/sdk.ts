@@ -248,6 +248,9 @@ export class ModularSdk {
     if (!this.etherspotWallet.accountAddress) {
       await this.getCounterFactualAddress();
     }
+    if (!this.etherspotWallet.accountAddress) {
+      throw new ErrorHandler('No account address found', 1);
+    }
     const balance = await this.publicClient.getBalance({ address: getViemAddress(this.etherspotWallet.accountAddress) });
     return formatEther(balance);
   }
@@ -270,7 +273,6 @@ export class ModularSdk {
     this.userOpsBatch.data.push(tx.data ?? '0x');
     return this.userOpsBatch;
   }
-
   async clearUserOpsFromBatch(): Promise<void> {
     this.userOpsBatch.to = [];
     this.userOpsBatch.data = [];

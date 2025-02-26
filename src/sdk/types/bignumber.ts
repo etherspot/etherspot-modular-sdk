@@ -193,7 +193,6 @@ export class BigNumber implements Hexable {
         } catch (error) {
             throwFault("overflow", "toNumber", this.toString());
         }
-        return null;
     }
 
     toBigInt(): bigint {
@@ -220,7 +219,7 @@ export class BigNumber implements Hexable {
                 logger.throwError("BigNumber.toString does not accept parameters", Logger.errors.UNEXPECTED_ARGUMENT, { });
             }
         }
-        return toBN(this).toString(10);
+        return toBN(this).toString(10) ?? throwFault("invalid-big-number", "toString");
     }
 
     toHexString(): string {
@@ -308,7 +307,7 @@ function toHex(value: string | BN): string {
 
     // For BN, call on the hex string
     if (typeof(value) !== "string") {
-        return toHex(value.toString(16));
+        return toHex(value.toString(16) ?? throwFault("toHex", "value failed to convert to string"));
     }
 
     // If negative, prepend the negative sign to the normalized positive value
@@ -361,12 +360,12 @@ function toBN(value: BigNumberish): BN {
 }
 
 // value should have no prefix
-export function _base36To16(value: string): string {
+export function _base36To16(value: string): string | undefined {
     return (new BN(value, 36)).toString(16);
 }
 
 // value should have no prefix
-export function _base16To36(value: string): string {
+export function _base16To36(value: string): string | undefined{
     return (new BN(value, 16)).toString(36);
 }
 
