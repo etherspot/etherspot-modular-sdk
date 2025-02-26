@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.0.1] - 2025-02-26
+### Fix
+- Fixed build issues faced on React by changing build command to bun
+- Added types build folder separately
+
 ## [5.0.0] - 2025-01-07
 ### Breaking Changes
 - Changed contract address for Bootstrap to `0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA`
