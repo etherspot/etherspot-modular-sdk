@@ -1,1 +1,0 @@
-{"version":3,"file":"interfaces.d.ts","sourceRoot":"","sources":["../../../../../src/sdk/common/exceptions/interfaces.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,eAAe;IAC9B,QAAQ,EAAE,MAAM,CAAC;IACjB,KAAK,CAAC,EAAE,GAAG,CAAC;IACZ,WAAW,CAAC,EAAE;QACZ,CAAC,IAAI,EAAE,MAAM,GAAG,MAAM,CAAC;KACxB,CAAC;IACF,QAAQ,CAAC,EAAE,eAAe,EAAE,CAAC;CAC9B"}

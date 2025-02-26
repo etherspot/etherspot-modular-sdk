@@ -1,1 +1,0 @@
-{"version":3,"file":"network-name-to-chain-id.js","sourceRoot":"","sources":["../../../../../src/sdk/network/utils/network-name-to-chain-id.ts"],"names":[],"mappings":"AAAA,OAAO,EAAgB,wBAAwB,EAAE,MAAM,iBAAiB,CAAC;AAEzE,MAAM,UAAU,oBAAoB,CAAC,WAAyB;IAC5D,OAAO,wBAAwB,CAAC,WAAW,CAAC,IAAI,IAAI,CAAC;AACvD,CAAC;AAED,OAAO,EAAE,wBAAwB,EAAE,CAAC"}

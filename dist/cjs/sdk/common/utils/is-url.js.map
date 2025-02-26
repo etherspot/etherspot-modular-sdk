@@ -1,1 +1,0 @@
-{"version":3,"file":"is-url.js","sourceRoot":"","sources":["../../../../../src/sdk/common/utils/is-url.ts"],"names":[],"mappings":";;AAKA,sBAOC;;AAZD,kEAAkC;AAKlC,SAAgB,KAAK,CAAC,GAAW;IAC/B,OAAO,mBAAS,CAAC,KAAK,CAAC,GAAG,EAAE;QAC1B,SAAS,EAAE,CAAC,MAAM,EAAE,OAAO,CAAC;QAC5B,WAAW,EAAE,KAAK;QAClB,YAAY,EAAE,IAAI;QAClB,gBAAgB,EAAE,IAAI;KACvB,CAAC,CAAC;AACL,CAAC"}
