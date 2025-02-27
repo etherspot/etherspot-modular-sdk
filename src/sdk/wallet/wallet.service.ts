@@ -1,8 +1,8 @@
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Service, ObjectSubject } from '../common';
-import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload, WalletClientProvider } from './providers';
-import { Wallet, WalletOptions } from './interfaces';
+import { Service, ObjectSubject } from '../common/index.js';
+import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload, WalletClientProvider } from './providers/index.js';
+import { Wallet, WalletOptions } from './interfaces.js';
 import {
   WalletClient,
   Hex,

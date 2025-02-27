@@ -17,11 +17,11 @@
 !.vscode/extensions.json
 workspace.code-workspace
 
+# build
+dist
+
 # node
 node_modules
-
-# dist
-dist
 
 # develop
 .graphqlconfig

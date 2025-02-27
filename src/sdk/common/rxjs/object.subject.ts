@@ -1,6 +1,6 @@
 import { Observable, BehaviorSubject } from 'rxjs';
-import { deepCompare } from '../utils';
-import { distinctUniqueKey } from './distinct-unique-key.operator';
+import { deepCompare } from '../utils/index.js';
+import { distinctUniqueKey } from './distinct-unique-key.operator.js';
 
 /**
  * @ignore

@@ -1,6 +1,6 @@
 import { Address, concat, encodeAbiParameters, Hash, hashMessage, Hex, parseAbiParameters, toBytes, toHex, TransactionRequest } from 'viem';
-import { DynamicWalletProvider } from './dynamic.wallet-provider';
-import { MessagePayload, WalletConnectConnector } from './interfaces';
+import { DynamicWalletProvider } from './dynamic.wallet-provider.js';
+import { MessagePayload, WalletConnectConnector } from './interfaces.js';
 
 export class WalletConnectWalletProvider extends DynamicWalletProvider {
   static connect(connector: WalletConnectConnector): WalletConnectWalletProvider {

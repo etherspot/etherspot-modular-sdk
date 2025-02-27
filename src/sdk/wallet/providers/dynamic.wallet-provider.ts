@@ -1,6 +1,6 @@
-import { NetworkNames, prepareNetworkName } from '../../network';
-import { prepareAddress, UniqueSubject } from '../../common';
-import { MessagePayload, WalletProvider } from './interfaces';
+import { NetworkNames, prepareNetworkName } from '../../network/index.js';
+import { prepareAddress, UniqueSubject } from '../../common/index.js';
+import { MessagePayload, WalletProvider } from './interfaces.js';
 import { Address, Hash, Hex, TransactionRequest } from 'viem';
 
 export abstract class DynamicWalletProvider implements WalletProvider {

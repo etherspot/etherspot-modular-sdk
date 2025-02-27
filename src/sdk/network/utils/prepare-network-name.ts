@@ -1,4 +1,4 @@
-import { NetworkNames, NETWORK_NAME_TO_CHAIN_ID, CHAIN_ID_TO_NETWORK_NAME } from '../constants';
+import { NetworkNames, NETWORK_NAME_TO_CHAIN_ID, CHAIN_ID_TO_NETWORK_NAME } from '../constants.js';
 
 export function prepareNetworkName(networkNameOrChainId: string | number): NetworkNames {
   let result: NetworkNames = null;

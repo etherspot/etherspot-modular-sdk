@@ -1,4 +1,4 @@
-import { entryPointErrorMsg, errorMsg } from "./constants";
+import { entryPointErrorMsg, errorMsg } from "./constants.js";
 
 export class ErrorHandler extends Error {
     public rawError: string = null;

@@ -1,7 +1,7 @@
-import { resolveProperties } from './utils';
-import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
+import { resolveProperties } from './utils/index.js';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types.js';
 import { toHex } from 'viem';
-import { BigNumber } from '../types/bignumber';
+import { BigNumber } from '../types/bignumber.js';
 
 export function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<any> {
   return resolveProperties(op).then((userOp) =>

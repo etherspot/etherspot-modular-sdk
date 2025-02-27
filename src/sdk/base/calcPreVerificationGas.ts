@@ -1,8 +1,8 @@
 
-import { NotPromise, packUserOp } from '../common';
+import { NotPromise, packUserOp } from '../common/index.js';
 import { Buffer } from 'buffer';
 import { toBytes, toHex } from 'viem';
-import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types.js';
 
 export interface GasOverheads {
   /**

@@ -1,4 +1,4 @@
-import { BundlerProvider } from "../interface";
+import { BundlerProvider } from "../interface.js";
 
 
 export class GenericBundler implements BundlerProvider {

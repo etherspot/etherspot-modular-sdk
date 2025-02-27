@@ -1,15 +1,15 @@
 import Debug from 'debug';
-import { UserOperation, deepHexlify } from '../common/ERC4337Utils';
-import { Gas } from '../common';
-import { ErrorHandler } from '../errorHandler/errorHandler.service';
-import { resolveProperties } from '../common/utils';
+import { UserOperation, deepHexlify } from '../common/ERC4337Utils.js';
+import { Gas } from '../common/index.js';
+import { ErrorHandler } from '../errorHandler/errorHandler.service.js';
+import { resolveProperties } from '../common/utils/index.js';
 import {
   Hex,
   RpcRequestError,
   WalletClient,
   type PublicClient,
 } from "viem"
-import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types.js';
 const debug = Debug('aa.rpc');
 
 export class HttpRpcClient {

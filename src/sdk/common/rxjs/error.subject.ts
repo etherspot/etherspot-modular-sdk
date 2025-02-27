@@ -38,7 +38,6 @@ export class ErrorSubject extends Subject<any> {
     const fireOnComplete = () => {
       if (onComplete) {
         onComplete();
-        onComplete = null;
       }
     };
 

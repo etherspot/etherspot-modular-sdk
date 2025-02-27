@@ -1,10 +1,10 @@
-import { Factory, PaymasterApi, SdkOptions } from './interfaces';
-import { Network } from "./network";
+import { Factory, PaymasterApi, SdkOptions } from './interfaces.js';
+import { Network } from "./network/index.js";
 import {
   BatchUserOpsRequest, Exception, getGasFee,
   getViemAddress, MODULE_TYPE,
-  UserOperation, UserOpsRequest
-} from "./common";
+  UserOperation, UserOpsRequest, getPublicClient
+} from "./common/index.js";
 import {
   EthereumProvider,
   isWalletConnectProvider,
@@ -12,17 +12,14 @@ import {
   MessagePayload,
   WalletConnect2WalletProvider,
   WalletProviderLike
-} from './wallet';
-import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/constants';
-import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI } from './base';
-import { TransactionDetailsForUserOp, TransactionGasInfoForUserOp } from './base/TransactionDetailsForUserOp';
-import { SignMessageDto, validateDto } from './dto';
-import { ErrorHandler } from './errorHandler/errorHandler.service';
-import { EtherspotBundler } from './bundler';
-import { ModuleInfo } from './base/EtherspotWalletAPI';
+} from './wallet/index.js';
+import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/index.js';
+import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI, TransactionDetailsForUserOp, TransactionGasInfoForUserOp, ModuleInfo } from './base/index.js';
+import { SignMessageDto, validateDto } from './dto/index.js';
+import { ErrorHandler } from './errorHandler/errorHandler.service.js';
+import { EtherspotBundler } from './bundler/index.js';
 import { Account, formatEther, Hex, http, type PublicClient } from 'viem';
-import { getPublicClient } from './common/utils/viem-utils';
-import { BigNumber, BigNumberish } from './types/bignumber';
+import { BigNumber, BigNumberish } from './types/bignumber.js';
 
 /**
  * Modular-Sdk
@@ -251,6 +248,9 @@ export class ModularSdk {
     if (!this.etherspotWallet.accountAddress) {
       await this.getCounterFactualAddress();
     }
+    if (!this.etherspotWallet.accountAddress) {
+      throw new ErrorHandler('No account address found', 1);
+    }
     const balance = await this.publicClient.getBalance({ address: getViemAddress(this.etherspotWallet.accountAddress) });
     return formatEther(balance);
   }
@@ -273,7 +273,6 @@ export class ModularSdk {
     this.userOpsBatch.data.push(tx.data ?? '0x');
     return this.userOpsBatch;
   }
-
   async clearUserOpsFromBatch(): Promise<void> {
     this.userOpsBatch.to = [];
     this.userOpsBatch.data = [];

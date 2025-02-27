@@ -1,2 +1,2 @@
-export * from './sign-message.dto';
-export * from './utils';
+export * from './sign-message.dto.js';
+export * from './utils/index.js';

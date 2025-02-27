@@ -1,9 +1,9 @@
 import { Buffer } from 'buffer';
 import { concat, decodeAbiParameters, encodeAbiParameters, Hex, keccak256, pad, parseAbiParameters, toHex } from 'viem';
-import { hexlifyValue } from './utils/hexlify';
-import { BaseAccountUserOperationStruct } from '../types/user-operation-types';
-import { BigNumber, BigNumberish } from '../types/bignumber';
-import { BytesLike } from './types';
+import { hexlifyValue } from './utils/hexlify.js';
+import { BaseAccountUserOperationStruct } from '../types/user-operation-types.js';
+import { BigNumber, BigNumberish } from '../types/bignumber.js';
+import { BytesLike } from './types.js';
 
 export interface UserOperation {
   sender: string

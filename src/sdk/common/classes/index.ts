@@ -1,2 +1,2 @@
-export * from './synchronized';
-export * from './base-class';
+export * from './synchronized.js';
+export * from './base-class.js';

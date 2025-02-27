@@ -1,5 +1,5 @@
-import { Exception } from './exception';
-import { ValidationError } from './interfaces';
+import { Exception } from './exception.js';
+import { ValidationError } from './interfaces.js';
 
 export class ValidationException extends Exception {
   static throw(property: string, constraints: { [key: string]: string }) {

@@ -1,5 +1,5 @@
-import { UserOperationStruct } from '../types/user-operation-types';
-import { PaymasterResponse } from './VerifyingPaymasterAPI';
+import { UserOperationStruct } from '../types/user-operation-types.js';
+import { PaymasterResponse } from './VerifyingPaymasterAPI.js';
 
 /**
  * an API to external a UserOperation with paymaster info

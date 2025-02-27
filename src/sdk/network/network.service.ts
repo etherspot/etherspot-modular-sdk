@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
-import { NetworkConfig } from '.';
-import { ObjectSubject, Service, Exception } from '../common';
-import { Networks, CHAIN_ID_TO_NETWORK_NAME, SupportedNetworks, NetworkNames } from './constants';
-import { Network } from './interfaces';
+import { NetworkConfig } from './index.js';
+import { ObjectSubject, Service, Exception } from '../common/index.js';
+import { Networks, CHAIN_ID_TO_NETWORK_NAME, SupportedNetworks, NetworkNames } from './constants.js';
+import { Network } from './interfaces.js';
 
 export class NetworkService extends Service {
   readonly network$ = new ObjectSubject<Network>(null);

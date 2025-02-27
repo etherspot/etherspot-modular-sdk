@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { isAddress } from '../../common';
+import { isAddress } from '../../common/index.js';
 
 export function IsAddress(options: ValidationOptions = {}) {
   return (object: any, propertyName: string) => {

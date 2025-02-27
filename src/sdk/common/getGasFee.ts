@@ -1,5 +1,5 @@
-import { BigNumber, BigNumberish } from '../types/bignumber';
-import { bufferPercent } from './constants';
+import { BigNumber, BigNumberish } from '../types/bignumber.js';
+import { bufferPercent } from './constants.js';
 import { PublicClient } from 'viem';
 
 export interface Gas {

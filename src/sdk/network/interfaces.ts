@@ -1,5 +1,5 @@
 import { Chain } from 'viem/chains';
-import { NetworkNames } from './constants';
+import { NetworkNames } from './constants.js';
 
 export interface Network {
   name: NetworkNames;

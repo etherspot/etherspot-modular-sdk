@@ -1,7 +1,7 @@
-import { prepareAddress } from '../../common';
-import { NetworkNames, prepareNetworkName } from '../../network';
-import { MessagePayload, Web3Provider } from './interfaces';
-import { DynamicWalletProvider } from './dynamic.wallet-provider';
+import { prepareAddress } from '../../common/index.js';
+import { NetworkNames, prepareNetworkName } from '../../network/index.js';
+import { MessagePayload, Web3Provider } from './interfaces.js';
+import { DynamicWalletProvider } from './dynamic.wallet-provider.js';
 import { Address, concat, encodeAbiParameters, Hash, hashMessage, Hex, parseAbiParameters, toBytes, toHex, TransactionRequest } from 'viem';
 
 export class Web3WalletProvider extends DynamicWalletProvider {

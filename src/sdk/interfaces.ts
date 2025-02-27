@@ -1,4 +1,4 @@
-import { BundlerProviderLike } from './bundler';
+import { BundlerProviderLike } from './bundler/index.js';
 
 export interface PaymasterApi {
   url: string;

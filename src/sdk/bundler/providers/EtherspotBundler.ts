@@ -1,10 +1,10 @@
-import { Exception } from "../../common";
-import { getNetworkConfig } from "../../network/constants";
-import { BundlerProvider } from "../interface";
+import { Exception } from "../../common/index.js";
+import { getNetworkConfig } from "../../network/index.js";
+import { BundlerProvider } from "../interface.js";
 
 export class EtherspotBundler implements BundlerProvider {
   readonly url: string;
-  readonly apiKey: string;
+  readonly apiKey: string | undefined;
   readonly chainId: string;
 
   constructor(chainId: number, apiKey?: string, bundlerUrl?: string) {

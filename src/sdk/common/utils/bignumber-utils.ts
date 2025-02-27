@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from '../../types/bignumber';
+import { BigNumber, BigNumberish } from '../../types/bignumber.js';
 
 // Function to convert BigNumberish to bigint
 export function bigNumberishToBigInt(value: BigNumberish): bigint {

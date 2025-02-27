@@ -1,5 +1,5 @@
 import { encodeFunctionData, parseAbi } from "viem";
-import { modulesAbi } from "../common/abis";
+import { modulesAbi } from "../common/abis.js";
 
 export interface BootstrapConfig {
     module: string;

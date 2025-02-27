@@ -1,3 +1,3 @@
-export * from './SessionKeyValidator';
-export * from './interfaces';
-export * from './constants';
+export * from './SessionKeyValidator.js';
+export * from './interfaces.js';
+export * from './constants.js';

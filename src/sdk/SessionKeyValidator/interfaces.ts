@@ -1,4 +1,4 @@
-import { BigNumber } from "../types/bignumber";
+import { BigNumber } from "../types/bignumber.js";
 
 export interface GenerateSessionKeyResponse {
     sessionKey: string;

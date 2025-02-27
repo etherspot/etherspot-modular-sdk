@@ -1,1 +1,1 @@
-export * from './transform-big-number';
+export * from './transform-big-number.js';

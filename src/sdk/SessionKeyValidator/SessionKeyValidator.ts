@@ -1,10 +1,10 @@
-import { ModularSdk } from "../sdk";
-import { KeyStore, PERMISSIONS_URL } from "./constants";
-import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SessionData } from "./interfaces";
-import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants";
+import { ModularSdk } from "../sdk.js";
+import { KeyStore, PERMISSIONS_URL } from "./constants.js";
+import { SessionKeyResponse, GenerateSessionKeyResponse, GetNonceResponse, GetSessionKeyResponse, DeleteSessionKeyResponse, SessionData } from "./interfaces.js";
+import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../network/constants.js";
 import { encodeFunctionData, Hex, parseAbi, PublicClient } from "viem";
-import { erc20Abi, sessionKeyValidatorAbi } from "../common/abis";
-import { MODULE_TYPE, deepHexlify, resolveProperties, UserOperation } from "../common";
+import { erc20Abi, sessionKeyValidatorAbi } from "../common/abis.js";
+import { MODULE_TYPE, deepHexlify, resolveProperties, UserOperation } from "../common/index.js";
 
 
 export class SessionKeyValidator {
@@ -332,7 +332,7 @@ export class SessionKeyValidator {
                 throw new Error('API Key is required');
             }
 
-            let url = `${PERMISSIONS_URL}/account/generateSessionKeyData?apiKey=${apiKey}`;
+            const url = `${PERMISSIONS_URL}/account/generateSessionKeyData?apiKey=${apiKey}`;
 
             if (account == null) {
                 throw new Error('Account is required');

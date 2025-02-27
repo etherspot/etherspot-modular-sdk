@@ -1,6 +1,6 @@
-import { ErrorSubject, Service } from './common';
-import { NetworkService } from './network';
-import { WalletService } from './wallet';
+import { ErrorSubject, Service } from './common/index.js';
+import { NetworkService } from './network/index.js';
+import { WalletService } from './wallet/index.js';
 
 export class Context {
   readonly error$ = new ErrorSubject();

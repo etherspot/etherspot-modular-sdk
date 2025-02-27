@@ -1,17 +1,17 @@
-import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp';
-import { PaymasterAPI } from './PaymasterAPI';
-import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common';
-import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas';
-import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '..';
-import { Context } from '../context';
-import { PaymasterResponse } from './VerifyingPaymasterAPI';
+import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp.js';
+import { PaymasterAPI } from './PaymasterAPI.js';
+import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common/index.js';
+import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas.js';
+import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '../index.js';
+import { Context } from '../context.js';
+import { PaymasterResponse } from './VerifyingPaymasterAPI.js';
 import { Hex, parseAbi, PublicClient } from 'viem';
-import { entryPointAbi } from '../common/abis';
-import { resolveProperties } from '../common/utils';
-import { BaseAccountUserOperationStruct, FeeData } from '../types/user-operation-types';
-import { BigNumber, BigNumberish } from '../types/bignumber';
-import { MessagePayload, WalletProviderLike, WalletService } from '../wallet';
-import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network';
+import { entryPointAbi } from '../common/abis.js';
+import { resolveProperties } from '../common/utils/index.js';
+import { BaseAccountUserOperationStruct, FeeData } from '../types/user-operation-types.js';
+import { BigNumber, BigNumberish } from '../types/bignumber.js';
+import { MessagePayload, WalletProviderLike, WalletService } from '../wallet/index.js';
+import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/index.js';
 
 export interface BaseApiParams {
   entryPointAddress: string;
