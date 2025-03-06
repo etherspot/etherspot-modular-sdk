@@ -1,5 +1,4 @@
-import { OperatorFunction } from 'rxjs';
-import { distinctUntilKeyChanged, pluck, map } from 'rxjs/operators';
+import { OperatorFunction, distinctUntilKeyChanged, map, pluck } from 'rxjs';
 import { deepCompare } from '../utils/index.js';
 
 /**
