@@ -1,15 +1,14 @@
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Service, ObjectSubject } from '../common/index.js';
-import { WalletProvider, WalletProviderLike, KeyWalletProvider, WalletLike, MessagePayload, WalletClientProvider } from './providers/index.js';
-import { Wallet, WalletOptions } from './interfaces.js';
+import { map, Subscription } from 'rxjs';
 import {
-  WalletClient,
+  Address,
+  Hash,
   Hex,
   TransactionRequest,
-  Hash,
-  Address,
+  WalletClient,
 } from 'viem';
+import { ObjectSubject, Service } from '../common/index.js';
+import { Wallet, WalletOptions } from './interfaces.js';
+import { KeyWalletProvider, MessagePayload, WalletClientProvider, WalletLike, WalletProvider, WalletProviderLike } from './providers/index.js';
 
 export class WalletService extends Service {
   readonly wallet$ = new ObjectSubject<Wallet>();

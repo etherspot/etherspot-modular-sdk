@@ -1,5 +1,9 @@
 # Changelog
 
+## [5.1.0] - 2025-03-06
+### Updated
+- Updated the RxJS library to 7.8.2 from 6.6.7. All imports within the code have been updated. Bumped minor due to the major version revision of RxJS this adds functionality to the SDk and is backwards compatible.
+
 ## [5.0.1] - 2025-02-26
 ### Fix
 - Fixed build issues faced on React by changing build command to bun
