@@ -459,11 +459,15 @@ export abstract class BaseAccountAPI {
       partialUserOp.paymaster = paymasterData.result.paymaster;
       partialUserOp.paymasterVerificationGasLimit = paymasterData.result.paymasterVerificationGasLimit;
       partialUserOp.paymasterPostOpGasLimit = paymasterData.result.paymasterPostOpGasLimit;
+      if (paymasterData?.result.maxFeePerGas && paymasterData?.result.maxPriorityFeePerGas) {
+        partialUserOp.maxFeePerGas = paymasterData.result.maxFeePerGas;
+        partialUserOp.maxPriorityFeePerGas = paymasterData.result.maxPriorityFeePerGas;
+      }
     }
     partialUserOp.paymasterData = paymasterData ? paymasterData.result.paymasterData : '0x';
+    partialUserOp.preVerificationGas = paymasterData ? paymasterData.result.preVerificationGas : this.getPreVerificationGas(partialUserOp);
     return {
       ...partialUserOp,
-      preVerificationGas: this.getPreVerificationGas(partialUserOp),
       signature: info.dummySignature ?? '0x',
     };
   }
@@ -473,15 +477,6 @@ export abstract class BaseAccountAPI {
    * @param userOp the UserOperation to sign (with signature field ignored)
    */
   async signUserOp(userOp: UserOperation): Promise<UserOperation> {
-    if (this.paymasterAPI != null) {
-      const paymasterData = await this.paymasterAPI.getPaymasterData(userOp);
-      userOp.verificationGasLimit = paymasterData.result.verificationGasLimit;
-      userOp.preVerificationGas = paymasterData.result.preVerificationGas;
-      userOp.callGasLimit = paymasterData.result.callGasLimit;
-      userOp.paymaster = paymasterData.result.paymaster;
-      userOp.paymasterVerificationGasLimit = paymasterData.result.paymasterVerificationGasLimit;
-      userOp.paymasterPostOpGasLimit = paymasterData.result.paymasterPostOpGasLimit;
-    }
     const userOpHash = await this.getUserOpHash(userOp);
     const signature = await this.signUserOpHash(userOpHash);
     return {

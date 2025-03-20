@@ -1,4 +1,7 @@
 # Changelog
+## [5.1.1] - 2025-03-19
+### Fix
+- Removed multiple estimations when paymaster is set in the userOp
 
 ## [5.1.0] - 2025-03-06
 ### Updated

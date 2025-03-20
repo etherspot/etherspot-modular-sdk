@@ -1,7 +1,7 @@
 export const errorMsg = {
     '429': 'Rate limit exceeded for the given bundler api key. Please contact bundler team for increasing bandwidth.', // Rate limit quota execeeded
-    '-32521': 'Check for balance in your Smart wallet', // execution reverted
-    '-32500': `Please make sure you have enough funds for wallet creation.`, // transaction rejected by entryPoint's simulateValidation, during wallet creation or validation
+    '-32521': 'UserOp failed. Please contact wallet provider for further details', // execution reverted
+    '-32500': `Please make sure you have enough funds for wallet creation. If problem still persists please contact wallet provider`, // transaction rejected by entryPoint's simulateValidation, during wallet creation or validation
     '-32501': `Check paymaster data`,  // transaction rejected by paymaster's validatePaymasterUserOp
     '-32502': 'If using skandha bundler or the default one, please report this issue on https://github.com/etherspot/skandha/issues or ticket on https://discord.etherspot.io', //transaction rejected because of opcode validation
     '-32503': 'validUntil and validAfter cannot be past timestamps', // UserOperation out of time-range

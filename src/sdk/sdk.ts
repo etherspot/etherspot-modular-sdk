@@ -195,31 +195,29 @@ export class ModularSdk {
       partialtx.factory = this.etherspotWallet.factoryAddress;
     }
 
-    const bundlerGasEstimate = await this.bundler.getVerificationGasInfo(partialtx);
+    if (!paymasterDetails?.url) {
+      const bundlerGasEstimate = await this.bundler.getVerificationGasInfo(partialtx);
 
-    // if user has specified the gas prices then use them
-    if (gasDetails?.maxFeePerGas && gasDetails?.maxPriorityFeePerGas) {
-      partialtx.maxFeePerGas = gasDetails.maxFeePerGas;
-      partialtx.maxPriorityFeePerGas = gasDetails.maxPriorityFeePerGas;
-    }
-    // if estimation has gas prices use them, otherwise fetch them in a separate call
-    else if (bundlerGasEstimate.maxFeePerGas && bundlerGasEstimate.maxPriorityFeePerGas) {
-      partialtx.maxFeePerGas = bundlerGasEstimate.maxFeePerGas;
-      partialtx.maxPriorityFeePerGas = bundlerGasEstimate.maxPriorityFeePerGas;
-    } else {
-      const gas = await this.getGasFee();
-      partialtx.maxFeePerGas = gas.maxFeePerGas;
-      partialtx.maxPriorityFeePerGas = gas.maxPriorityFeePerGas;
-    }
+      // if user has specified the gas prices then use them
+      if (gasDetails?.maxFeePerGas && gasDetails?.maxPriorityFeePerGas) {
+        partialtx.maxFeePerGas = gasDetails.maxFeePerGas;
+        partialtx.maxPriorityFeePerGas = gasDetails.maxPriorityFeePerGas;
+      }
+      // if estimation has gas prices use them, otherwise fetch them in a separate call
+      else if (bundlerGasEstimate.maxFeePerGas && bundlerGasEstimate.maxPriorityFeePerGas) {
+        partialtx.maxFeePerGas = bundlerGasEstimate.maxFeePerGas;
+        partialtx.maxPriorityFeePerGas = bundlerGasEstimate.maxPriorityFeePerGas;
+      }
 
-    if (bundlerGasEstimate.preVerificationGas) {
-      partialtx.preVerificationGas = BigNumber.from(bundlerGasEstimate.preVerificationGas);
-      partialtx.verificationGasLimit = BigNumber.from(bundlerGasEstimate.verificationGasLimit ?? bundlerGasEstimate.verificationGas);
-      const expectedCallGasLimit = BigNumber.from(bundlerGasEstimate.callGasLimit);
-      if (!callGasLimit)
-        partialtx.callGasLimit = expectedCallGasLimit;
-      else if (BigNumber.from(callGasLimit).lt(expectedCallGasLimit))
-        throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
+      if (bundlerGasEstimate.preVerificationGas) {
+        partialtx.preVerificationGas = BigNumber.from(bundlerGasEstimate.preVerificationGas);
+        partialtx.verificationGasLimit = BigNumber.from(bundlerGasEstimate.verificationGasLimit ?? bundlerGasEstimate.verificationGas);
+        const expectedCallGasLimit = BigNumber.from(bundlerGasEstimate.callGasLimit);
+        if (!callGasLimit)
+          partialtx.callGasLimit = expectedCallGasLimit;
+        else if (BigNumber.from(callGasLimit).lt(expectedCallGasLimit))
+          throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
+      }
     }
 
     return partialtx;
