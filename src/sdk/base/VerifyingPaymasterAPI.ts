@@ -19,6 +19,8 @@ export interface PaymasterResponse {
     callGasLimit: string;
     paymasterVerificationGasLimit: string;
     paymasterPostOpGasLimit: string;
+    maxFeePerGas?: string;
+    maxPriorityFeePerGas?: string;
   }
 }
 

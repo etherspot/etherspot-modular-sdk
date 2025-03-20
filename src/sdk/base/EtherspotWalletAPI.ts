@@ -397,7 +397,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const convertedResult = result.map(item => ({
       ...item,
       // Convert `value` from BigNumberish to bigint
-      value: typeof item.value === 'bigint' ? item.value : BigInt(item.value.toString()),
+      value: typeof item.value === 'bigint' ? item.value : BigNumber.from(item.value.toString()).toBigInt(),
     }));
 
     //TODO-Test-LibraryFix identify the syntax for viem to pass array of tuple
