@@ -94,7 +94,8 @@ jobs:
                 jq -r '.dependencies."@etherspot/modular-sdk" |= "file:../etherspot-modular-sdk"' temp.json > package.json
                 rm temp.json
                 npm i
-                npm run test-testnet-viem-combined
+                npm run test-mainnet-viem-combined
+                npm run test-mainnet-ether-combined
           - run:
               name: Move test report
               command: |
