@@ -1,7 +1,7 @@
-import { bsc, gnosis } from "viem/chains";
-import { NetworkConfig } from "./index.js";
-import * as Chain from "viem/chains";
-import { defineChain } from "viem";
+import { bsc, gnosis } from 'viem/chains';
+import { NetworkConfig } from './index.js';
+import * as Chain from 'viem/chains';
+import { defineChain } from 'viem';
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -42,9 +42,10 @@ export enum NetworkNames {
   SxNetworkTestnet = 'sxNetworkTestnet',
 }
 
-export const SupportedNetworks =
-  [1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 42220, 43113, 43114, 44787, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 79479957, 888888888]
-
+export const SupportedNetworks = [
+  1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 42220, 43113, 43114,
+  44787, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 79479957, 888888888,
+];
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
   [key: string]: number;
@@ -84,11 +85,11 @@ export const NETWORK_NAME_TO_CHAIN_ID: {
   [NetworkNames.XDCMainnet]: 50,
   [NetworkNames.CeloTestnet]: 44787,
   [NetworkNames.Celo]: 42220,
-  [NetworkNames.SxNetworkTestnet]: 79479957
+  [NetworkNames.SxNetworkTestnet]: 79479957,
 };
 
 export const Networks: {
-  [key: string]: NetworkConfig
+  [key: string]: NetworkConfig;
 } = {
   [84532]: {
     chainId: 84532,
@@ -108,9 +109,9 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155111',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x94A29462652764B49fC26761Be541789ff34D787',
+      bootstrap: '0x6613b79B733C80aDc70ec4d3C20EFf91d6405118',
+      multipleOwnerECDSAValidator: '0xC0ae5a9D3F518cd2e4B4B6a0EE1537f167f993f3',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
     },
   },
@@ -497,8 +498,8 @@ export const Networks: {
       walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
       bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
       multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
-      erc20SessionKeyValidator: ''
-    }
+      erc20SessionKeyValidator: '',
+    },
   },
   [42220]: {
     chainId: 42220,
@@ -509,24 +510,24 @@ export const Networks: {
       walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
       bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
       multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
-      erc20SessionKeyValidator: ''
-    }
+      erc20SessionKeyValidator: '',
+    },
   },
   [79479957]: {
     chainId: 79479957,
     chain: defineChain({
       id: 79479957,
-      name: "SX Rollup Testnet",
+      name: 'SX Rollup Testnet',
       nativeCurrency: {
         decimals: 18,
         name: 'SX',
-        symbol: 'SX'
+        symbol: 'SX',
       },
       rpcUrls: {
         default: {
-          http: ['https://rpc.sx-rollup-testnet.t.raas.gelato.cloud/']
-        }
-      }
+          http: ['https://rpc.sx-rollup-testnet.t.raas.gelato.cloud/'],
+        },
+      },
     }),
     bundler: 'https://testnet-rpc.etherspot.io/v2/79479957',
     contracts: {
@@ -534,14 +535,14 @@ export const Networks: {
       walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
       bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
       multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
-      erc20SessionKeyValidator: ''
-    }
-  }
+      erc20SessionKeyValidator: '',
+    },
+  },
 };
 
-export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = "0x22A55192a663591586241D42E603221eac49ed09";
-export const DEFAULT_BOOTSTRAP_ADDRESS = "0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA";
-export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = "0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906";
+export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = '0x22A55192a663591586241D42E603221eac49ed09';
+export const DEFAULT_BOOTSTRAP_ADDRESS = '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA';
+export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906';
 export const DEFAULT_QUERY_PAGE_SIZE = 50;
 
 export const CHAIN_ID_TO_NETWORK_NAME: { [key: number]: NetworkNames } = Object.entries(
