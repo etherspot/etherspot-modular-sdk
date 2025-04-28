@@ -13,6 +13,7 @@ const SEPOLIA_CHAIN_ID = '11155111';
 const HOOK_MULTIPLEXER_ADDRESS = '0x32651A82b40d0EBFb6B9Bd52E3cbF3534E0Cd1d5'; // SEPOLIA
 const CREDIBLE_ACCOUNT_HOOK_ADDRESS = '0x892A1e814fD0E6392465B01D619d06145DEf8D06'; // SEPOLIA
 const CREDIBLE_ACCOUNT_VALIDATOR_ADDRESS = '0xcCeE6e4191632F3dcF3194D53fA892cF96c8Ee59'; // SEPOLIA
+const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0x75e6990466479f531241Db1FD6598A27e0bBE60E'; // SEPOLIA
 
 async function main() {
   // Init SDK
@@ -58,6 +59,20 @@ async function main() {
   });
   // Add UserOp to batch
   await modularSdk.addUserOpsToBatch({ to: address, data: cavInstallCalldata });
+
+  /*//////////////////////////////////////////////////////////////
+                   INSTALL RESOURCE LOCK VALIDATOR
+  //////////////////////////////////////////////////////////////*/
+
+  // Get CredibleAccountValidator init data
+  let rlvInitData = encodeAbiParameters([{ type: 'address' }], [modularSdk.getEOAAddress()]);
+  const rlvInstallCalldata = encodeFunctionData({
+    abi: parseAbi(accountAbi),
+    functionName: 'installModule',
+    args: [BigInt(MODULE_TYPE.VALIDATOR), RESOURCE_LOCK_VALIDATOR_ADDRESS, rlvInitData],
+  });
+  // Add UserOp to batch
+  await modularSdk.addUserOpsToBatch({ to: address, data: rlvInstallCalldata });
 
   /*//////////////////////////////////////////////////////////////
                       ESTIMATE/SEND USER OP
