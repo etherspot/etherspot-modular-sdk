@@ -10,10 +10,9 @@ dotenv.config();
 
 const bundlerApiKey = 'etherspot_public_key';
 const SEPOLIA_CHAIN_ID = '11155111';
-const HOOK_MULTIPLEXER_ADDRESS = '0x32651A82b40d0EBFb6B9Bd52E3cbF3534E0Cd1d5'; // SEPOLIA
-const CREDIBLE_ACCOUNT_HOOK_ADDRESS = '0x892A1e814fD0E6392465B01D619d06145DEf8D06'; // SEPOLIA
-const CREDIBLE_ACCOUNT_VALIDATOR_ADDRESS = '0xcCeE6e4191632F3dcF3194D53fA892cF96c8Ee59'; // SEPOLIA
-const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0x75e6990466479f531241Db1FD6598A27e0bBE60E'; // SEPOLIA
+const HOOK_MULTIPLEXER_ADDRESS = '0xC5992461712AF117bb08a50B00B5e32840eBf6a6'; // SEPOLIA
+const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0x2BEAa7d17BF6ef8BE63Ad755F34B5554c0F46AF9'; // SEPOLIA
+const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0xca7b76b01fd911fC57b87573334174b81cb9271D'; // SEPOLIA
 
 async function main() {
   // Init SDK
@@ -33,11 +32,11 @@ async function main() {
   await modularSdk.clearUserOpsFromBatch();
 
   /*//////////////////////////////////////////////////////////////
-        INSTALL HOOK MULTIPLEXER WITH CREDIBLE ACCOUNT HOOK
+  INSTALL HOOK MULTIPLEXER WITH CREDIBLE ACCOUNT MODULE - AS HOOK
   //////////////////////////////////////////////////////////////*/
 
   // Get HookMultiPlexer init data with CredibleAccountHook as global subhook
-  let hmpInitData = getHookMultiPlexerInitData([CREDIBLE_ACCOUNT_HOOK_ADDRESS]);
+  let hmpInitData = getHookMultiPlexerInitData([CREDIBLE_ACCOUNT_MODULE_ADDRESS]);
   const hmpInstallCalldata = encodeFunctionData({
     abi: parseAbi(accountAbi),
     functionName: 'installModule',
@@ -47,15 +46,15 @@ async function main() {
   await modularSdk.addUserOpsToBatch({ to: address, data: hmpInstallCalldata });
 
   /*//////////////////////////////////////////////////////////////
-                INSTALL CREDIBLE ACCOUNT VALIDATOR
+            INSTALL CREDIBLE ACCOUNT MODULE - AS VALIDATOR
   //////////////////////////////////////////////////////////////*/
 
   // Get CredibleAccountValidator init data
-  let cavInitData = encodeAbiParameters([{ type: 'uint256' }], [BigInt(1)]);
+  let cavInitData = encodeAbiParameters([{ type: 'uint256' }], [BigInt(MODULE_TYPE.VALIDATOR)]);
   const cavInstallCalldata = encodeFunctionData({
     abi: parseAbi(accountAbi),
     functionName: 'installModule',
-    args: [BigInt(MODULE_TYPE.VALIDATOR), CREDIBLE_ACCOUNT_VALIDATOR_ADDRESS, cavInitData],
+    args: [BigInt(MODULE_TYPE.VALIDATOR), CREDIBLE_ACCOUNT_MODULE_ADDRESS, cavInitData],
   });
   // Add UserOp to batch
   await modularSdk.addUserOpsToBatch({ to: address, data: cavInstallCalldata });
