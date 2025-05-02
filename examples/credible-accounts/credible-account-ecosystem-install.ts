@@ -28,7 +28,7 @@ dotenv.config();
 // ResourceLockValidator: 0x3c4e0A61619D4405d4c4905816D8ea3358Bd5918
 
 const bundlerApiKey = 'eyJvcmciOiI2NTIzZjY5MzUwOTBmNzAwMDFiYjJkZWIiLCJpZCI6IjMxMDZiOGY2NTRhZTRhZTM4MGVjYjJiN2Q2NDMzMjM4IiwiaCI6Im11cm11cjEyOCJ9';
-const SEPOLIA_CHAIN_ID = '84532';
+const CHAIN_ID = '84532';
 const HOOK_MULTIPLEXER_ADDRESS = '0xE9a88F0d543d3a0C14E487bed884B3dA49529e48'; // BASE SEPOLIA
 const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0x3c4e0A61619D4405d4c4905816D8ea3358Bd5918'; // BASE SEPOLIA
 const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0xE66DACBae15Cf2F3D8A5E5ef26205E8301cD9CE5'; // BASE SEPOLIA
@@ -38,7 +38,7 @@ async function main() {
   // Init SDK
   const modularSdk = generateModularSDKInstance(
     process.env.WALLET_PRIVATE_KEY as string,
-    Number(SEPOLIA_CHAIN_ID),
+    Number(CHAIN_ID),
     bundlerApiKey,
   );
 
