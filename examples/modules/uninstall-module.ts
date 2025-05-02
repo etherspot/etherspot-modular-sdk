@@ -27,7 +27,7 @@ async function main() {
   //generate deinit data...
   const deInitData = await modularSdk.generateModuleDeInitData(
       MODULE_TYPE.VALIDATOR,
-     '0xF4CDE8B11500ca9Ea108c5838DD26Ff1a4257a0c', 
+     '0x83450f43Ea036Cc74E56E4E9F47332cC204223bF', 
      deInitDataDefault);
 
   console.log(`deinitData: ${deInitData}`);
