@@ -26,6 +26,14 @@ export const getPublicClient = ({ chainId, transport }: { chainId: number, trans
   return publicClient;
 }
 
+export const getPublicClientByChain = ({ chain, transport }: { chain: Chain, transport: Transport }) => {
+  const publicClient = createPublicClient({
+    chain: chain,
+    transport: transport
+  });
+  return publicClient;
+}
+
 export const getWalletClientFromPrivateKey = ({ rpcUrl, chainId, privateKey }: { rpcUrl: string, chainId: number, privateKey: string }): ReturnType<typeof createWalletClient> => {
   return createWalletClient({
     account: privateKeyToAccount(privateKey as Hex),

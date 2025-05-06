@@ -54,7 +54,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     this.index = params.index ?? 0;
     this.predefinedAccountAddress = params.predefinedAccountAddress ?? null;
     if (params?.optionsLike) {
-      this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? DEFAULT_BOOTSTRAP_ADDRESS;
+      this.bootstrapAddress = Networks[params.optionsLike.chainId]?.contracts?.bootstrap ?? params.optionsLike?.bootstrapAddress ?? DEFAULT_BOOTSTRAP_ADDRESS;
     } else {
       this.bootstrapAddress = DEFAULT_BOOTSTRAP_ADDRESS;
     }
