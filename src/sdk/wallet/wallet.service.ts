@@ -1,6 +1,7 @@
 import { map, Subscription } from 'rxjs';
 import {
   Address,
+  Chain,
   Hash,
   Hex,
   TransactionRequest,
@@ -14,6 +15,7 @@ export class WalletService extends Service {
   readonly wallet$ = new ObjectSubject<Wallet>();
   readonly rpcBundlerUrl: string;
   readonly chainId: number;
+  readonly chainObject: Chain | undefined;
 
   provider: WalletProvider;
 
@@ -26,6 +28,7 @@ export class WalletService extends Service {
     super();
     this.rpcBundlerUrl = rpcUrl;
     this.chainId = chain;
+    this.chainObject = options.chain;
   }
 
   get wallet(): Wallet {
@@ -77,7 +80,7 @@ export class WalletService extends Service {
           const walletLike = providerLike as WalletClient;
           const isNotViemClient = walletLike?.account.address === undefined;
           if (privateKey && isNotViemClient) {
-            provider = new KeyWalletProvider(this.chainId, privateKey);
+            provider = new KeyWalletProvider(this.chainId, privateKey, this.chainObject);
           } else {
             provider = new WalletClientProvider(walletLike);
           }
@@ -85,7 +88,7 @@ export class WalletService extends Service {
         }
 
         case 'string':
-          provider = new KeyWalletProvider(this.chainId, providerLike);
+          provider = new KeyWalletProvider(this.chainId, providerLike, this.chainObject);
           break;
       }
     }

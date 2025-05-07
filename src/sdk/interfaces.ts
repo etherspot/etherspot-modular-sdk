@@ -1,3 +1,4 @@
+import { Chain } from 'viem';
 import { BundlerProviderLike } from './bundler/index.js';
 
 export interface PaymasterApi {
@@ -11,6 +12,7 @@ export enum Factory {
 
 export interface SdkOptions {
   chainId: number;
+  chain?: Chain;
   bundlerProvider?: BundlerProviderLike;
   rpcProviderUrl?: string;
   factoryWallet?: Factory;
@@ -18,4 +20,6 @@ export interface SdkOptions {
   entryPointAddress?: string;
   accountAddress?: string;
   index?: number;
+  bootstrapAddress?: string;
+  multipleOwnerECDSAValidatorAddress?: string;
 }

@@ -68,6 +68,7 @@ export abstract class BaseAccountAPI {
     const optionsLike = params.optionsLike;
 
     const {
+      chain,
       chainId, //
       rpcProviderUrl,
       factoryWallet,
@@ -78,7 +79,7 @@ export abstract class BaseAccountAPI {
       networkService: new NetworkService(chainId),
       walletService: new WalletService(
         params.wallet,
-        { provider: rpcProviderUrl},
+        { provider: rpcProviderUrl, chain},
         bundlerProvider.url,
         chainId
       ),
@@ -94,7 +95,7 @@ export abstract class BaseAccountAPI {
     this.accountAddress = params.accountAddress;
     this.factoryAddress = params.factoryAddress;
     this.publicClient = params.publicClient;
-    this.validatorAddress = Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
+    this.validatorAddress =  params.optionsLike?.multipleOwnerECDSAValidatorAddress ?? Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
   }
 
   get error$(): ErrorSubject {

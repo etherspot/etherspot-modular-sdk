@@ -3,7 +3,8 @@ import { Network } from "./network/index.js";
 import {
   BatchUserOpsRequest, Exception, getGasFee,
   getViemAddress, MODULE_TYPE,
-  UserOperation, UserOpsRequest, getPublicClient
+  UserOperation, UserOpsRequest, getPublicClient,
+  getPublicClientByChain
 } from "./common/index.js";
 import {
   EthereumProvider,
@@ -52,6 +53,7 @@ export class ModularSdk {
       chainId,
       rpcProviderUrl,
       accountAddress,
+      chain,
     } = optionsLike;
 
     this.chainId = chainId;
@@ -72,12 +74,24 @@ export class ModularSdk {
 
     this.providerUrl = viemClientUrl;
 
-    this.publicClient = getPublicClient({
-      chainId: chainId,
-      transport: http(
-        viemClientUrl
-      )
-    }) as PublicClient;
+    if (Networks[chainId] == undefined) {
+      if (chain == undefined) {
+        throw new Exception('chain needs to be set when chainId is not in default Networks'); 
+      }
+      this.publicClient = getPublicClientByChain({
+        chain: chain,
+        transport: http(
+          viemClientUrl
+        )
+      }) as PublicClient;
+    } else {
+      this.publicClient = getPublicClient({
+        chainId: chainId,
+        transport: http(
+          viemClientUrl
+        )
+      }) as PublicClient;
+    }
 
     let entryPointAddress = '', walletFactoryAddress = '';
     if (Networks[chainId]) {

@@ -1,4 +1,8 @@
 # Changelog
+## [5.1.2] - 2025-05-07
+### Fix
+- Added ability to use custom chain
+
 ## [5.1.1] - 2025-03-19
 ### Fix
 - Removed multiple estimations when paymaster is set in the userOp
