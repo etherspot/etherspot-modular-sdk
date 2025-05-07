@@ -21,5 +21,5 @@ export interface SdkOptions {
   accountAddress?: string;
   index?: number;
   bootstrapAddress?: string;
-  multiECDSAValidatorAddress?: string;
+  multipleOwnerECDSAValidatorAddress?: string;
 }

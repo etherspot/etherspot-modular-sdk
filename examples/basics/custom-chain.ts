@@ -14,7 +14,7 @@ const chainId = 84532; // chain id
 const entryPointAddress = '0x0000000071727De22E5E9d8BAf0edAc6f37da032'; // entry point address
 const walletFactoryAddress = '0x2A40091f044e48DEB5C0FCbc442E443F3341B451'; // wallet factory address
 const bootstrapAddress = '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA'; // bootstrap address
-const multiECDSAValidatorAddress = '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906'; // multi owner ECDSA validator factory address
+const multipleOwnerECDSAValidatorAddress = '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906'; // multi owner ECDSA validator factory address
 
 // tsx examples/basics/custom-chain.ts
 async function main() {
@@ -44,7 +44,7 @@ async function main() {
       entryPointAddress,
       walletFactoryAddress,
       bootstrapAddress,
-      multiECDSAValidatorAddress,
+      multipleOwnerECDSAValidatorAddress,
       rpcProviderUrl: bundlerUrl,
     })
 
