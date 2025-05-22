@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.0] - 2025-05-28
+### Breaking Changes
+- Changed contract address for Wallet Factory from `0x2A40091f044e48DEB5C0FCbc442E443F3341B451` to `0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a`
+- Changed contract address for Bootstrap from `0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA` to `0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7`
+- Changed contract address for Multiple Owner ECDSA Validator from `0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906` to `0x0eA25BF9F313344d422B513e1af679484338518E`
+- Results in a change of precomputed modular account address.
+
 ## [6.0.1] - 2025-05-28
 ### Fix
 - revert 6.0.0 to the older version of the sdk
