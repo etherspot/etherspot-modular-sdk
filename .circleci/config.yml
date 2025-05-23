@@ -217,18 +217,23 @@ jobs:
 
 workflows:
   version: 2.1
+
+  scheduled_e2e_only:
+    when:
+      condition: << pipeline.parameters.run_e2e_tests >>
+    jobs:
+      - e2e-tests:
+          context: general-vars
+
   install_and_publish:
+    when:
+      condition:
+        not: << pipeline.parameters.run_e2e_tests >>
     jobs:
       - install:
           context: general-vars
       - e2e-tests:
           context: general-vars
-         # requires:
-          #  - install
-          # filters:
-          #   branches:
-          #     only:
-          #         - master
       - publish-npm-package:
           context: general-vars
           requires:
@@ -236,7 +241,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                - master
       - publish-github-release:
           context: general-vars
           requires:
@@ -244,4 +249,4 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                - master
