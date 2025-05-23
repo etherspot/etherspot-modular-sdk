@@ -216,19 +216,15 @@ jobs:
             ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" "$PACKAGE_VERSION"
 
 workflows:
-  version: 2.1
-
-  scheduled_e2e_only:
-    when:
-      condition: << pipeline.parameters.run_e2e_tests >>
+  run-e2e-only:
+    when: << pipeline.parameters.run_e2e_tests >>
     jobs:
       - e2e-tests:
           context: general-vars
 
-  install_and_publish:
+  install-and-publish:
     when:
-      condition:
-        not: << pipeline.parameters.run_e2e_tests >>
+      not: << pipeline.parameters.run_e2e_tests >>
     jobs:
       - install:
           context: general-vars
