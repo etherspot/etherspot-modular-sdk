@@ -101,7 +101,7 @@ jobs:
                 jq -r '.dependencies."@etherspot/modular-sdk" |= "file:../etherspot-modular-sdk"' temp.json > package.json
                 rm temp.json
                 npm i
-                << pipeline.parameters.test_command >>
+                << parameters.test_command >>
           - run:
               name: Move test report
               command: |
@@ -237,6 +237,7 @@ workflows:
       - install:
           context: general-vars
       - e2e-tests:
+          name: testnet-e2e-tests
           context: general-vars
           test_command: "npm run test-testnet-viem-combined"
           filters:
@@ -244,6 +245,7 @@ workflows:
               only:
                 - develop
       - e2e-tests:
+      ````name: mainnet-e2e-tests
           context: general-vars
           test_command: "npm run test-mainnet-viem-combined"
           filters:
