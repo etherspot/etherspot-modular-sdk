@@ -47,6 +47,10 @@ jobs:
       #     webhook: "${SLACK_WEBHOOK_URL}"
 
   e2e-tests:
+    parameters:
+      test_command:
+        type: string
+        default: "npm run test-testnet-viem-combined"
     working_directory: ~/etherspot-modular-sdk
     docker:
       - image: cimg/node:20.11.1
