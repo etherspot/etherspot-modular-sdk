@@ -1,4 +1,10 @@
 # Changelog
+
+## [6.0.1] - 2025-05-28
+### Fix
+- revert 6.0.0 to the older version of the sdk
+- vesion 6.0.0 to be deprecated
+
 ## [5.1.2] - 2025-05-07
 ### Fix
 - Added ability to use custom chain
