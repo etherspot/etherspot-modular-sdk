@@ -245,7 +245,7 @@ workflows:
               only:
                 - develop
       - e2e-tests:
-      ````name: mainnet-e2e-tests
+          name: mainnet-e2e-tests
           context: general-vars
           test_command: "npm run test-mainnet-viem-combined"
           filters:
