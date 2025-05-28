@@ -3,6 +3,9 @@ parameters:
   run_e2e_tests:
     type: boolean
     default: false
+  test_command:
+    type: string
+    default: "npm run test-testnet-viem-combined"
 orbs:
   slack: circleci/slack@3.4.2
 
@@ -94,7 +97,7 @@ jobs:
                 jq -r '.dependencies."@etherspot/modular-sdk" |= "file:../etherspot-modular-sdk"' temp.json > package.json
                 rm temp.json
                 npm i
-                npm run test-testnet-viem-combined
+                << pipeline.parameters.test_command >>
           - run:
               name: Move test report
               command: |
@@ -221,6 +224,7 @@ workflows:
     jobs:
       - e2e-tests:
           context: general-vars
+          test_command: "npm run test-mainnet-viem-combined"
 
   install-and-publish:
     when:
@@ -230,6 +234,18 @@ workflows:
           context: general-vars
       - e2e-tests:
           context: general-vars
+          test_command: "npm run test-testnet-viem-combined"
+          filters:
+            branches:
+              only:
+                - develop
+      - e2e-tests:
+          context: general-vars
+          test_command: "npm run test-mainnet-viem-combined"
+          filters:
+            branches:
+              only:
+                - master
       - publish-npm-package:
           context: general-vars
           requires:
@@ -246,3 +262,4 @@ workflows:
             branches:
               only:
                 - master
+
