@@ -1,6 +1,6 @@
 import { TransactionDetailsForUserOp } from './TransactionDetailsForUserOp.js';
 import { PaymasterAPI } from './PaymasterAPI.js';
-import { ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common/index.js';
+import { AddressZero, ErrorSubject, Exception, getUserOpHash, NotPromise, packUserOp, UserOperation } from '../common/index.js';
 import { calcPreVerificationGas, GasOverheads } from './calcPreVerificationGas.js';
 import { Factory, Network, NetworkNames, NetworkService, SdkOptions, SignMessageDto, validateDto } from '../index.js';
 import { Context } from '../context.js';
@@ -56,6 +56,7 @@ export abstract class BaseAccountAPI {
   factoryUsed: Factory;
   factoryAddress?: string;
   validatorAddress?: string;
+  hookMultiplexerAddress?: string;
   wallet: WalletProviderLike;
   publicClient: PublicClient;
 
@@ -96,6 +97,7 @@ export abstract class BaseAccountAPI {
     this.factoryAddress = params.factoryAddress;
     this.publicClient = params.publicClient;
     this.validatorAddress =  params.optionsLike?.multipleOwnerECDSAValidatorAddress ?? Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
+    this.hookMultiplexerAddress = Networks[params.optionsLike.chainId]?.contracts?.hookMultiPlexer || AddressZero;  
   }
 
   get error$(): ErrorSubject {

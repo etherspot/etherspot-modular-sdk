@@ -6,7 +6,6 @@ dotenv.config();
 // tsx examples/basics/get-address.ts
 async function main() {
   const bundlerApiKey = 'etherspot_public_key';
-  const customBundlerUrl = '';
 
   // initializating sdk...
   const modularSdk = generateModularSDKInstance(
