@@ -255,7 +255,7 @@ workflows:
       - publish-npm-package:
           context: general-vars
           requires:
-            - e2e-tests
+            - mainnet-e2e-tests
           filters:
             branches:
               only:
