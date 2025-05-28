@@ -7,7 +7,7 @@ dotenv.config();
 
 // tsx examples/modules/list-modules.ts
 async function main() {
-  const bundlerApiKey = 'etherspot_3ZXobjcWrPVsHC6sXZRBtmLV';
+  const bundlerApiKey = 'etherspot_public_key';
 
   // initializating sdk...
   const modularSdk = generateModularSDKInstance(
