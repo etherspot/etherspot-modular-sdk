@@ -234,7 +234,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     }
     const validators: BootstrapConfig[] = makeBootstrapConfig(this.validatorAddress, '0x');
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-    const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
+    const hook: BootstrapConfig = _makeBootstrapConfig(this.hookMultiplexerAddress as Hex, '0x');
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     const initMSAData = encodeFunctionData({
