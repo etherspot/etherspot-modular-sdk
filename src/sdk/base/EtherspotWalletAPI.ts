@@ -6,7 +6,7 @@ import { getViemAddress } from '../common/utils/viem-utils.js';
 import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_QUERY_PAGE_SIZE, Networks } from '../network/constants.js';
 import { BigNumber, BigNumberish } from '../types/bignumber.js';
 import { BaseAccountAPI, BaseApiParams } from './BaseAccountAPI.js';
-import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap.js';
+import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig, makeBootstrapConfigForModules } from './Bootstrap.js';
 import { getHookMultiPlexerInitData } from '../../../examples/pulse/utils.js';
 
 // Creating a constant for the sentinel address using viem
@@ -233,7 +233,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     if (!this.validatorAddress) {
       throw new Error('Validator address not found');
     }
-    const validators: BootstrapConfig[] = makeBootstrapConfig(this.validatorAddress, '0x');
+    const validators: BootstrapConfig[] = makeBootstrapConfigForModules([this.validatorAddress, this.credibleAccountModuleAddress as Hex] , ['0x', '0x']);
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     //Get HookMultiPlexer init data with CredibleAccountHook as global subhook
