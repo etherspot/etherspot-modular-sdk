@@ -57,6 +57,7 @@ export abstract class BaseAccountAPI {
   factoryAddress?: string;
   validatorAddress?: string;
   hookMultiplexerAddress?: string;
+  credibleAccountModuleAddress?: string;
   wallet: WalletProviderLike;
   publicClient: PublicClient;
 
@@ -98,6 +99,7 @@ export abstract class BaseAccountAPI {
     this.publicClient = params.publicClient;
     this.validatorAddress =  params.optionsLike?.multipleOwnerECDSAValidatorAddress ?? Networks[params.optionsLike.chainId]?.contracts?.multipleOwnerECDSAValidator ?? DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS;
     this.hookMultiplexerAddress = Networks[params.optionsLike.chainId]?.contracts?.hookMultiPlexer || AddressZero;  
+    this.credibleAccountModuleAddress = Networks[params.optionsLike.chainId]?.contracts?.credibleAccountModule || AddressZero;
   }
 
   get error$(): ErrorSubject {

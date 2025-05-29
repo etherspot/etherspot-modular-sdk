@@ -7,6 +7,7 @@ import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_QUERY_PAGE_SIZE, Networks } from '..
 import { BigNumber, BigNumberish } from '../types/bignumber.js';
 import { BaseAccountAPI, BaseApiParams } from './BaseAccountAPI.js';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap.js';
+import { getHookMultiPlexerInitData } from '../../../examples/pulse/utils.js';
 
 // Creating a constant for the sentinel address using viem
 const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
@@ -234,7 +235,11 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     }
     const validators: BootstrapConfig[] = makeBootstrapConfig(this.validatorAddress, '0x');
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-    const hook: BootstrapConfig = _makeBootstrapConfig(this.hookMultiplexerAddress as Hex, '0x');
+
+    //Get HookMultiPlexer init data with CredibleAccountHook as global subhook
+    let hmpInitData = this.credibleAccountModuleAddress == ADDRESS_ZERO ? '0x' : getHookMultiPlexerInitData([this.credibleAccountModuleAddress as Hex]);
+    const hook: BootstrapConfig = _makeBootstrapConfig(this.hookMultiplexerAddress as Hex, hmpInitData);
+
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     const initMSAData = encodeFunctionData({
