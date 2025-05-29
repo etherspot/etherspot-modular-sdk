@@ -13,7 +13,7 @@ dotenv.config();
 // add/change these values
 const recipient = '0x80a1874E1046B1cc5deFdf4D3153838B72fF94Ac'; // recipient wallet address
 const value = '0.1'; // transfer value
-const tokenAddress = process.env.TOKEN_ADDRESS as string; // token address
+const tokenAddress = '0xDeDf3B40f8c44b1fF195F37F35c6b8199C7ee443'; // token address
 const bundlerApiKey = 'etherspot_public_key';
 
 // tsx examples/basics/transfer-erc20.ts

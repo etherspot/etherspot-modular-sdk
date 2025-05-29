@@ -1,7 +1,7 @@
-import { bsc, gnosis } from "viem/chains";
-import { NetworkConfig } from "./index.js";
-import * as Chain from "viem/chains";
-import { defineChain } from "viem";
+import { bsc, gnosis } from 'viem/chains';
+import { NetworkConfig } from './index.js';
+import * as Chain from 'viem/chains';
+import { defineChain } from 'viem';
 
 export enum NetworkNames {
   BaseSepolia = 'baseSepolia',
@@ -42,9 +42,10 @@ export enum NetworkNames {
   SxNetworkTestnet = 'sxNetworkTestnet',
 }
 
-export const SupportedNetworks =
-  [1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 42220, 43113, 43114, 44787, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 79479957, 888888888]
-
+export const SupportedNetworks = [
+  1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 42220, 43113, 43114,
+  44787, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 79479957, 888888888,
+];
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
   [key: string]: number;
@@ -84,11 +85,11 @@ export const NETWORK_NAME_TO_CHAIN_ID: {
   [NetworkNames.XDCMainnet]: 50,
   [NetworkNames.CeloTestnet]: 44787,
   [NetworkNames.Celo]: 42220,
-  [NetworkNames.SxNetworkTestnet]: 79479957
+  [NetworkNames.SxNetworkTestnet]: 79479957,
 };
 
 export const Networks: {
-  [key: string]: NetworkConfig
+  [key: string]: NetworkConfig;
 } = {
   [84532]: {
     chainId: 84532,
@@ -96,10 +97,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/84532',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [11155111]: {
@@ -108,10 +110,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155111',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [10]: {
@@ -121,10 +124,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/10',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [137]: {
@@ -133,10 +137,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/137',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [42161]: {
@@ -145,10 +150,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/42161',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [1]: {
@@ -157,10 +163,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/1',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [10200]: {
@@ -169,10 +176,11 @@ export const Networks: {
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [122]: {
@@ -181,10 +189,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/122',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [123]: {
@@ -194,10 +203,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/123',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [100]: {
@@ -206,10 +216,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/100',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [2357]: {
@@ -218,10 +229,11 @@ export const Networks: {
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [30]: {
@@ -230,10 +242,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/30',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [31]: {
@@ -242,10 +255,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/31',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [5000]: {
@@ -254,10 +268,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/5000',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [5003]: {
@@ -266,10 +281,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/5003',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [43114]: {
@@ -278,10 +294,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/43114',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [8453]: {
@@ -290,10 +307,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/8453',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [56]: {
@@ -302,10 +320,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/56',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [97]: {
@@ -314,10 +333,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/97',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [43113]: {
@@ -326,10 +346,11 @@ export const Networks: {
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [59144]: {
@@ -338,10 +359,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/59144',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [59140]: {
@@ -350,10 +372,11 @@ export const Networks: {
     bundler: '',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [114]: {
@@ -362,10 +385,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/114',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [14]: {
@@ -374,10 +398,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/14',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [534351]: {
@@ -386,10 +411,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/534351',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [534352]: {
@@ -398,10 +424,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/534352',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [11155420]: {
@@ -410,10 +437,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/11155420',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [28122024]: {
@@ -422,10 +450,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/28122024',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [888888888]: {
@@ -434,10 +463,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/888888888',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [80002]: {
@@ -446,10 +476,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/80002',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [421614]: {
@@ -458,10 +489,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/421614',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [51]: {
@@ -470,10 +502,11 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/51',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [50]: {
@@ -482,10 +515,11 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/50',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
     },
   },
   [44787]: {
@@ -494,11 +528,12 @@ export const Networks: {
     bundler: 'https://testnet-rpc.etherspot.io/v2/44787',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
-      erc20SessionKeyValidator: ''
-    }
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
+      erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+    },
   },
   [42220]: {
     chainId: 42220,
@@ -506,42 +541,45 @@ export const Networks: {
     bundler: 'https://rpc.etherspot.io/v2/42220',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
-      erc20SessionKeyValidator: ''
-    }
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
+      erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+    },
   },
   [79479957]: {
     chainId: 79479957,
     chain: defineChain({
       id: 79479957,
-      name: "SX Rollup Testnet",
+      name: 'SX Rollup Testnet',
       nativeCurrency: {
         decimals: 18,
         name: 'SX',
-        symbol: 'SX'
+        symbol: 'SX',
       },
       rpcUrls: {
         default: {
-          http: ['https://rpc.sx-rollup-testnet.t.raas.gelato.cloud/']
-        }
-      }
+          http: ['https://rpc.sx-rollup-testnet.t.raas.gelato.cloud/'],
+        },
+      },
     }),
     bundler: 'https://testnet-rpc.etherspot.io/v2/79479957',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
-      walletFactory: '0x2A40091f044e48DEB5C0FCbc442E443F3341B451',
-      bootstrap: '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA',
-      multipleOwnerECDSAValidator: '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906',
-      erc20SessionKeyValidator: ''
-    }
-  }
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
+      erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+    },
+  },
 };
 
-export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = "0x22A55192a663591586241D42E603221eac49ed09";
-export const DEFAULT_BOOTSTRAP_ADDRESS = "0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA";
-export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = "0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906";
+export const DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS = '0x22A55192a663591586241D42E603221eac49ed09';
+export const DEFAULT_BOOTSTRAP_ADDRESS = '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7';
+export const DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS = '0x0eA25BF9F313344d422B513e1af679484338518E';
+export const DEFAULT_HOOK_MULTI_PLEXER_ADDRESS = '0xDcA918dd23456d321282DF9507F6C09A50522136';
 export const DEFAULT_QUERY_PAGE_SIZE = 50;
 
 export const CHAIN_ID_TO_NETWORK_NAME: { [key: number]: NetworkNames } = Object.entries(

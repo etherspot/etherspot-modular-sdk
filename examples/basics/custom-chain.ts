@@ -12,42 +12,39 @@ const bundlerApiKey = 'etherspot_public_key';
 const bundlerUrl = 'https://testnet-rpc.etherspot.io/v2/84532'; // bundler url
 const chainId = 84532; // chain id
 const entryPointAddress = '0x0000000071727De22E5E9d8BAf0edAc6f37da032'; // entry point address
-const walletFactoryAddress = '0x2A40091f044e48DEB5C0FCbc442E443F3341B451'; // wallet factory address
-const bootstrapAddress = '0x0D5154d7751b6e2fDaa06F0cC9B400549394C8AA'; // bootstrap address
-const multipleOwnerECDSAValidatorAddress = '0x0740Ed7c11b9da33d9C80Bd76b826e4E90CC1906'; // multi owner ECDSA validator factory address
+const walletFactoryAddress = '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a'; // wallet factory address
+const bootstrapAddress = '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7'; // bootstrap address
+const multipleOwnerECDSAValidatorAddress = '0x0eA25BF9F313344d422B513e1af679484338518E'; // multi owner ECDSA validator factory address
 
 // tsx examples/basics/custom-chain.ts
 async function main() {
   // for custom chains, you can use the following code to create a chain object
   const chain = defineChain({
     id: chainId,
-    name: "Base sepolia Testnet",
+    name: 'Base sepolia Testnet',
     nativeCurrency: {
       decimals: 18,
       name: 'ETH',
-      symbol: 'ETH'
+      symbol: 'ETH',
     },
     rpcUrls: {
       default: {
-        http: ['https://sepolia.base.org'] // RPC URL
-      }
-    }
-  })
+        http: ['https://sepolia.base.org'], // RPC URL
+      },
+    },
+  });
   // initializating sdk...
-  const modularSdk = new ModularSdk(
-    process.env.WALLET_PRIVATE_KEY as string,
-    {
-      chain: chain,
-      chainId: chainId,
-      bundlerProvider: new EtherspotBundler(chainId, bundlerApiKey, bundlerUrl),
-      index: 0,
-      entryPointAddress,
-      walletFactoryAddress,
-      bootstrapAddress,
-      multipleOwnerECDSAValidatorAddress,
-      rpcProviderUrl: bundlerUrl,
-    })
-
+  const modularSdk = new ModularSdk(process.env.WALLET_PRIVATE_KEY as string, {
+    chain: chain,
+    chainId: chainId,
+    bundlerProvider: new EtherspotBundler(chainId, bundlerApiKey, bundlerUrl),
+    index: 0,
+    entryPointAddress,
+    walletFactoryAddress,
+    bootstrapAddress,
+    multipleOwnerECDSAValidatorAddress,
+    rpcProviderUrl: bundlerUrl,
+  });
 
   // get address of EtherspotWallet...
   const address: string = await modularSdk.getCounterFactualAddress();
@@ -77,7 +74,7 @@ async function main() {
   console.log('Waiting for transaction...');
   let userOpsReceipt: string | null = null;
   const timeout = Date.now() + 1200000; // 1 minute timeout
-  while ((userOpsReceipt == null) && (Date.now() < timeout)) {
+  while (userOpsReceipt == null && Date.now() < timeout) {
     await sleep(2);
     userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
   }

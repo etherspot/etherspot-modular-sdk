@@ -16,5 +16,6 @@ export interface NetworkConfig {
     bootstrap: string;
     multipleOwnerECDSAValidator: string;
     erc20SessionKeyValidator: string;
+    hookMultiPlexer: string;
   };
 };
