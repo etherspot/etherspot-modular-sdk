@@ -7,7 +7,6 @@ import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_QUERY_PAGE_SIZE, Networks } from '..
 import { BigNumber, BigNumberish } from '../types/bignumber.js';
 import { BaseAccountAPI, BaseApiParams } from './BaseAccountAPI.js';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig, makeBootstrapConfigForModules } from './Bootstrap.js';
-import { getHookMultiPlexerInitData } from '../../../examples/pulse/utils.js';
 
 // Creating a constant for the sentinel address using viem
 const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
@@ -36,6 +35,12 @@ export type FallbackInfo = {
   selector: string;
   handlerAddress: string;
 };
+
+
+export interface SigHookInit {
+  sig: string;
+  subHooks: Hex[];
+}
 
 /**
  * An implementation of the BaseAccountAPI using the EtherspotWallet contract.
@@ -251,7 +256,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     //Get HookMultiPlexer init data with CredibleAccountHook as global subhook
-    let hmpInitData = this.credibleAccountModuleAddress == ADDRESS_ZERO ? '0x' : getHookMultiPlexerInitData([this.credibleAccountModuleAddress as Hex]);
+    let hmpInitData = this.credibleAccountModuleAddress == ADDRESS_ZERO ? '0x' : this.getHookMultiPlexerInitData([this.credibleAccountModuleAddress as Hex]);
     const hook: BootstrapConfig = _makeBootstrapConfig(this.hookMultiplexerAddress as Hex, hmpInitData);
 
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
@@ -447,5 +452,35 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       abi: parseAbi(accountAbi),
       args: [executeMode, calldata],
     });
+  }
+
+  getHookMultiPlexerInitData(
+    globalHooks: Hex[] = [],
+    valueHooks: Hex[] = [],
+    delegatecallHooks: Hex[] = [],
+    sigHooks: SigHookInit[] = [],
+    targetSigHooks: SigHookInit[] = [],
+  ): Hex {
+    const abiType = [
+      { type: 'address[]' },
+      { type: 'address[]' },
+      { type: 'address[]' },
+      {
+        type: 'tuple[]',
+        components: [{ type: 'bytes4' }, { type: 'address[]' }],
+      },
+      {
+        type: 'tuple[]',
+        components: [{ type: 'bytes4' }, { type: 'address[]' }],
+      },
+    ];
+    const encodedData = encodeAbiParameters(abiType, [
+      globalHooks,
+      valueHooks,
+      delegatecallHooks,
+      sigHooks,
+      targetSigHooks
+    ]);
+    return encodedData;
   }
 }
