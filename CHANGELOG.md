@@ -1,5 +1,14 @@
 # Changelog
 
+## [7.0.0] - 2025-06-03
+### Breaking Changes
+- Updated HookMultiplexer, CredibleAccountModule and Bootstrap contract addresses for all chains
+- getInitCode logic updated to include 
+   - HookMultiplexer as defaultHook with CredibleAccountModule as globalHook in Multiplexer
+   - CredibleAccountModule to be installed as validator along with MultiSigECDSAModule
+- Results in a change of precomputed modular account address.
+
+
 ## [6.1.0] - 2025-05-28
 ### Breaking Changes
 - Changed contract address for Wallet Factory from `0x2A40091f044e48DEB5C0FCbc442E443F3341B451` to `0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a`.
