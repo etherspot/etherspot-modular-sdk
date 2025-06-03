@@ -98,11 +98,11 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
-      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      bootstrap: '0xEA5ecE95D3A28f9faB161779d20128b449F9EC9C',
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
-      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
-      credibleAccountModule: '',
+      hookMultiPlexer: '0xB56335BaEB331DF3955ac4d6841ac6DdA5b14cb4',
+      credibleAccountModule: '0xF34fEBDCc36D7246498C56bEfc10bE5dC694C494',
     },
   },
   [11155111]: {

@@ -233,7 +233,21 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     if (!this.validatorAddress) {
       throw new Error('Validator address not found');
     }
-    const validators: BootstrapConfig[] = makeBootstrapConfigForModules([this.validatorAddress, this.credibleAccountModuleAddress as Hex] , ['0x', '0x']);
+
+    const validators: BootstrapConfig[] = makeBootstrapConfigForModules(
+      [
+        this.validatorAddress,
+        this.credibleAccountModuleAddress as Hex
+      ] ,
+      [
+        '0x',
+        encodeAbiParameters(
+          parseAbiParameters('uint256'),
+          [BigInt(MODULE_TYPE.VALIDATOR)]
+        )
+      ]
+    );
+
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     //Get HookMultiPlexer init data with CredibleAccountHook as global subhook
