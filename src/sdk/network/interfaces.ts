@@ -18,5 +18,6 @@ export interface NetworkConfig {
     erc20SessionKeyValidator: string;
     hookMultiPlexer: string;
     credibleAccountModule: string;
+    resourceLockValidator: string;
   };
 };

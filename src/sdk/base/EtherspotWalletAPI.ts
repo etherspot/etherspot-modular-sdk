@@ -243,21 +243,25 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const validators: BootstrapConfig[] = makeBootstrapConfigForModules(
       [
         this.validatorAddress,
-        this.credibleAccountModuleAddress as Hex
+        this.credibleAccountModuleAddress as Hex,
+        this.resourceLockValidatorAddress
       ] ,
       [
         '0x',
         encodeAbiParameters(
           parseAbiParameters('uint256'),
           [BigInt(MODULE_TYPE.VALIDATOR)]
-        )
+        ),
+        '0x'
       ]
     );
 
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     //Get HookMultiPlexer init data with CredibleAccountHook as global subhook
-    let hmpInitData = this.credibleAccountModuleAddress == ADDRESS_ZERO ? '0x' : getHookMultiPlexerInitData([this.credibleAccountModuleAddress as Hex]);
+    let hmpInitData = this.credibleAccountModuleAddress == ADDRESS_ZERO ? '0x' : getHookMultiPlexerInitData(
+      [this.credibleAccountModuleAddress as Hex]
+    );
     const hook: BootstrapConfig = _makeBootstrapConfig(this.hookMultiplexerAddress as Hex, hmpInitData);
 
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
