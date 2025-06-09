@@ -244,7 +244,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       [
         this.validatorAddress,
         this.credibleAccountModuleAddress as Hex,
-        this.resourceLockValidatorAddress
+        this.resourceLockValidatorAddress as Hex
       ] ,
       [
         '0x',
@@ -252,16 +252,14 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
           parseAbiParameters('uint256'),
           [BigInt(MODULE_TYPE.VALIDATOR)]
         ),
-        '0x'
+        encodeAbiParameters([{ type: 'address' }], [this.services.walletService.EOAAddress as Hex]),
       ]
     );
 
     const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
 
     //Get HookMultiPlexer init data with CredibleAccountHook as global subhook
-    let hmpInitData = this.credibleAccountModuleAddress == ADDRESS_ZERO ? '0x' : getHookMultiPlexerInitData(
-      [this.credibleAccountModuleAddress as Hex]
-    );
+    let hmpInitData = this.credibleAccountModuleAddress == ADDRESS_ZERO ? '0x' : getHookMultiPlexerInitData([this.credibleAccountModuleAddress as Hex]);
     const hook: BootstrapConfig = _makeBootstrapConfig(this.hookMultiplexerAddress as Hex, hmpInitData);
 
     const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
@@ -280,6 +278,30 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
 
     return initCode;
   }
+
+  //   async getInitCodeData(): Promise<string> {
+  //   if (!this.validatorAddress) {
+  //     throw new Error('Validator address not found');
+  //   }
+  //   const validators: BootstrapConfig[] = makeBootstrapConfig(this.validatorAddress, '0x');
+  //   const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+  //   const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
+  //   const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
+
+  //   const initMSAData = encodeFunctionData({
+  //     functionName: 'initMSA',
+  //     abi: parseAbi(bootstrapAbi),
+  //     args: [validators, executors, hook, fallbacks],
+  //   });
+  //   const eoaAddress = await this.getEOAAddress();
+
+  //   const initCode = encodeAbiParameters(
+  //     parseAbiParameters('address, address, bytes'),
+  //     [eoaAddress, this.bootstrapAddress as Hex, initMSAData]
+  //   )
+
+  //   return initCode;
+  // }
 
   /**
    * return the value to put into the "initCode" field, if the account is not yet deployed.

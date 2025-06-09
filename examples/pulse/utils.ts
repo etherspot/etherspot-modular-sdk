@@ -46,5 +46,7 @@ export function getHookMultiPlexerInitData(
     sigHooks,
     targetSigHooks
   ]);
+
+  console.log('\x1b[33m%s\x1b[0m', `HookMultiPlexer Init Data: ${encodedData}`);
   return encodedData;
 }
