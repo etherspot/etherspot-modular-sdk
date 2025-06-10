@@ -3,8 +3,9 @@ import * as dotenv from 'dotenv';
 import { MODULE_TYPE, sleep } from '../../src/sdk/common';
 import { encodeAbiParameters, encodeFunctionData, Hex, parseAbi } from 'viem';
 import { generateModularSDKInstance } from '../helpers/sdk-helper';
-import { getHookMultiPlexerInitData } from '../pulse/utils';
 import { accountAbi } from '../../src/sdk/common/abis';
+import { getHookMultiPlexerInitData } from '../../src/sdk/common/getInitData';
+import { _makeBootstrapConfig } from '../../src/sdk/base/Bootstrap';
 
 dotenv.config();
 
@@ -20,10 +21,10 @@ const bundlerApiKey = 'etherspot_public_key';
 // const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0x56BE864234F5710C00868e29e1fbB76ad4f234e3';
 // const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0xFa970f9Bd071999FD54F7fDD80cA17965Fa8f5b6'; 
 
-const CHAIN_ID = '8453';
-const HOOK_MULTIPLEXER_ADDRESS = '0xDcA918dd23456d321282DF9507F6C09A50522136'; 
-const RESOURCE_LOCK_VALIDATOR_ADDRESS = ''; 
-const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0xDcA918dd23456d321282DF9507F6C09A50522136';
+const CHAIN_ID = '11155111';
+const HOOK_MULTIPLEXER_ADDRESS = '0x018c9824f25c5Ba653da88aD1cCC7355698f9186'; 
+const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0x7B2852637D62c4DAfc146e3bA4EE81dFD817Ff13'; 
+const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0x97c4954752BDA1826ff66f7BF044cFA512e3ca83';
 
 // const CHAIN_ID = '10';
 // const HOOK_MULTIPLEXER_ADDRESS = ''; 
@@ -54,12 +55,13 @@ async function main() {
 
   //Get HookMultiPlexer init data with CredibleAccountHook as global subhook
   let hmpInitData = getHookMultiPlexerInitData([CREDIBLE_ACCOUNT_MODULE_ADDRESS]);
+  const config = _makeBootstrapConfig(HOOK_MULTIPLEXER_ADDRESS, hmpInitData);
   const hmpInstallCalldata = encodeFunctionData({
     abi: parseAbi(accountAbi),
     functionName: 'installModule',
-    args: [BigInt(MODULE_TYPE.HOOK), HOOK_MULTIPLEXER_ADDRESS, hmpInitData],
+    args: [BigInt(MODULE_TYPE.HOOK), HOOK_MULTIPLEXER_ADDRESS, config.data],
   });
-  // // Add UserOp to batch
+  // Add UserOp to batch
   await modularSdk.addUserOpsToBatch({ to: address, data: hmpInstallCalldata });
 
   /*//////////////////////////////////////////////////////////////
@@ -81,14 +83,14 @@ async function main() {
   //////////////////////////////////////////////////////////////*/
 
   // Get CredibleAccountValidator init data
-  // let rlvInitData = encodeAbiParameters([{ type: 'address' }], [modularSdk.getEOAAddress()]);
-  // const rlvInstallCalldata = encodeFunctionData({
-  //   abi: parseAbi(accountAbi),
-  //   functionName: 'installModule',
-  //   args: [BigInt(MODULE_TYPE.VALIDATOR), RESOURCE_LOCK_VALIDATOR_ADDRESS, rlvInitData],
-  // });
-  // // Add UserOp to batch
-  // await modularSdk.addUserOpsToBatch({ to: address, data: rlvInstallCalldata });
+  let rlvInitData = encodeAbiParameters([{ type: 'address' }], [modularSdk.getEOAAddress()]);
+  const rlvInstallCalldata = encodeFunctionData({
+    abi: parseAbi(accountAbi),
+    functionName: 'installModule',
+    args: [BigInt(MODULE_TYPE.VALIDATOR), RESOURCE_LOCK_VALIDATOR_ADDRESS, rlvInitData],
+  });
+  // Add UserOp to batch
+  await modularSdk.addUserOpsToBatch({ to: address, data: rlvInstallCalldata });
 
   /*//////////////////////////////////////////////////////////////
                       ESTIMATE/SEND USER OP
