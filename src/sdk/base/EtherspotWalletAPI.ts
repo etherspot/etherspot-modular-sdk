@@ -279,30 +279,6 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     return initCode;
   }
 
-  //   async getInitCodeData(): Promise<string> {
-  //   if (!this.validatorAddress) {
-  //     throw new Error('Validator address not found');
-  //   }
-  //   const validators: BootstrapConfig[] = makeBootstrapConfig(this.validatorAddress, '0x');
-  //   const executors: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-  //   const hook: BootstrapConfig = _makeBootstrapConfig(ADDRESS_ZERO, '0x');
-  //   const fallbacks: BootstrapConfig[] = makeBootstrapConfig(ADDRESS_ZERO, '0x');
-
-  //   const initMSAData = encodeFunctionData({
-  //     functionName: 'initMSA',
-  //     abi: parseAbi(bootstrapAbi),
-  //     args: [validators, executors, hook, fallbacks],
-  //   });
-  //   const eoaAddress = await this.getEOAAddress();
-
-  //   const initCode = encodeAbiParameters(
-  //     parseAbiParameters('address, address, bytes'),
-  //     [eoaAddress, this.bootstrapAddress as Hex, initMSAData]
-  //   )
-
-  //   return initCode;
-  // }
-
   /**
    * return the value to put into the "initCode" field, if the account is not yet deployed.
    * this value holds the "factory" address, followed by this account's information
