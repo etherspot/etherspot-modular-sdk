@@ -98,10 +98,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
-      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      bootstrap: '0x2229B2C3D00a213D93151cd65C31e5b4ea4D0330',
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
-      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      hookMultiPlexer: '0x78E8aEb28C7730c27a7B5df4380aa9963A3d3423',
+      credibleAccountModule: '0xe3b2eC604AC5a8B76EaB74F107CE32CE48364624',
+      resourceLockValidator: "0x9AD563258C9d007E9F6F372D11a50b5D4DB553E4",
     },
   },
   [11155111]: {
@@ -111,10 +113,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
-      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      bootstrap: '0xFD109F06162B76d6A7752B853F4e825Df2cC9cBA',
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
-      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      hookMultiPlexer: '0x018c9824f25c5Ba653da88aD1cCC7355698f9186',
+      credibleAccountModule: '0x97c4954752BDA1826ff66f7BF044cFA512e3ca83',
+      resourceLockValidator: '0x7B2852637D62c4DAfc146e3bA4EE81dFD817Ff13'
     },
   },
   [10]: {
@@ -129,6 +133,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [137]: {
@@ -142,6 +148,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [42161]: {
@@ -155,6 +163,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [1]: {
@@ -168,6 +178,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [10200]: {
@@ -181,6 +193,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [122]: {
@@ -194,6 +208,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [123]: {
@@ -208,6 +224,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [100]: {
@@ -221,6 +239,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [2357]: {
@@ -234,6 +254,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [30]: {
@@ -247,6 +269,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [31]: {
@@ -260,6 +284,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [5000]: {
@@ -273,6 +299,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [5003]: {
@@ -286,6 +314,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [43114]: {
@@ -299,6 +329,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [8453]: {
@@ -312,6 +344,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [56]: {
@@ -325,6 +359,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [97]: {
@@ -338,6 +374,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [43113]: {
@@ -351,6 +389,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [59144]: {
@@ -364,6 +404,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [59140]: {
@@ -377,6 +419,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [114]: {
@@ -390,6 +434,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [14]: {
@@ -403,6 +449,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [534351]: {
@@ -416,6 +464,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [534352]: {
@@ -429,6 +479,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [11155420]: {
@@ -442,6 +494,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [28122024]: {
@@ -455,6 +509,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [888888888]: {
@@ -468,6 +524,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [80002]: {
@@ -481,6 +539,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [421614]: {
@@ -494,6 +554,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [51]: {
@@ -507,6 +569,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [50]: {
@@ -520,6 +584,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [44787]: {
@@ -533,6 +599,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [42220]: {
@@ -546,6 +614,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
   [79479957]: {
@@ -572,6 +642,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '',
+      resourceLockValidator: ''
     },
   },
 };
