@@ -101,9 +101,9 @@ export const Networks: {
       bootstrap: '0x2229B2C3D00a213D93151cd65C31e5b4ea4D0330',
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
-      hookMultiPlexer: '0x78E8aEb28C7730c27a7B5df4380aa9963A3d3423',
-      credibleAccountModule: '0xe3b2eC604AC5a8B76EaB74F107CE32CE48364624',
-      resourceLockValidator: "0x9AD563258C9d007E9F6F372D11a50b5D4DB553E4",
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '0xfd090eAFdb3dccE1FA9517ce52BaeBAd1d8cE939',
+      resourceLockValidator: "0xa3789284adB928258DA2cC674090AC5c69D22183",
     },
   },
   [11155111]: {
@@ -116,9 +116,9 @@ export const Networks: {
       bootstrap: '0xFD109F06162B76d6A7752B853F4e825Df2cC9cBA',
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
-      hookMultiPlexer: '0x018c9824f25c5Ba653da88aD1cCC7355698f9186',
-      credibleAccountModule: '0x97c4954752BDA1826ff66f7BF044cFA512e3ca83',
-      resourceLockValidator: '0x7B2852637D62c4DAfc146e3bA4EE81dFD817Ff13'
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      credibleAccountModule: '0xfd090eAFdb3dccE1FA9517ce52BaeBAd1d8cE939',
+      resourceLockValidator: '0xa3789284adB928258DA2cC674090AC5c69D22183'
     },
   },
   [10]: {
