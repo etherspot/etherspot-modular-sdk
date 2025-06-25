@@ -239,8 +239,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
-      credibleAccountModule: '',
-      resourceLockValidator: ''
+      credibleAccountModule: '0xb8970dB5cd5617411577a8eCE93b16CCf244e7A4',
+      resourceLockValidator: '0x7948Ad29e179716793B3F404F91a9d8aa0275712'
     },
   },
   [2357]: {
@@ -359,8 +359,8 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
-      credibleAccountModule: '',
-      resourceLockValidator: ''
+      credibleAccountModule: '0xb8970dB5cd5617411577a8eCE93b16CCf244e7A4',
+      resourceLockValidator: '0x7948Ad29e179716793B3F404F91a9d8aa0275712'
     },
   },
   [97]: {
