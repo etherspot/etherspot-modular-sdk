@@ -10,7 +10,7 @@ import { _makeBootstrapConfig } from '../../../src/sdk/base/Bootstrap';
 
 dotenv.config();
 
-const bundlerApiKey = 'etherspot_public_key';
+const bundlerApiKey = process.env.API_KEY || "etherspot_public_key";
 
 // tsx examples/modules/credible-account-modules/credible-account-ecosystem-install.ts
 async function main() {
