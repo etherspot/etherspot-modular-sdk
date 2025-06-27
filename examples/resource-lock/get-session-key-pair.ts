@@ -11,7 +11,7 @@ const client = new SecretsManagerClient({
   }
 });
 
-async function getSecretFromBidHashAndSessionKey(bidHash: string, sessionKey: string) {
+export async function getSecretFromBidHashAndSessionKey(bidHash: string, sessionKey: string) {
   const secretName = `${sessionKey}-${bidHash}`;
   console.log(`Fetching secret for: ${secretName}`);
   if (!secretName) {

@@ -6,6 +6,10 @@ import { ModularSdk, EtherspotBundler, Networks } from '../../src';
 import { ERC20_ABI } from '../../src/sdk/helpers/abi/ERC20_ABI';
 import { encodeFunctionData, Hex, parseAbi, parseUnits } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
+import { getSecretFromBidHashAndSessionKey } from './get-session-key-pair';
+import { getSessionDetailsByWalletAddressAndSessionKey, SessionDetails } from './get-session-key-details';
+import { BidSearchResult, searchBid } from './search-bid';
+import { getResourceLockInfo, ResourceLockInfoResponse } from './get-resourcelock-info';
 
 dotenv.config();
 
@@ -14,14 +18,36 @@ const walletPrivateKey = process.env.WALLET_PRIVATE_KEY as string;
 const bundlerApiKey = 'etherspot_public_key';
 const user_modular_wallet_address = '';
 
-const solverAddress = '';
-const tokenAmount = '';
-const tokenAddress = "";
-const sessionKeyAddress = "";
-const sessionPrivateKey = '';
+const bidHash = '';
 
 // tsx examples/resource-lock/claim-resourcelock-session-key.ts
 async function main() {
+
+  // search bid and get solver address
+  const bidSearchResult: BidSearchResult[] = await searchBid(bidHash);
+
+  const bidDetails = bidSearchResult[0];
+
+  const solverAddress = bidDetails.solverAddress;
+
+  const resourceLockInfoResponse: ResourceLockInfoResponse = await getResourceLockInfo(bidHash);
+
+  const sessionKeyAddress = resourceLockInfoResponse.resourceLockInfo.sessionKey;
+
+  // get session key private key from AWS Secrets Manager
+  const sessionPrivateKey = await getSecretFromBidHashAndSessionKey(solverAddress, sessionKeyAddress);
+
+  // get the session-details from api-call
+  const sessionKeyDetails: SessionDetails = await getSessionDetailsByWalletAddressAndSessionKey(
+    chainId,
+    user_modular_wallet_address,
+    sessionKeyAddress
+  );
+
+  const tokenAddress = sessionKeyDetails.lockedTokens[0].token;
+  const tokenAmount = sessionKeyDetails.lockedTokens[0].locked_amount;
+
+  // prepare UserOp to transfer the locked ERC20 tokens from the user's ModularWallet to the solver address
   const modularSdk = new ModularSdk(
     walletPrivateKey,
     {
@@ -59,9 +85,9 @@ async function main() {
 
   console.log(`Estimate UserOp: ${await printOp(op)}`);
 
-  const userOpHash : string = await modularSdk.getUserOpHash(op);
+  const userOpHash: string = await modularSdk.getUserOpHash(op);
   console.log(`UserOpHash: ${userOpHash}`);
-  
+
   // sign the UserOp using sessionPrivateKey (with viem)
   const sessionAccount = privateKeyToAccount(sessionPrivateKey as Hex);
   const signature = await sessionAccount.signMessage({ message: { raw: userOpHash as Hex } });
