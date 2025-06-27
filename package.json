@@ -1,6 +1,6 @@
 {
   "name": "@etherspot/modular-sdk",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "description": "Etherspot Modular SDK - build with ERC-7579 smart accounts modules",
   "keywords": [
     "ether",
@@ -63,9 +63,10 @@
     "url": "https://github.com/etherspot/etherspot-modular-sdk/issues"
   },
   "dependencies": {
-    "@lifi/sdk": "2.5.0",
+    "@aws-sdk/client-secrets-manager": "^3.835.0",
     "@thehubbleproject/bls": "0.5.1",
     "@walletconnect/universal-provider": "2.10.0",
+    "axios": "^1.10.0",
     "biome": "0.3.3",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.1",
@@ -90,7 +91,7 @@
     "async-mutex": "0.5.0",
     "buffer": "6.0.3",
     "bun-types": "1.0.7",
-    "dotenv": "16.0.3",
+    "dotenv": "^16.0.3",
     "eslint": "8.28.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.2.1",

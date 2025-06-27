@@ -9,7 +9,8 @@ export const generateModularSDKInstance = (privateKey: string, chainId: number, 
         {
             chainId: chainId,
             bundlerProvider: new EtherspotBundler(chainId, bundlerApiKey),
-            index: index
+            index: index,
+            accountAddress: process.env.MODULAR_ACCOUNT_ADDRESS
         })
 
     return modularSdk;

@@ -45,17 +45,8 @@ export function getHookMultiPlexerInitData(
     delegatecallHooks,
     sigHooks,
     targetSigHooks
-  ] as any);
+  ]);
 
-  console.log('Encoded Data:', encodedData);
-
-  const hookMultiplexerInitData = encodeFunctionData({
-    abi: HookMultiplexer,
-    args: [encodedData],
-    functionName: 'onInstall',
-  });
-
-  console.log('Hook Multiplexer Init Data:', hookMultiplexerInitData);
-
-  return hookMultiplexerInitData;
+  console.log('\x1b[33m%s\x1b[0m', `HookMultiPlexer Init Data: ${encodedData}`);
+  return encodedData;
 }

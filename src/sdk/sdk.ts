@@ -21,6 +21,7 @@ import { ErrorHandler } from './errorHandler/errorHandler.service.js';
 import { EtherspotBundler } from './bundler/index.js';
 import { Account, formatEther, Hex, http, type PublicClient } from 'viem';
 import { BigNumber, BigNumberish } from './types/bignumber.js';
+import { printOp } from './common/OperationUtils.js';
 
 /**
  * Modular-Sdk
@@ -208,6 +209,9 @@ export class ModularSdk {
     if (await this.etherspotWallet.checkAccountPhantom()) {
       partialtx.factory = this.etherspotWallet.factoryAddress;
     }
+
+    console.log('Partial User Operation:', partialtx);
+    console.log(`User Operation: ${await printOp(partialtx)}`);
 
     if (!paymasterDetails?.url) {
       const bundlerGasEstimate = await this.bundler.getVerificationGasInfo(partialtx);
