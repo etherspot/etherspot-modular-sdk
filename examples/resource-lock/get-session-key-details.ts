@@ -32,7 +32,12 @@ export async function getSessionDetailsByWalletAddressAndSessionKey(
     walletAddress: string,
     sessionKey: string
 ): Promise<SessionDetails> {
+    console.log(`Fetching session details for wallet: ${walletAddress}, chainId: ${chainId}, sessionKey: ${sessionKey}`);
     const allSessionKeyDetails = await getAllSessionKeysOfWallet(chainId, walletAddress);
+
+    if (!allSessionKeyDetails || allSessionKeyDetails.length === 0) {
+        console.error(`No session keys found for wallet: ${walletAddress} on chain: ${chainId}`);
+    }
 
     const sessionDetails = allSessionKeyDetails.find(
         (details) => details.sessionData.sessionKey === sessionKey
@@ -46,9 +51,9 @@ export const bigintReplacer = (key: string, value: any) => {
 }
 
 // tsx examples/resource-lock/get-session-key-details.ts
-(async () => {
-    const chainId = 10;
-    const walletAddress = '0x23F04522a2ec5a8b188C48c18edAE54005b537a3';
-    const details = await getAllSessionKeysOfWallet(chainId, walletAddress);
-    console.log(`details for wallet ${walletAddress} on chain ${chainId} are: ${JSON.stringify(details, bigintReplacer, 2)}`);
-})();
+// (async () => {
+//     const chainId = 10;
+//     const walletAddress = '0x23F04522a2ec5a8b188C48c18edAE54005b537a3';
+//     const details = await getAllSessionKeysOfWallet(chainId, walletAddress);
+//     console.log(`details for wallet ${walletAddress} on chain ${chainId} are: ${JSON.stringify(details, bigintReplacer, 2)}`);
+// })();

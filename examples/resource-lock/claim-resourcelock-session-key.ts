@@ -7,7 +7,7 @@ import { ERC20_ABI } from '../../src/sdk/helpers/abi/ERC20_ABI';
 import { encodeFunctionData, Hex, parseAbi, parseUnits } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { getSecretFromBidHashAndSessionKey } from './get-session-key-pair';
-import { getSessionDetailsByWalletAddressAndSessionKey, SessionDetails } from './get-session-key-details';
+import { bigintReplacer, getSessionDetailsByWalletAddressAndSessionKey, SessionDetails } from './get-session-key-details';
 import { BidSearchResult, searchBid } from './search-bid';
 import { getResourceLockInfo, ResourceLockInfoResponse } from './get-resourcelock-info';
 import { IntentSearchResult, searchIntent } from './search-intent';
@@ -76,8 +76,14 @@ async function main() {
     console.error(`No resource lock info found for bid hash: ${bidHash}`);
     return;
   }
+  console.log(`Resource Lock Info: ${JSON.stringify(resourceLockInfoResponse, bigintReplacer, 2)}`);
 
-  const sessionKeyAddress = resourceLockInfoResponse.resourceLockInfo.sessionKey;
+    const sessionKeyAddress = resourceLockInfoResponse.resourceLockInfo.sessionKey;
+
+  if(resourceLockInfoResponse.resourceLockInfo.validUntil < Date.now() / 1000) {
+    console.error(`SessionKey: ${sessionKeyAddress} expired in Resource lock info for bid hash: ${bidHash}`);
+    return;
+  }
 
   if (!sessionKeyAddress) {
     console.error(`No session key address found for bid hash: ${bidHash}`);
@@ -85,7 +91,7 @@ async function main() {
   }
 
   // get session key private key from AWS Secrets Manager
-  const sessionPrivateKey = await getSecretFromBidHashAndSessionKey(solverAddress, sessionKeyAddress);
+  const sessionPrivateKey = await getSecretFromBidHashAndSessionKey(bidHash, sessionKeyAddress);
 
   if (!sessionPrivateKey) {
     console.error(`No session private key found for session key address: ${sessionKeyAddress}`);

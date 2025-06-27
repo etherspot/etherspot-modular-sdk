@@ -62,7 +62,7 @@ export async function searchBid(bidHash: string): Promise<BidSearchResult[]> {
 }
 
 // tsx examples/resource-lock/search-bid.ts
-(async () => {
-    const results = await searchBid('0xf9385007459e20a6f37805309a73a1eaae824e06ec136ae3b95452229a1ce27f');
-    console.log(JSON.stringify(results, bigintReplacer, 2));
-})();
+// (async () => {
+//     const results = await searchBid('0xf9385007459e20a6f37805309a73a1eaae824e06ec136ae3b95452229a1ce27f');
+//     console.log(JSON.stringify(results, bigintReplacer, 2));
+// })();

@@ -26,10 +26,10 @@ export async function getSecretFromBidHashAndSessionKey(bidHash: string, session
   throw new Error("Secret not found");
 }
 
-// tsx examples/secrets-manager/get-session-key-pair.ts
-(async () => {
-  const bidHash = '0x7931e1aca917a4673d583cdc599bcfe6ff19496922aa75a11499e726884b9aec';
-  const sessionKey = '0xd0Df09FD15E6a4b2940A22a684EEC2F377E36a8C';
-  const secret = await getSecretFromBidHashAndSessionKey(bidHash, sessionKey);
-  console.log(secret);
-})();
+// tsx examples/resource-lock/get-session-key-pair.ts
+// (async () => {
+//   const bidHash = '0x7931e1aca917a4673d583cdc599bcfe6ff19496922aa75a11499e726884b9aec';
+//   const sessionKey = '0xd0Df09FD15E6a4b2940A22a684EEC2F377E36a8C';
+//   const secret = await getSecretFromBidHashAndSessionKey(bidHash, sessionKey);
+//   console.log(secret);
+// })();

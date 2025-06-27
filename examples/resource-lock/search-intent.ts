@@ -55,7 +55,7 @@ export async function searchIntent(intentHash: string): Promise<IntentSearchResu
   return res.data;
 }
 
-// Example usage:
+// tsx examples/resource-lock/search-intent.ts
 // (async () => {
 //   const results = await searchIntent('0xddaea938a9293e91b2556ac656cf30b5cb5cf980748d783db24bf019a1ab4668');
 //   console.log(JSON.stringify(results, null, 2));

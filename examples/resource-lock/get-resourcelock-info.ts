@@ -44,7 +44,7 @@ export async function getResourceLockInfo(bidHash: string): Promise<ResourceLock
 }
 
 // tsx examples/resource-lock/get-resourcelock-info.ts
-(async () => {
-  const info = await getResourceLockInfo('0xf9385007459e20a6f37805309a73a1eaae824e06ec136ae3b95452229a1ce27f');
-  console.log(JSON.stringify(info, null, 2));
-})();
+// (async () => {
+//   const info = await getResourceLockInfo('0xf9385007459e20a6f37805309a73a1eaae824e06ec136ae3b95452229a1ce27f');
+//   console.log(JSON.stringify(info, null, 2));
+// })();
