@@ -1,6 +1,9 @@
 import { Subscription } from 'rxjs';
 import { Context } from '../context.js';
 
+/**
+ * Abstract base class for services with lifecycle and subscription management.
+ */
 export abstract class Service {
   protected context: Context;
   private inited = false;
@@ -8,6 +11,10 @@ export abstract class Service {
   private attachedCounter = 0;
   private subscriptions: Subscription[] = [];
 
+  /**
+   * Initialize the service with the given context. Idempotent.
+   * @param context Service context
+   */
   init(context: Context): void {
     if (!this.inited) {
       this.inited = true;
@@ -25,6 +32,9 @@ export abstract class Service {
     ++this.attachedCounter;
   }
 
+  /**
+   * Destroy the service and clean up subscriptions. Idempotent.
+   */
   destroy(): void {
     if (!this.attachedCounter) {
       return;
@@ -55,10 +65,21 @@ export abstract class Service {
     return this.context.services;
   }
 
+  /**
+   * Add subscriptions, preventing duplicates.
+   * @param subscriptions Subscriptions to add
+   */
   protected addSubscriptions(...subscriptions: Subscription[]): void {
-    this.subscriptions.push(...subscriptions.filter((subscription) => !!subscription));
+    for (const sub of subscriptions) {
+      if (sub && !this.subscriptions.includes(sub)) {
+        this.subscriptions.push(sub);
+      }
+    }
   }
 
+  /**
+   * Remove and unsubscribe all subscriptions.
+   */
   protected removeSubscriptions(): void {
     for (const subscription of this.subscriptions) {
       subscription.unsubscribe();
@@ -66,6 +87,10 @@ export abstract class Service {
     this.subscriptions = [];
   }
 
+  /**
+   * Replace all subscriptions with new ones.
+   * @param subscriptions New subscriptions
+   */
   protected replaceSubscriptions(...subscriptions: Subscription[]): void {
     this.removeSubscriptions();
     this.addSubscriptions(...subscriptions);

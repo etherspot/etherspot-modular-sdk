@@ -21,6 +21,7 @@ import { ErrorHandler } from './errorHandler/errorHandler.service.js';
 import { EtherspotBundler } from './bundler/index.js';
 import { Account, formatEther, Hex, http, type PublicClient } from 'viem';
 import { BigNumber, BigNumberish } from './types/bignumber.js';
+import { ValidationException } from './common/exceptions/validation.exception.js';
 
 /**
  * Modular-Sdk
@@ -39,6 +40,11 @@ export class ModularSdk {
   private providerUrl: string;
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
+
+  /**
+   * Maximum allowed batch size for user operations.
+   */
+  private static readonly MAX_BATCH_SIZE = 50;
 
   constructor(walletProvider: WalletProviderLike, optionsLike: SdkOptions) {
     let walletConnectProvider;
@@ -167,6 +173,11 @@ export class ModularSdk {
     return this.etherspotWallet.getCounterFactualAddress();
   }
 
+  /**
+   * Estimate gas and prepare a user operation batch.
+   * Throws if the batch is empty or exceeds the maximum allowed size.
+   * @param params Estimation parameters
+   */
   async estimate(params: {
     paymasterDetails?: PaymasterApi,
     gasDetails?: TransactionGasInfoForUserOp,
@@ -178,6 +189,12 @@ export class ModularSdk {
 
     if (this.userOpsBatch.to.length < 1) {
       throw new ErrorHandler('cannot sign empty transaction batch', 1);
+    }
+    if (this.userOpsBatch.to.length > ModularSdk.MAX_BATCH_SIZE) {
+      throw new ErrorHandler(`Batch size exceeds maximum allowed (${ModularSdk.MAX_BATCH_SIZE})`, 1);
+    }
+    if (this.userOpsBatch.data.length !== this.userOpsBatch.to.length || this.userOpsBatch.value.length !== this.userOpsBatch.to.length) {
+      throw new ValidationException([{ property: 'userOpsBatch', constraints: { length: 'Batch arrays must be of equal length' } }]);
     }
 
     if (paymasterDetails?.url) {
