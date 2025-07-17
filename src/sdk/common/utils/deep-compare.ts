@@ -2,9 +2,13 @@ import { BigNumber } from '../../types/bignumber.js';
 import { isBigNumber } from './bignumber-utils.js';
 
 /**
- * @ignore
+ * Deeply compares two values for equality, supporting BigNumber, Date, arrays, and objects.
+ * Throws an error if an unexpected type is encountered.
+ * @param a First value
+ * @param b Second value
+ * @returns True if equal, false otherwise
  */
-export function deepCompare(a: any, b: any): boolean {
+export function deepCompare(a: unknown, b: unknown): boolean {
   let result = false;
 
   const aType = typeof a;
@@ -16,7 +20,7 @@ export function deepCompare(a: any, b: any): boolean {
         } else if (a === b) {
           result = true;
         } else if (isBigNumber(a) && isBigNumber(b)) {
-          result = (a as BigNumber).eq(b);
+          result = (a as BigNumber).eq(b as BigNumber);
         } else if (a instanceof Date && b instanceof Date) {
           result = a.getTime() === b.getTime();
         } else {
@@ -24,33 +28,35 @@ export function deepCompare(a: any, b: any): boolean {
           const bIsArray = Array.isArray(b);
 
           if (aIsArray && bIsArray) {
-            const aLength = a.length;
-            const bLength = b.length;
+            const aLength = (a as unknown[]).length;
+            const bLength = (b as unknown[]).length;
 
             if (aLength === bLength) {
               result = true;
 
               for (let index = 0; index < aLength; index += 1) {
-                if (!deepCompare(a[index], b[index])) {
+                if (!deepCompare((a as unknown[])[index], (b as unknown[])[index])) {
                   result = false;
                   break;
                 }
               }
             }
           } else if (!aIsArray && !bIsArray) {
-            const aKeys = Object.keys(a);
-            const bKeys = Object.keys(b);
+            const aKeys = Object.keys(a as object);
+            const bKeys = Object.keys(b as object);
 
             if (aKeys.length === bKeys.length) {
               result = true;
 
               for (const key of aKeys) {
-                if (!deepCompare(a[key], b[key])) {
+                if (!deepCompare((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key])) {
                   result = false;
                   break;
                 }
               }
             }
+          } else {
+            throw new Error('deepCompare: Mismatched array/object types');
           }
         }
         break;
@@ -59,8 +65,15 @@ export function deepCompare(a: any, b: any): boolean {
         result = true;
         break;
 
-      default:
+      case 'undefined':
+      case 'boolean':
+      case 'number':
+      case 'string':
         result = a === b;
+        break;
+
+      default:
+        throw new Error(`deepCompare: Unexpected type '${aType}' encountered`);
     }
   }
 

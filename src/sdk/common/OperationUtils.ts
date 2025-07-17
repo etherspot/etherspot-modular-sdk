@@ -3,7 +3,12 @@ import { BaseAccountUserOperationStruct } from '../types/user-operation-types.js
 import { toHex } from 'viem';
 import { BigNumber } from '../types/bignumber.js';
 
-export function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<any> {
+/**
+ * Converts a partial BaseAccountUserOperationStruct to a JSON object with all values hexlified.
+ * @param op Partial user operation
+ * @returns Promise resolving to a JSON object with hexlified values
+ */
+export async function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<Record<string, string>> {
   return resolveProperties(op).then((userOp) =>
     Object.keys(userOp)
       .map((key) => {
@@ -14,14 +19,14 @@ export function toJSON(op: Partial<BaseAccountUserOperationStruct>): Promise<any
         else if (typeof val !== 'string' || !val.startsWith('0x')) {
           val = toHex(val);
         }
-        return [key, val];
+        return [key, val as string];
       })
       .reduce(
         (set, [k, v]) => ({
           ...set,
           [k]: v,
         }),
-        {},
+        {} as Record<string, string>,
       ),
   );
 }

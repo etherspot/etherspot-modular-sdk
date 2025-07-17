@@ -64,21 +64,56 @@ export class HttpRpcClient {
     }
   }
 
+  /**
+   * Handle RPC errors and convert them to ErrorHandler instances.
+   * @param err Error to handle
+   */
   handleRPCError(err: any) {
     const body: RpcRequestError = this.parseViemRPCRequestError(err);
     if (body && body?.details && body?.code) {
       throw new ErrorHandler(body.details, body.code);
     } else {
-      throw new Error(JSON.stringify(err));
+      throw new ErrorHandler(JSON.stringify(err), 1);
     }
   }
 
+  /**
+   * Parse viem RPC request errors.
+   * @param error Error to parse
+   * @returns Parsed RPC request error
+   */
   parseViemRPCRequestError(error: any): RpcRequestError {
     if (error instanceof RpcRequestError) {
       return JSON.parse(JSON.stringify(error));
     }
 
-    // TODO handle BaseError and ContractFunctionExecutionError
+    // Handle BaseError and ContractFunctionExecutionError
+    if (error && typeof error === 'object') {
+      // Check if it's a viem BaseError
+      if (error.name === 'BaseError' || error.name === 'ContractFunctionExecutionError') {
+        return {
+          code: error.code || 1,
+          details: error.message || 'Unknown error',
+          data: error.data,
+        } as RpcRequestError;
+      }
+      
+      // Handle other error types
+      if (error.message) {
+        return {
+          code: error.code || 1,
+          details: error.message,
+          data: error.data,
+        } as RpcRequestError;
+      }
+    }
+
+    // Fallback for unknown error types
+    return {
+      code: 1,
+      details: typeof error === 'string' ? error : 'Unknown RPC error',
+      data: error,
+    } as RpcRequestError;
   }
 
   /**

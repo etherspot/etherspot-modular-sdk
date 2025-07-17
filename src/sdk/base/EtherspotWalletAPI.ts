@@ -7,6 +7,7 @@ import { DEFAULT_BOOTSTRAP_ADDRESS, DEFAULT_QUERY_PAGE_SIZE, Networks } from '..
 import { BigNumber, BigNumberish } from '../types/bignumber.js';
 import { BaseAccountAPI, BaseApiParams } from './BaseAccountAPI.js';
 import { BootstrapConfig, _makeBootstrapConfig, makeBootstrapConfig } from './Bootstrap.js';
+import { ErrorHandler } from '../errorHandler/errorHandler.service.js';
 
 // Creating a constant for the sentinel address using viem
 const SENTINEL_ADDRESS = getAddress("0x0000000000000000000000000000000000000001");
@@ -298,53 +299,60 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     return this.accountAddress;
   }
 
+  /**
+   * Get the current account nonce.
+   * @param key Optional nonce key
+   * @returns Current nonce as BigNumber
+   */
   async getNonce(key: BigNumber = BigNumber.from(0)): Promise<BigNumber> {
     const accountAddress = await this.getAccountAddress();
 
     const nonceKey = key.eq(0) ? this.validatorAddress : key.toHexString();
 
     if (!nonceKey) {
-      throw new Error('nonce key not defined');
+      throw new ErrorHandler('Nonce key not defined', 1);
     }
 
     if (!this.checkAccountPhantom()) {
-
       let isAddressIndicator = false;
 
       try {
         isAddressIndicator = isAddress(getAddress(nonceKey), { strict: true });
         if (!isAddressIndicator) {
-          throw new Error(`Invalid Validator Address: ${nonceKey}`);
-        }
-        else {
+          throw new ErrorHandler(`Invalid Validator Address: ${nonceKey}`, 1);
+        } else {
           const isModuleInstalled = await this.isModuleInstalled(MODULE_TYPE.VALIDATOR, nonceKey);
           if (!isModuleInstalled) {
-            throw new Error(`Validator: ${nonceKey} is not installed in the wallet`);
+            throw new ErrorHandler(`Validator: ${nonceKey} is not installed in the wallet`, 1);
           }
         }
-
       } catch (e) {
         console.error(`Error caught : ${e}`);
-        throw new Error(`Invalid Validator Address: ${nonceKey}`);
+        throw new ErrorHandler(`Invalid Validator Address: ${nonceKey}`, 1);
       }
     }
 
-    const dummyKey = getAddress(nonceKey) + "00000000"
+    const dummyKey = getAddress(nonceKey) + "00000000";
 
-    const nonceResponse = await this.publicClient.readContract({
-      address: this.entryPointAddress as Hex,
-      abi: parseAbi(entryPointAbi),
-      functionName: 'getNonce',
-      args: [accountAddress, BigInt(dummyKey)]
-    });
-    return nonceResponse as BigNumber;
+    try {
+      const nonceResponse = await this.publicClient.readContract({
+        address: this.entryPointAddress as Hex,
+        abi: parseAbi(entryPointAbi),
+        functionName: 'getNonce',
+        args: [accountAddress, BigInt(dummyKey)]
+      });
+      return nonceResponse as BigNumber;
+    } catch (error) {
+      throw new ErrorHandler(`Failed to get nonce: ${error instanceof Error ? error.message : String(error)}`, 1);
+    }
   }
 
   /**
-   * encode a method call from entryPoint to our contract
-   * @param target
-   * @param value
-   * @param data
+   * Encode a method call from entryPoint to our contract.
+   * @param target Target address
+   * @param value Value to send
+   * @param data Call data
+   * @returns Encoded execute data
    */
   async encodeExecute(target: string, value: BigNumberish, data: string): Promise<string> {
     const executeMode = getExecuteMode({
@@ -352,27 +360,32 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
       execType: EXEC_TYPE.DEFAULT
     });
 
-    // Assuming toHex is a function that accepts string | number | bigint | boolean | Uint8Array
-    // Convert BigNumberish to a string if it's a BigNumber
-    // Convert BigNumberish or Bytes to a compatible type
+    // Validate inputs
+    if (!target || typeof target !== 'string') {
+      throw new Error('Invalid target address');
+    }
+    if (!data || typeof data !== 'string') {
+      throw new Error('Invalid call data');
+    }
+
+    // Convert BigNumberish to a compatible type for toHex
     let valueToProcess: string | number | bigint | boolean | Uint8Array;
 
     if (BigNumber.isBigNumber(value)) {
       valueToProcess = value.toString(); // Convert BigNumber to string
     } else if (isBytes(value)) {
       valueToProcess = new Uint8Array(value); // Convert Bytes to Uint8Array
+    } else if (typeof value === 'bigint') {
+      valueToProcess = value;
+    } else if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean') {
+      valueToProcess = value;
     } else {
-      // Here, TypeScript is unsure about the type of `value`
-      // You need to ensure `value` is of a type compatible with `valueToProcess`
-      // If `value` can only be string, number, bigint, boolean, or Uint8Array, this assignment is safe
-      // If `value` can be of other types (like Bytes), you need an explicit conversion or handling here
-      // For example, if there's a chance `value` is still `Bytes`, you could handle it like so:
-      if (typeof value === 'object' && value !== null && 'length' in value) {
-        // Assuming this condition is sufficient to identify Bytes-like objects
-        // Convert it to Uint8Array
-        valueToProcess = new Uint8Array(Object.values(value));
-      } else {
-        valueToProcess = value as string | number | bigint | boolean | Uint8Array;
+      // Handle other BigNumberish types
+      try {
+        const bn = BigNumber.from(value);
+        valueToProcess = bn.toString();
+      } catch (err) {
+        throw new Error(`Invalid value type: ${typeof value}`);
       }
     }
 
@@ -389,22 +402,58 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     });
   }
 
+  /**
+   * Sign a user operation hash.
+   * @param userOpHash Hash to sign
+   * @returns Signature
+   */
   async signUserOpHash(userOpHash: string): Promise<string> {
     return await this.services.walletService.signUserOp(userOpHash as Hex);
   }
 
+  /**
+   * Encode a batch of method calls from entryPoint to our contract.
+   * @param targets Array of target addresses
+   * @param values Array of values to send
+   * @param datas Array of call data
+   * @returns Encoded batch execute data
+   */
   async encodeBatch(targets: string[], values: BigNumberish[], datas: string[]): Promise<string> {
+    // Validate input arrays
+    if (!targets || !values || !datas) {
+      throw new ErrorHandler('Targets, values, and datas arrays are required', 1);
+    }
+    
+    if (targets.length !== values.length || targets.length !== datas.length) {
+      throw new ErrorHandler('Targets, values, and datas arrays must have the same length', 1);
+    }
+    
+    if (targets.length === 0) {
+      throw new ErrorHandler('Cannot encode empty batch', 1);
+    }
 
     const executeMode = getExecuteMode({
       callType: CALL_TYPE.BATCH,
       execType: EXEC_TYPE.DEFAULT
     });
 
-    const result = targets.map((target, index) => ({
-      target: target as Hex,
-      value: values[index],
-      callData: datas[index] as Hex
-    }));
+    const result = targets.map((target, index) => {
+      // Validate each target
+      if (!target || typeof target !== 'string') {
+        throw new ErrorHandler(`Invalid target address at index ${index}`, 1);
+      }
+      
+      // Validate each data
+      if (!datas[index] || typeof datas[index] !== 'string') {
+        throw new ErrorHandler(`Invalid call data at index ${index}`, 1);
+      }
+
+      return {
+        target: target as Hex,
+        value: values[index],
+        callData: datas[index] as Hex
+      };
+    });
 
     const convertedResult = result.map(item => ({
       ...item,
@@ -421,7 +470,7 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     const calldata = encodeAbiParameters(
       parseAbiParameters('(address target,uint256 value,bytes callData)[]'),
       [convertedResult]
-    )
+    );
 
     return encodeFunctionData({
       functionName: 'execute',

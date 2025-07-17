@@ -5,6 +5,7 @@ import { DEFAULT_ERC20_SESSION_KEY_VALIDATOR_ADDRESS, Networks } from "../networ
 import { encodeFunctionData, Hex, parseAbi, PublicClient } from "viem";
 import { erc20Abi, sessionKeyValidatorAbi } from "../common/abis.js";
 import { MODULE_TYPE, deepHexlify, resolveProperties, UserOperation } from "../common/index.js";
+import { ErrorHandler } from '../errorHandler/errorHandler.service.js';
 
 
 export class SessionKeyValidator {
@@ -34,6 +35,16 @@ export class SessionKeyValidator {
         }
     }
 
+    /**
+     * Enable a session key for the specified token and function.
+     * @param token Token address
+     * @param functionSelector Function selector
+     * @param spendingLimit Spending limit
+     * @param validAfter Valid after timestamp
+     * @param validUntil Valid until timestamp
+     * @param keyStore Optional key store
+     * @returns Session key response
+     */
     async enableSessionKey(
         token: string,
         functionSelector: string,
@@ -50,29 +61,29 @@ export class SessionKeyValidator {
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
             if (erc20SessionKeyValidatorAddress == null) {
-                throw new Error('ERC20SessionKeyValidator contract address is required');
+                throw new ErrorHandler('ERC20SessionKeyValidator contract address is required', 1);
             }
 
             if (etherspotWalletAddress == null) {
-                throw new Error('etherspotWalletAddress is required');
+                throw new ErrorHandler('Etherspot wallet address is required', 1);
             }
 
             if (apiKey == null) {
-                throw new Error('API Key is required');
+                throw new ErrorHandler('API Key is required', 1);
             }
 
             if (!token || token == null || token == '') {
-                throw new Error('Token is required');
+                throw new ErrorHandler('Token is required', 1);
             }
 
             if (!functionSelector || functionSelector == null || functionSelector == '') {
-                throw new Error('Function Selector is required');
+                throw new ErrorHandler('Function Selector is required', 1);
             }
 
             const isAValidTokenIndicator = await this.isAValidToken(token);
 
             if (!isAValidTokenIndicator) {
-                throw new Error(`Token: ${token} does not exist or is invalid`);
+                throw new ErrorHandler(`Token: ${token} does not exist or is invalid`, 1);
             }
 
             const data = await this.generateSessionKeyData(
@@ -85,8 +96,8 @@ export class SessionKeyValidator {
                 validUntil,
                 apiKey,
                 false,
-                keyStore ? keyStore : null,
-            )
+                keyStore || null,
+            );
 
             const enableSessionKeyData = encodeFunctionData({
                 functionName: 'enableSessionKey',
@@ -111,36 +122,125 @@ export class SessionKeyValidator {
                 await this.deleteSessionKey(etherspotWalletAddress, chainId, apiKey, data.sessionKey);
                 throw error;
             }
-        } catch (error) {
-            throw error;
+        } catch (err) {
+            if (err instanceof ErrorHandler) {
+                throw err;
+            }
+            throw new ErrorHandler(`Failed to enable session key: ${err instanceof Error ? err.message : String(err)}`, 1);
         }
     }
 
-
-    async rotateSessionKey(
-        token: string,
-        functionSelector: string,
-        spendingLimit: string,
-        validAfter: number,
-        validUntil: number,
-        oldSessionKey: string,
-        keyStore?: KeyStore,
-    ): Promise<SessionKeyResponse> {
+    /**
+     * Disable a session key.
+     * @param sessionKey Session key to disable
+     * @returns Session key response
+     */
+    async disableSessionKey(sessionKey: string): Promise<SessionKeyResponse> {
         try {
-            const account = await this.modularSdk.getCounterFactualAddress();
+            const etherspotWalletAddress = await this.modularSdk.getCounterFactualAddress();
             const chainId = await this.getChainId();
             const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
             const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
             const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
 
-            const isAValidTokenIndicator = await this.isAValidToken(token);
+            if (erc20SessionKeyValidatorAddress == null) {
+                throw new ErrorHandler('ERC20SessionKeyValidator contract address is required', 1);
+            }
 
-            if (!isAValidTokenIndicator) {
-                throw new Error(`Token: ${token} is does not exist or is invalid`);
+            if (etherspotWalletAddress == null) {
+                throw new ErrorHandler('Etherspot wallet address is required', 1);
+            }
+
+            if (apiKey == null) {
+                throw new ErrorHandler('API Key is required', 1);
+            }
+
+            if (!sessionKey || sessionKey == null || sessionKey == '') {
+                throw new ErrorHandler('Session Key is required', 1);
             }
 
             const data = await this.generateSessionKeyData(
-                account,
+                etherspotWalletAddress,
+                chainId,
+                '', // token
+                '', // functionSelector
+                '', // spendingLimit
+                0, // validAfter
+                0, // validUntil
+                apiKey,
+                false,
+                null, // keyStore
+                sessionKey,
+            );
+
+            return data;
+        } catch (err) {
+            if (err instanceof ErrorHandler) {
+                throw err;
+            }
+            throw new ErrorHandler(`Failed to disable session key: ${err instanceof Error ? err.message : String(err)}`, 1);
+        }
+    }
+
+    /**
+     * Rotate a session key.
+     * @param oldSessionKey Old session key
+     * @param token Token address
+     * @param functionSelector Function selector
+     * @param spendingLimit Spending limit
+     * @param validAfter Valid after timestamp
+     * @param validUntil Valid until timestamp
+     * @param keyStore Optional key store
+     * @returns Session key response
+     */
+    async rotateSessionKey(
+        oldSessionKey: string,
+        token: string,
+        functionSelector: string,
+        spendingLimit: string,
+        validAfter: number,
+        validUntil: number,
+        keyStore?: KeyStore,
+    ): Promise<SessionKeyResponse> {
+        try {
+            const etherspotWalletAddress = await this.modularSdk.getCounterFactualAddress();
+            const chainId = await this.getChainId();
+            const erc20SessionKeyValidatorAddress = await this.getERC20SessionKeyValidator();
+            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
+            const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
+
+            if (erc20SessionKeyValidatorAddress == null) {
+                throw new ErrorHandler('ERC20SessionKeyValidator contract address is required', 1);
+            }
+
+            if (etherspotWalletAddress == null) {
+                throw new ErrorHandler('Etherspot wallet address is required', 1);
+            }
+
+            if (apiKey == null) {
+                throw new ErrorHandler('API Key is required', 1);
+            }
+
+            if (!oldSessionKey || oldSessionKey == null || oldSessionKey == '') {
+                throw new ErrorHandler('Old Session Key is required', 1);
+            }
+
+            if (!token || token == null || token == '') {
+                throw new ErrorHandler('Token is required', 1);
+            }
+
+            if (!functionSelector || functionSelector == null || functionSelector == '') {
+                throw new ErrorHandler('Function Selector is required', 1);
+            }
+
+            const isAValidTokenIndicator = await this.isAValidToken(token);
+
+            if (!isAValidTokenIndicator) {
+                throw new ErrorHandler(`Token: ${token} does not exist or is invalid`, 1);
+            }
+
+            const data = await this.generateSessionKeyData(
+                etherspotWalletAddress,
                 chainId,
                 token,
                 functionSelector,
@@ -149,84 +249,16 @@ export class SessionKeyValidator {
                 validUntil,
                 apiKey,
                 true,
-                keyStore ? keyStore : null,
+                keyStore || null,
                 oldSessionKey,
-            )
+            );
 
-            const rotateSessionKeyData = encodeFunctionData({
-                functionName: 'rotateSessionKey',
-                abi: parseAbi(sessionKeyValidatorAbi),
-                args: [data.oldSessionKey, data.enableSessionKeyData],
-            });
-
-            this.modularSdk.clearUserOpsFromBatch();
-
-            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidatorAddress, data: rotateSessionKeyData });
-
-            try {
-                const op = await this.modularSdk.estimate();
-
-                const uoHash = await this.modularSdk.send(op);
-
-                if (uoHash) {
-                    await this.deleteSessionKey(account, chainId, apiKey, data.oldSessionKey);
-                }
-                else {
-                    await this.deleteSessionKey(account, chainId, apiKey, data.sessionKey);
-                }
-
-                return {
-                    userOpHash: uoHash,
-                    sessionKey: data.sessionKey,
-                }
-            } catch (error) {
-                await this.deleteSessionKey(account, chainId, apiKey, data.sessionKey);
-                throw error;
+            return data;
+        } catch (err) {
+            if (err instanceof ErrorHandler) {
+                throw err;
             }
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async disableSessionKey(sessionKey: string): Promise<SessionKeyResponse> {
-        try {
-            const account = await this.modularSdk.getCounterFactualAddress();
-            const erc20SessionKeyValidator = await this.getERC20SessionKeyValidator();
-            const chainId = await this.getChainId();
-            const apiKeyMatch = this.providerURL.match(/api-key=([^&]+)/);
-            const apiKey = apiKeyMatch ? apiKeyMatch[1] : null;
-
-            const getSessionKeyData = await this.getSessionKey(
-                account,
-                chainId,
-                apiKey,
-                sessionKey,
-            )
-
-            const disableSessionKeyData = encodeFunctionData({
-                functionName: 'disableSessionKey',
-                abi: parseAbi(sessionKeyValidatorAbi),
-                args: [getSessionKeyData.sessionKey],
-            });
-
-            this.modularSdk.clearUserOpsFromBatch();
-
-            await this.modularSdk.addUserOpsToBatch({ to: erc20SessionKeyValidator, data: disableSessionKeyData });
-
-            const op = await this.modularSdk.estimate();
-
-            const uoHash = await this.modularSdk.send(op);
-
-            if (uoHash) {
-                await this.deleteSessionKey(account, chainId, apiKey, sessionKey);
-            }
-
-            return {
-                userOpHash: uoHash,
-                sessionKey: getSessionKeyData.sessionKey,
-            }
-        } catch (error) {
-            throw error;
+            throw new ErrorHandler(`Failed to rotate session key: ${err instanceof Error ? err.message : String(err)}`, 1);
         }
     }
 
@@ -329,36 +361,36 @@ export class SessionKeyValidator {
         let response = null;
         try {
             if (!apiKey || apiKey == null) {
-                throw new Error('API Key is required');
+                throw new ErrorHandler('API Key is required', 1);
             }
 
             const url = `${PERMISSIONS_URL}/account/generateSessionKeyData?apiKey=${apiKey}`;
 
             if (account == null) {
-                throw new Error('Account is required');
+                throw new ErrorHandler('Account is required', 1);
             }
 
 
             const now = Math.floor(Date.now() / 1000);
 
             if (validAfter < now + 29) {
-                throw new Error('validAfter must be greater than current time by at least 30 seconds');
+                throw new ErrorHandler('validAfter must be greater than current time by at least 30 seconds', 1);
             }
 
             if (validUntil == 0 || validUntil < validAfter || validUntil < now) {
-                throw new Error('validUntil must be greater than validAfter and current time');
+                throw new ErrorHandler('validUntil must be greater than validAfter and current time', 1);
             }
 
             if (!token || token == null || token == '') {
-                throw new Error('Token is required');
+                throw new ErrorHandler('Token is required', 1);
             }
 
             if (!functionSelector || functionSelector == null || functionSelector == '') {
-                throw new Error('Function Selector is required');
+                throw new ErrorHandler('Function Selector is required', 1);
             }
 
             if (!spendingLimit || spendingLimit == null || spendingLimit == '') {
-                throw new Error('Spending Limit is required');
+                throw new ErrorHandler('Spending Limit is required', 1);
             }
 
             const requestBody = {
@@ -388,10 +420,10 @@ export class SessionKeyValidator {
                 return responseJson
             } else {
                 const responseJson = await response.json();
-                throw new Error(responseJson.message)
+                throw new ErrorHandler(responseJson.message, 1);
             }
         } catch (err) {
-            throw new Error(err.message)
+            throw new ErrorHandler(err.message, 1);
         }
     }
 
@@ -420,10 +452,10 @@ export class SessionKeyValidator {
                 return responseJson
             } else {
                 const responseJson = await response.json();
-                throw new Error(responseJson.message)
+                throw new ErrorHandler(responseJson.message, 1);
             }
         } catch (err) {
-            throw new Error(err.message)
+            throw new ErrorHandler(err.message, 1);
         }
     }
 
@@ -451,10 +483,10 @@ export class SessionKeyValidator {
                 return responseJson
             } else {
                 const responseJson = await response.json();
-                throw new Error(responseJson.message)
+                throw new ErrorHandler(responseJson.message, 1);
             }
         } catch (err) {
-            throw new Error(err.message)
+            throw new ErrorHandler(err.message, 1);
         }
     }
 
@@ -485,10 +517,10 @@ export class SessionKeyValidator {
                 return responseJson
             } else {
                 const responseJson = await response.json();
-                throw new Error(responseJson.message)
+                throw new ErrorHandler(responseJson.message, 1);
             }
         } catch (err) {
-            throw new Error(err.message)
+            throw new ErrorHandler(err.message, 1);
         }
     }
 
@@ -517,10 +549,10 @@ export class SessionKeyValidator {
                 return responseJson
             } else {
                 const responseJson = await response.json();
-                throw new Error(responseJson.message)
+                throw new ErrorHandler(responseJson.message, 1);
             }
         } catch (err) {
-            throw new Error(err.message)
+            throw new ErrorHandler(err.message, 1);
         }
     }
 

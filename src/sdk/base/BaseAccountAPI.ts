@@ -12,6 +12,7 @@ import { BaseAccountUserOperationStruct, FeeData } from '../types/user-operation
 import { BigNumber, BigNumberish } from '../types/bignumber.js';
 import { MessagePayload, WalletProviderLike, WalletService } from '../wallet/index.js';
 import { DEFAULT_MULTIPLE_OWNER_ECDSA_VALIDATOR_ADDRESS, Networks } from '../network/index.js';
+import { ErrorHandler } from '../errorHandler/errorHandler.service.js';
 
 export interface BaseApiParams {
   entryPointAddress: string;
@@ -249,7 +250,8 @@ export abstract class BaseAccountAPI {
   }
 
   /**
-   * calculate the account address even before it is deployed
+   * Calculate the account address even before it is deployed.
+   * @returns Counterfactual address
    */
   async getCounterFactualAddress(): Promise<string> {
     const initCode = await this.getAccountInitCode();
@@ -264,11 +266,13 @@ export abstract class BaseAccountAPI {
         args: [initCode]
       });
 
-
     } catch (e: any) {
-      return e.errorArgs.sender;
+      if (e?.errorArgs?.sender) {
+        return e.errorArgs.sender;
+      }
+      throw new ErrorHandler(`Failed to get counterfactual address: ${e instanceof Error ? e.message : String(e)}`, 1);
     }
-    throw new Error('must handle revert');
+    throw new ErrorHandler('getCounterFactualAddress: must handle revert', 1);
   }
 
   /**
