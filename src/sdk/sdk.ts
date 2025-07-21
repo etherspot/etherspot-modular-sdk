@@ -1,26 +1,39 @@
 import { Factory, PaymasterApi, SdkOptions } from './interfaces.js';
-import { Network } from "./network/index.js";
+import { Network } from './network/index.js';
 import {
-  BatchUserOpsRequest, Exception, getGasFee,
-  getViemAddress, MODULE_TYPE,
-  UserOperation, UserOpsRequest, getPublicClient,
-  getPublicClientByChain
-} from "./common/index.js";
+  BatchUserOpsRequest,
+  Exception,
+  getGasFee,
+  getViemAddress,
+  MODULE_TYPE,
+  UserOperation,
+  UserOpsRequest,
+  getPublicClient,
+  getPublicClientByChain,
+} from './common/index.js';
 import {
   EthereumProvider,
   isWalletConnectProvider,
   isWalletProvider,
   MessagePayload,
   WalletConnect2WalletProvider,
-  WalletProviderLike
+  WalletProviderLike,
 } from './wallet/index.js';
 import { DEFAULT_QUERY_PAGE_SIZE, Networks } from './network/index.js';
-import { EtherspotWalletAPI, HttpRpcClient, VerifyingPaymasterAPI, TransactionDetailsForUserOp, TransactionGasInfoForUserOp, ModuleInfo } from './base/index.js';
+import {
+  EtherspotWalletAPI,
+  HttpRpcClient,
+  VerifyingPaymasterAPI,
+  TransactionDetailsForUserOp,
+  TransactionGasInfoForUserOp,
+  ModuleInfo,
+} from './base/index.js';
 import { SignMessageDto, validateDto } from './dto/index.js';
 import { ErrorHandler } from './errorHandler/errorHandler.service.js';
 import { EtherspotBundler } from './bundler/index.js';
 import { Account, formatEther, Hex, http, type PublicClient } from 'viem';
 import { BigNumber, BigNumberish } from './types/bignumber.js';
+import { Pulse } from './pulse/index.js';
 
 /**
  * Modular-Sdk
@@ -28,7 +41,6 @@ import { BigNumber, BigNumberish } from './types/bignumber.js';
  * @category Modular-Sdk
  */
 export class ModularSdk {
-
   private etherspotWallet: EtherspotWalletAPI;
   private bundler: HttpRpcClient;
   private chainId: number;
@@ -37,6 +49,7 @@ export class ModularSdk {
   private publicClient: PublicClient;
   private account: Account;
   private providerUrl: string;
+  private _pulse?: Pulse;
 
   private userOpsBatch: BatchUserOpsRequest = { to: [], data: [], value: [] };
 
@@ -48,13 +61,7 @@ export class ModularSdk {
       throw new Exception('Invalid wallet provider');
     }
 
-    const {
-      index,
-      chainId,
-      rpcProviderUrl,
-      accountAddress,
-      chain,
-    } = optionsLike;
+    const { index, chainId, rpcProviderUrl, accountAddress, chain } = optionsLike;
 
     this.chainId = chainId;
     this.index = index ?? 0;
@@ -76,35 +83,33 @@ export class ModularSdk {
 
     if (Networks[chainId] == undefined) {
       if (chain == undefined) {
-        throw new Exception('chain needs to be set when chainId is not in default Networks'); 
+        throw new Exception('chain needs to be set when chainId is not in default Networks');
       }
       this.publicClient = getPublicClientByChain({
         chain: chain,
-        transport: http(
-          viemClientUrl
-        )
+        transport: http(viemClientUrl),
       }) as PublicClient;
     } else {
       this.publicClient = getPublicClient({
         chainId: chainId,
-        transport: http(
-          viemClientUrl
-        )
+        transport: http(viemClientUrl),
       }) as PublicClient;
     }
 
-    let entryPointAddress = '', walletFactoryAddress = '';
+    let entryPointAddress = '',
+      walletFactoryAddress = '';
     if (Networks[chainId]) {
       entryPointAddress = Networks[chainId].contracts.entryPoint;
-      if (Networks[chainId].contracts.walletFactory == '') throw new Exception('The selected factory is not deployed in the selected chain_id')
+      if (Networks[chainId].contracts.walletFactory == '')
+        throw new Exception('The selected factory is not deployed in the selected chain_id');
       walletFactoryAddress = Networks[chainId].contracts.walletFactory;
     }
 
     if (optionsLike.entryPointAddress) entryPointAddress = optionsLike.entryPointAddress;
     if (optionsLike.walletFactoryAddress) walletFactoryAddress = optionsLike.walletFactoryAddress;
 
-    if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id')
-    if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id')
+    if (entryPointAddress == '') throw new Exception('entryPointAddress not set on the given chain_id');
+    if (walletFactoryAddress == '') throw new Exception('walletFactoryAddress not set on the given chain_id');
     this.account = this.account;
     this.etherspotWallet = new EtherspotWalletAPI({
       optionsLike,
@@ -115,16 +120,21 @@ export class ModularSdk {
       wallet: walletConnectProvider ?? walletProvider,
       publicClient: this.publicClient,
     });
-    this.bundler = new HttpRpcClient(
-      optionsLike.bundlerProvider.url,
-      entryPointAddress,
-      chainId,
-      this.publicClient
-    );
+    this.bundler = new HttpRpcClient(optionsLike.bundlerProvider.url, entryPointAddress, chainId, this.publicClient);
   }
 
   get supportedNetworks(): Network[] {
     return this.etherspotWallet.services.networkService.supportedNetworks;
+  }
+
+  /*
+   * Pulse instance
+   */
+  get pulse(): Pulse {
+    if (!this._pulse) {
+      this._pulse = new Pulse(this);
+    }
+    return this._pulse;
   }
 
   /**
@@ -167,22 +177,29 @@ export class ModularSdk {
     return this.etherspotWallet.getCounterFactualAddress();
   }
 
-  async estimate(params: {
-    paymasterDetails?: PaymasterApi,
-    gasDetails?: TransactionGasInfoForUserOp,
-    callGasLimit?: BigNumberish,
-    key?: BigNumber
-  } = {}) {
+  async estimate(
+    params: {
+      paymasterDetails?: PaymasterApi;
+      gasDetails?: TransactionGasInfoForUserOp;
+      callGasLimit?: BigNumberish;
+      key?: BigNumber;
+    } = {},
+  ) {
     const { paymasterDetails, gasDetails, callGasLimit, key } = params;
-    const dummySignature = "0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
+    const dummySignature =
+      '0xfffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c';
 
     if (this.userOpsBatch.to.length < 1) {
       throw new ErrorHandler('cannot sign empty transaction batch', 1);
     }
 
     if (paymasterDetails?.url) {
-      const paymasterAPI = new VerifyingPaymasterAPI(paymasterDetails.url, this.etherspotWallet.entryPointAddress, paymasterDetails.context ?? {})
-      this.etherspotWallet.setPaymasterApi(paymasterAPI)
+      const paymasterAPI = new VerifyingPaymasterAPI(
+        paymasterDetails.url,
+        this.etherspotWallet.entryPointAddress,
+        paymasterDetails.context ?? {},
+      );
+      this.etherspotWallet.setPaymasterApi(paymasterAPI);
     } else this.etherspotWallet.setPaymasterApi(null);
 
     const tx: TransactionDetailsForUserOp = {
@@ -191,15 +208,18 @@ export class ModularSdk {
       data: this.userOpsBatch.data,
       dummySignature: dummySignature,
       ...gasDetails,
-    }
+    };
 
     const gasInfo = await this.getGasFee();
 
-    const partialtx = await this.etherspotWallet.createUnsignedUserOp({
-      ...tx,
-      maxFeePerGas: gasInfo.maxFeePerGas,
-      maxPriorityFeePerGas: gasInfo.maxPriorityFeePerGas,
-    }, key);
+    const partialtx = await this.etherspotWallet.createUnsignedUserOp(
+      {
+        ...tx,
+        maxFeePerGas: gasInfo.maxFeePerGas,
+        maxPriorityFeePerGas: gasInfo.maxPriorityFeePerGas,
+      },
+      key,
+    );
 
     if (callGasLimit) {
       partialtx.callGasLimit = BigNumber.from(callGasLimit).toHexString();
@@ -225,23 +245,22 @@ export class ModularSdk {
 
       if (bundlerGasEstimate.preVerificationGas) {
         partialtx.preVerificationGas = BigNumber.from(bundlerGasEstimate.preVerificationGas);
-        partialtx.verificationGasLimit = BigNumber.from(bundlerGasEstimate.verificationGasLimit ?? bundlerGasEstimate.verificationGas);
+        partialtx.verificationGasLimit = BigNumber.from(
+          bundlerGasEstimate.verificationGasLimit ?? bundlerGasEstimate.verificationGas,
+        );
         const expectedCallGasLimit = BigNumber.from(bundlerGasEstimate.callGasLimit);
-        if (!callGasLimit)
-          partialtx.callGasLimit = expectedCallGasLimit;
+        if (!callGasLimit) partialtx.callGasLimit = expectedCallGasLimit;
         else if (BigNumber.from(callGasLimit).lt(expectedCallGasLimit))
           throw new ErrorHandler(`CallGasLimit is too low. Expected atleast ${expectedCallGasLimit.toString()}`);
       }
     }
 
     return partialtx;
-
   }
 
   async getGasFee() {
     const version = await this.bundler.getBundlerVersion();
-    if (version && version.includes('skandha'))
-      return this.bundler.getSkandhaGasPrice();
+    if (version && version.includes('skandha')) return this.bundler.getSkandhaGasPrice();
     return getGasFee(this.publicClient);
   }
 
@@ -250,9 +269,7 @@ export class ModularSdk {
     return this.bundler.sendUserOpToBundler(signedUserOp);
   }
 
-  async signTypedData(
-    msg: MessagePayload
-  ) {
+  async signTypedData(msg: MessagePayload) {
     return this.etherspotWallet.signTypedData(msg);
   }
 
@@ -263,7 +280,9 @@ export class ModularSdk {
     if (!this.etherspotWallet.accountAddress) {
       throw new ErrorHandler('No account address found', 1);
     }
-    const balance = await this.publicClient.getBalance({ address: getViemAddress(this.etherspotWallet.accountAddress) });
+    const balance = await this.publicClient.getBalance({
+      address: getViemAddress(this.etherspotWallet.accountAddress),
+    });
     return formatEther(balance);
   }
 
@@ -276,9 +295,7 @@ export class ModularSdk {
     return this.etherspotWallet.getUserOpHash(userOp);
   }
 
-  async addUserOpsToBatch(
-    tx: UserOpsRequest,
-  ): Promise<BatchUserOpsRequest> {
+  async addUserOpsToBatch(tx: UserOpsRequest): Promise<BatchUserOpsRequest> {
     if (!tx.data && !tx.value) throw new ErrorHandler('Data and Value both cannot be empty', 1);
     this.userOpsBatch.to.push(tx.to);
     this.userOpsBatch.value.push(tx.value ?? BigNumber.from(0));
@@ -301,8 +318,8 @@ export class ModularSdk {
     this.clearUserOpsFromBatch();
 
     await this.addUserOpsToBatch({
-      to: this.etherspotWallet.accountAddress ?? await this.getCounterFactualAddress(),
-      data: installData
+      to: this.etherspotWallet.accountAddress ?? (await this.getCounterFactualAddress()),
+      data: installData,
     });
 
     const op = await this.estimate();
@@ -328,8 +345,8 @@ export class ModularSdk {
     this.clearUserOpsFromBatch();
 
     await this.addUserOpsToBatch({
-      to: this.etherspotWallet.accountAddress ?? await this.getCounterFactualAddress(),
-      data: uninstallData
+      to: this.etherspotWallet.accountAddress ?? (await this.getCounterFactualAddress()),
+      data: uninstallData,
     });
 
     const op = await this.estimate();
