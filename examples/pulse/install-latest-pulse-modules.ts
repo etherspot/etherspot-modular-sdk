@@ -53,7 +53,7 @@ async function main() {
     let userOpsReceipt = null;
     const timeout = Date.now() + 300000; // 5 minute timeout
     while (userOpsReceipt == null && Date.now() < timeout) {
-      await sleep(2);
+      await sleep(1000);
       userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
     }
 
