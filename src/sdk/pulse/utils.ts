@@ -1,5 +1,5 @@
 import { encodeAbiParameters, encodeFunctionData, Hex } from 'viem';
-import { SigHookInit } from './interfaces';
+import { SigHookInit } from './interfaces.js';
 
 export const HookMultiplexer = [
   {
