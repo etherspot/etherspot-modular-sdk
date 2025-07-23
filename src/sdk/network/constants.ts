@@ -113,12 +113,12 @@ export const Networks: {
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
-      bootstrap: '0x6e5E238F8cA164CDe6a8C88407FB242b05524658',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
-      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
-      credibleAccountModule: '',
-      resourceLockValidator: '',
+      hookMultiPlexer: '0xe629A99Fe2fAD23B1dF6Aa680BA6995cfDA885a3',
+      credibleAccountModule: '0xc34D2E2D9Fa0aDbCd801F13563A1423858751A12',
+      resourceLockValidator: '0x08B42e03c1beC06caa3811F503EBF2D58CaccE94',
     },
   },
   [10]: {

@@ -17,10 +17,10 @@ async function main() {
   const modularSdk = generateModularSDKInstance(process.env.WALLET_PRIVATE_KEY as string, chainId, bundlerApiKey);
 
   const networkConfig: NetworkConfig = Networks[chainId];
+  const V1_HOOK_MULTIPLEXER_ADDRESS = '0xDcA918dd23456d321282DF9507F6C09A50522136';
   const HOOK_MULTIPLEXER_ADDRESS = networkConfig.contracts.hookMultiPlexer as Hex;
-  const NEW_HOOK_MULTIPLEXER_ADDRESS = '0xDDcDA78c9BE2d2Ca1b63F8a47f44B6337b8fA4B8' as Hex;
-  const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0xa3789284adB928258DA2cC674090AC5c69D22183' as Hex;
-  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0xA11CFb410f1a98d0c98439cEeDc9d799336d063f' as Hex;
+  const RESOURCE_LOCK_VALIDATOR_ADDRESS = networkConfig.contracts.resourceLockValidator as Hex;
+  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = networkConfig.contracts.credibleAccountModule as Hex;
 
   // Get counterfactual of ModularEtherspotWallet...
   const address: Hex = (await modularSdk.getCounterFactualAddress()) as Hex;
@@ -39,11 +39,11 @@ async function main() {
   try {
     // Install the complete Pulse ecosystem using the new Pulse class
     const uoHash = await modularSdk.pulse.installPulseModules({
-      hookMultiplexerAddress: NEW_HOOK_MULTIPLEXER_ADDRESS,
+      hookMultiplexerAddress: HOOK_MULTIPLEXER_ADDRESS,
       credibleAccountModuleAddress: CREDIBLE_ACCOUNT_MODULE_ADDRESS,
       resourceLockValidatorAddress: RESOURCE_LOCK_VALIDATOR_ADDRESS,
       uninstallOldHookMultiplexer: false,
-      // oldHookMultiplexerAddress: HOOK_MULTIPLEXER_ADDRESS,
+      // oldHookMultiplexerAddress: V1_HOOK_MULTIPLEXER_ADDRESS,
     });
 
     console.log(`PulseSetup UserOpHash: ${uoHash}`);
@@ -63,7 +63,7 @@ async function main() {
 
       // Verify installation
       const installationStatus = await modularSdk.pulse.isPulseModulesInstalled({
-        hookMultiplexerAddress: NEW_HOOK_MULTIPLEXER_ADDRESS,
+        hookMultiplexerAddress: HOOK_MULTIPLEXER_ADDRESS,
         credibleAccountModuleAddress: CREDIBLE_ACCOUNT_MODULE_ADDRESS,
         resourceLockValidatorAddress: RESOURCE_LOCK_VALIDATOR_ADDRESS,
       });
