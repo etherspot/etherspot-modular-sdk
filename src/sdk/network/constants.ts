@@ -607,6 +607,7 @@ export const Networks: {
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '',
       hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      hookMultiPlexerV2: '0xe629A99Fe2fAD23B1dF6Aa680BA6995cfDA885a3',
     },
   },
 };

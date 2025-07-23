@@ -37,10 +37,8 @@ export class Pulse {
 
     // Use provided addresses or fall back to network defaults
     const HOOK_MULTIPLEXER_ADDRESS_V2 = networkConfig.contracts.hookMultiPlexerV2 as Hex;
-    const CREDIBLE_ACCOUNT_MODULE_ADDRESS = (credibleAccountModuleAddress ||
-      networkConfig.contracts.credibleAccountModule) as Hex;
-    const RESOURCE_LOCK_VALIDATOR_ADDRESS = (resourceLockValidatorAddress ||
-      networkConfig.contracts.resourceLockValidator) as Hex;
+    const CREDIBLE_ACCOUNT_MODULE_ADDRESS = credibleAccountModuleAddress as Hex;
+    const RESOURCE_LOCK_VALIDATOR_ADDRESS = resourceLockValidatorAddress as Hex;
     const HOOK_MULTIPLEXER_ADDRESS = networkConfig.contracts.hookMultiPlexer as Hex;
 
     if (!HOOK_MULTIPLEXER_ADDRESS_V2 || !CREDIBLE_ACCOUNT_MODULE_ADDRESS || !RESOURCE_LOCK_VALIDATOR_ADDRESS) {
@@ -86,10 +84,8 @@ export class Pulse {
     const networkConfig = Networks[chainId];
 
     const HOOK_MULTIPLEXER_ADDRESS_V2 = networkConfig.contracts.hookMultiPlexerV2;
-    const CREDIBLE_ACCOUNT_MODULE_ADDRESS =
-      config.credibleAccountModuleAddress || networkConfig.contracts.credibleAccountModule;
-    const RESOURCE_LOCK_VALIDATOR_ADDRESS =
-      config.resourceLockValidatorAddress || networkConfig.contracts.resourceLockValidator;
+    const CREDIBLE_ACCOUNT_MODULE_ADDRESS = config.credibleAccountModuleAddress;
+    const RESOURCE_LOCK_VALIDATOR_ADDRESS = config.resourceLockValidatorAddress;
 
     const [hookMultiPlexer, credibleAccountValidator, resourceLockValidator] = await Promise.all([
       this.modularSdk.isModuleInstalled(MODULE_TYPE.HOOK, HOOK_MULTIPLEXER_ADDRESS_V2),
