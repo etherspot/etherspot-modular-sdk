@@ -25,14 +25,8 @@ export class Pulse {
    * @param config Configuration options for the installation
    * @returns Promise<string> UserOperation hash
    */
-  async installPulseModules(config: PulseConfig = {}): Promise<string> {
-    const {
-      hookMultiplexerAddress,
-      credibleAccountModuleAddress,
-      resourceLockValidatorAddress,
-      uninstallOldHookMultiplexer = false,
-      oldHookMultiplexerAddress,
-    } = config;
+  async installPulseModules(config: PulseConfig): Promise<string> {
+    const { credibleAccountModuleAddress, resourceLockValidatorAddress, uninstallOldHookMultiplexer = false } = config;
 
     // Get network config
     const chainId = this.modularSdk['chainId'];
@@ -42,14 +36,14 @@ export class Pulse {
     }
 
     // Use provided addresses or fall back to network defaults
-    const HOOK_MULTIPLEXER_ADDRESS = (hookMultiplexerAddress || networkConfig.contracts.hookMultiPlexer) as Hex;
+    const HOOK_MULTIPLEXER_ADDRESS_V2 = networkConfig.contracts.hookMultiPlexerV2 as Hex;
     const CREDIBLE_ACCOUNT_MODULE_ADDRESS = (credibleAccountModuleAddress ||
       networkConfig.contracts.credibleAccountModule) as Hex;
     const RESOURCE_LOCK_VALIDATOR_ADDRESS = (resourceLockValidatorAddress ||
       networkConfig.contracts.resourceLockValidator) as Hex;
-    const OLD_HOOK_MULTIPLEXER_ADDRESS = oldHookMultiplexerAddress as Hex;
+    const HOOK_MULTIPLEXER_ADDRESS = networkConfig.contracts.hookMultiPlexer as Hex;
 
-    if (!HOOK_MULTIPLEXER_ADDRESS || !CREDIBLE_ACCOUNT_MODULE_ADDRESS || !RESOURCE_LOCK_VALIDATOR_ADDRESS) {
+    if (!HOOK_MULTIPLEXER_ADDRESS_V2 || !CREDIBLE_ACCOUNT_MODULE_ADDRESS || !RESOURCE_LOCK_VALIDATOR_ADDRESS) {
       throw new ErrorHandler('Required contract addresses not found in network configuration');
     }
 
@@ -60,12 +54,12 @@ export class Pulse {
     await this.modularSdk.clearUserOpsFromBatch();
 
     // Uninstall old hook multiplexer if requested and installed
-    if (uninstallOldHookMultiplexer && OLD_HOOK_MULTIPLEXER_ADDRESS) {
-      await this.uninstallOldHookMultiplexer(address, OLD_HOOK_MULTIPLEXER_ADDRESS);
+    if (uninstallOldHookMultiplexer && HOOK_MULTIPLEXER_ADDRESS) {
+      await this.uninstallOldHookMultiplexer(address, HOOK_MULTIPLEXER_ADDRESS);
     }
 
     // Install Hook Multiplexer with Credible Account Module as subhook
-    await this.installHookMultiplexer(address, HOOK_MULTIPLEXER_ADDRESS, CREDIBLE_ACCOUNT_MODULE_ADDRESS);
+    await this.installHookMultiplexer(address, HOOK_MULTIPLEXER_ADDRESS_V2, CREDIBLE_ACCOUNT_MODULE_ADDRESS);
 
     // Install Credible Account Module as Validator
     await this.installCredibleAccountValidator(address, CREDIBLE_ACCOUNT_MODULE_ADDRESS);
@@ -83,28 +77,28 @@ export class Pulse {
   /**
    * Checks if the Pulse modules are fully installed
    */
-  async isPulseModulesInstalled(config: PulseConfig = {}): Promise<{
-    hookMultiplexer: boolean;
+  async isPulseModulesInstalled(config: PulseConfig): Promise<{
+    hookMultiPlexer: boolean;
     credibleAccountValidator: boolean;
     resourceLockValidator: boolean;
   }> {
     const chainId = this.modularSdk['chainId'];
     const networkConfig = Networks[chainId];
 
-    const HOOK_MULTIPLEXER_ADDRESS = config.hookMultiplexerAddress || networkConfig.contracts.hookMultiPlexer;
+    const HOOK_MULTIPLEXER_ADDRESS_V2 = networkConfig.contracts.hookMultiPlexerV2;
     const CREDIBLE_ACCOUNT_MODULE_ADDRESS =
       config.credibleAccountModuleAddress || networkConfig.contracts.credibleAccountModule;
     const RESOURCE_LOCK_VALIDATOR_ADDRESS =
       config.resourceLockValidatorAddress || networkConfig.contracts.resourceLockValidator;
 
-    const [hookMultiplexer, credibleAccountValidator, resourceLockValidator] = await Promise.all([
-      this.modularSdk.isModuleInstalled(MODULE_TYPE.HOOK, HOOK_MULTIPLEXER_ADDRESS),
+    const [hookMultiPlexer, credibleAccountValidator, resourceLockValidator] = await Promise.all([
+      this.modularSdk.isModuleInstalled(MODULE_TYPE.HOOK, HOOK_MULTIPLEXER_ADDRESS_V2),
       this.modularSdk.isModuleInstalled(MODULE_TYPE.VALIDATOR, CREDIBLE_ACCOUNT_MODULE_ADDRESS),
       this.modularSdk.isModuleInstalled(MODULE_TYPE.VALIDATOR, RESOURCE_LOCK_VALIDATOR_ADDRESS),
     ]);
 
     return {
-      hookMultiplexer,
+      hookMultiPlexer,
       credibleAccountValidator,
       resourceLockValidator,
     };

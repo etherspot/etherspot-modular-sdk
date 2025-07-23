@@ -17,7 +17,6 @@ export interface NetworkConfig {
     multipleOwnerECDSAValidator: string;
     erc20SessionKeyValidator: string;
     hookMultiPlexer: string;
-    credibleAccountModule: string;
-    resourceLockValidator: string;
+    hookMultiPlexerV2: string;
   };
 }

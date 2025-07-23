@@ -17,10 +17,8 @@ async function main() {
   const modularSdk = generateModularSDKInstance(process.env.WALLET_PRIVATE_KEY as string, chainId, bundlerApiKey);
 
   const networkConfig: NetworkConfig = Networks[chainId];
-  const V1_HOOK_MULTIPLEXER_ADDRESS = '0xDcA918dd23456d321282DF9507F6C09A50522136';
-  const HOOK_MULTIPLEXER_ADDRESS = networkConfig.contracts.hookMultiPlexer as Hex;
-  const RESOURCE_LOCK_VALIDATOR_ADDRESS = networkConfig.contracts.resourceLockValidator as Hex;
-  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = networkConfig.contracts.credibleAccountModule as Hex;
+  const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0x08B42e03c1beC06caa3811F503EBF2D58CaccE94' as Hex;
+  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0xc34D2E2D9Fa0aDbCd801F13563A1423858751A12' as Hex;
 
   // Get counterfactual of ModularEtherspotWallet...
   const address: Hex = (await modularSdk.getCounterFactualAddress()) as Hex;
@@ -39,11 +37,9 @@ async function main() {
   try {
     // Install the complete Pulse ecosystem using the new Pulse class
     const uoHash = await modularSdk.pulse.installPulseModules({
-      hookMultiplexerAddress: HOOK_MULTIPLEXER_ADDRESS,
       credibleAccountModuleAddress: CREDIBLE_ACCOUNT_MODULE_ADDRESS,
       resourceLockValidatorAddress: RESOURCE_LOCK_VALIDATOR_ADDRESS,
       uninstallOldHookMultiplexer: false,
-      // oldHookMultiplexerAddress: V1_HOOK_MULTIPLEXER_ADDRESS,
     });
 
     console.log(`PulseSetup UserOpHash: ${uoHash}`);
@@ -63,7 +59,6 @@ async function main() {
 
       // Verify installation
       const installationStatus = await modularSdk.pulse.isPulseModulesInstalled({
-        hookMultiplexerAddress: HOOK_MULTIPLEXER_ADDRESS,
         credibleAccountModuleAddress: CREDIBLE_ACCOUNT_MODULE_ADDRESS,
         resourceLockValidatorAddress: RESOURCE_LOCK_VALIDATOR_ADDRESS,
       });
@@ -71,7 +66,7 @@ async function main() {
       console.log('\x1b[33m%s\x1b[0m', 'Installation Status:', installationStatus);
 
       if (
-        installationStatus.hookMultiplexer &&
+        installationStatus.hookMultiPlexer &&
         installationStatus.credibleAccountValidator &&
         installationStatus.resourceLockValidator
       ) {
