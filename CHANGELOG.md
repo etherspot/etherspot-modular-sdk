@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.1.1] - 2025-07-22
+### Added
+- New `Pulse` class with `installPulseModules()` and `addHook()` methods
+- Added `HookType` enum and `PulseConfig` interface for hook configuration
+- Added ABI support and integration for Hook Multiplexer functionality
+- Support for automated Hook Multiplexer, Credible Account, and Resource Lock Validator installation
+- Added `credibleAccountModule` and `resourceLockValidator` fields to `NetworkConfig` object
+- Integrated Pulse into ModularSdk via `pulse` getter for easy access
+### Updated
+- Updated Sepolia `NetworkConfig` to use latest Bootstrap version that installs Hooks before Validators
+- Updated examples to demonstrate new Pulse methods and workflows
+
 ## [6.1.0] - 2025-05-28
 ### Breaking Changes
 - Changed contract address for Wallet Factory from `0x2A40091f044e48DEB5C0FCbc442E443F3341B451` to `0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a`.

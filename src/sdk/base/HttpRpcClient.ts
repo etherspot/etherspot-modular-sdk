@@ -93,10 +93,15 @@ export class HttpRpcClient {
       const jsonRequestData: [BaseAccountUserOperationStruct, string] = [hexifiedUserOp, this.entryPointAddress];
       await this.printUserOperation('eth_sendUserOperation', jsonRequestData);
       //return await this.userOpJsonRpcProvider.send('eth_sendUserOperation', [hexifiedUserOp, this.entryPointAddress]);
-      return await this.publicClient.request({
-        method: 'eth_sendUserOperation',
-        params: [hexifiedUserOp, this.entryPointAddress]
-      });
+      return await this.publicClient.request(
+        {
+          method: 'eth_sendUserOperation',
+          params: [hexifiedUserOp, this.entryPointAddress]
+        },
+        {
+          retryCount: 0
+        }
+      );
     } catch (err) {
       console.log(`error inside sendUserOpToBundler: ${JSON.stringify(err)}`);
       this.handleRPCError(err);
