@@ -116,9 +116,9 @@ export const Networks: {
       bootstrap: '0xFD109F06162B76d6A7752B853F4e825Df2cC9cBA',
       multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
       erc20SessionKeyValidator: '0x22A55192a663591586241D42E603221eac49ed09',
-      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
-      credibleAccountModule: '0xfd090eAFdb3dccE1FA9517ce52BaeBAd1d8cE939',
-      resourceLockValidator: '0xa3789284adB928258DA2cC674090AC5c69D22183'
+      hookMultiPlexer: '0xe629A99Fe2fAD23B1dF6Aa680BA6995cfDA885a3',
+      credibleAccountModule: '0xc34D2E2D9Fa0aDbCd801F13563A1423858751A12',
+      resourceLockValidator: '0x08B42e03c1beC06caa3811F503EBF2D58CaccE94'
     },
   },
   [10]: {
