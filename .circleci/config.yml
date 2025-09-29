@@ -105,11 +105,12 @@ jobs:
           - run:
               name: Move test report
               command: |
-                mv /home/circleci/e2e-sdk-modular/mochawesome-report /tmp/
-                chmod 777 -R /tmp/mochawesome-report
+                mkdir -p /tmp/test-report
+                cp -r reports/test-report.html /tmp/test-report/
+                chmod 777 -R /tmp/test-report
               when: always 
           - store_artifacts:
-              path: /tmp/mochawesome-report
+              path: /tmp/test-report
               when: always
           - run:
               name: Parse and send test results to Slack
