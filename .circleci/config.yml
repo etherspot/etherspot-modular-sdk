@@ -112,6 +112,7 @@ jobs:
 
           - run:
               name: Debug aggregated report
+              when: always
               command: |
                 echo "Checking aggregated-report.json..."
                 cat /home/circleci/e2e-sdk-modular/reports/aggregated-report.json | head -n 50
@@ -272,11 +273,12 @@ workflows:
       - e2e-tests:
           name: testnet-e2e-tests
           context: general-vars
-          test_command: "npm run test-testnet-viem-combined"
+          test_command: "npm run test-all-chains"
           filters:
             branches:
               only:
                 - develop
+                - PRO-3351-E2e
       - e2e-tests:
           name: mainnet-e2e-tests
           context: general-vars
