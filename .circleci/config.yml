@@ -5,7 +5,7 @@ parameters:
     default: false
   test_command:
     type: string
-    default: "npm run test-testnet-viem-combined"
+    default: "npm run test-all-chains"
 orbs:
   slack: circleci/slack@3.4.2
 
@@ -235,7 +235,7 @@ workflows:
     jobs:
       - e2e-tests:
           context: general-vars
-          test_command: "npm run test-mainnet-viem-combined"
+          test_command: "npm run test-all-chains"
 
   install-and-publish:
     when:
