@@ -76,6 +76,18 @@ export class EtherspotWalletAPI extends BaseAccountAPI {
     return response as boolean;
   }
 
+  async isModuleInitialised(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<boolean> {
+    const accountAddress = await this.getAccountAddress();
+    if (!accountAddress) throw new Error('Account address not found');
+    const response = await this.publicClient.readContract({
+      address: accountAddress as Hex,
+      abi: parseAbi(accountAbi),
+      functionName: 'isModuleInstalled',
+      args: [moduleTypeId, module, initData]
+    });
+    return response as boolean;
+  }
+
   async installModule(moduleTypeId: MODULE_TYPE, module: string, initData = '0x'): Promise<string> {
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('Account address not found');
