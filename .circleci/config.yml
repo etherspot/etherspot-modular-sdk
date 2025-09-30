@@ -122,22 +122,25 @@ jobs:
               path: /home/circleci/e2e-sdk-modular/reports
               destination: test-report
               
-              
-          - run:
-              name: Send test results to Slack
-              when: always
-              command: |
-                SLACK_MESSAGE=":page_facing_up: *E2E Test Report*\n\
-                *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
-                *Triggered by:* ${CIRCLE_USERNAME}\n\
-                *Branch:* ${CIRCLE_BRANCH}\n\
-                *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
-                *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
-                *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/home/circleci/e2e-sdk-modular/reports/test-report.html|View HTML Report>"
+#simple report
+          # - run:
+          #     name: Send test results to Slack
+          #     when: always
+          #     command: |
+          #       REPORT_URL="https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/test-report/test-report.html"
           
-                curl -X POST -H 'Content-type: application/json' \
-                  --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
-
+          #       SLACK_MESSAGE=":page_facing_up: *E2E Test Report*\n\
+          #       *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+          #       *Triggered by:* ${CIRCLE_USERNAME}\n\
+          #       *Branch:* ${CIRCLE_BRANCH}\n\
+          #       *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
+          #       *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+          #       *Report:* <${REPORT_URL}|View HTML Report>"
+          
+          #       curl -X POST -H 'Content-type: application/json' \
+          #         --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
+                  
+#old report
           # - run:
           #     name: Parse and send test results to Slack
           #     when: always
@@ -200,6 +203,78 @@ jobs:
           #       fi
 
           #       curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
+          - run:
+              name: Parse and send E2E test results to Slack
+              when: always
+              command: |
+                MOCHAWESOME_JSON_FILE=/home/circleci/e2e-sdk-modular/reports/aggregated-report.json
+                FAILED_TESTS_FILE=failed-tests.txt
+          
+                # Extract overall stats
+                TOTAL_SUITES=$(jq '.stats.suites' $MOCHAWESOME_JSON_FILE)
+                TOTAL_PASSES=$(jq '.stats.passes' $MOCHAWESOME_JSON_FILE)
+                TOTAL_PENDING=$(jq '.stats.pending' $MOCHAWESOME_JSON_FILE)
+                TOTAL_FAILURES=$(jq '.stats.failures' $MOCHAWESOME_JSON_FILE)
+                START_TIME=$(jq -r '.stats.start' $MOCHAWESOME_JSON_FILE)
+                END_TIME=$(jq -r '.stats.end' $MOCHAWESOME_JSON_FILE)
+                DURATION_MS=$(jq -r '.stats.duration' $MOCHAWESOME_JSON_FILE)
+          
+                # Format times
+                START_TIME_FORMATTED=$(date -d "$START_TIME" "+%Y-%m-%d %H:%M:%S")
+                END_TIME_FORMATTED=$(date -d "$END_TIME" "+%Y-%m-%d %H:%M:%S")
+                DURATION_MIN=$(awk "BEGIN {printf \"%.2f\",${DURATION_MS}/60000}")
+          
+                # Extract failing tests
+                jq -r '
+                  .results[] | 
+                  .suites[]? | 
+                  select(.tests[]?.state == "failed") |
+                  "*Suite:* \(.title)\n*Failing Tests:* \n\(.tests[] | select(.state=="failed") | "- " + .title)\n"
+                ' $MOCHAWESOME_JSON_FILE > $FAILED_TESTS_FILE
+          
+                # Artifact URL
+                REPORT_URL="https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/test-report/test-report.html"
+          
+                # Compose Slack message
+                if [ -s $FAILED_TESTS_FILE ]; then
+                  MESSAGE=$(cat $FAILED_TESTS_FILE)
+                  SLACK_MESSAGE=":x: *E2E Tests Failed :x:*\n\
+                *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+                *Triggered by:* ${CIRCLE_USERNAME}\n\
+                *Branch:* ${CIRCLE_BRANCH}\n\
+                *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\n\
+                *Test Summary:*\n\
+                *Total Suites:* ${TOTAL_SUITES}\n\
+                *Passes:* ${TOTAL_PASSES}\n\
+                *Pending:* ${TOTAL_PENDING}\n\
+                *Failures:* ${TOTAL_FAILURES}\n\
+                *Start Time:* ${START_TIME_FORMATTED}\n\
+                *End Time:* ${END_TIME_FORMATTED}\n\
+                *Duration:* ${DURATION_MIN} minutes\n\n\
+                *Failed Tests:*\n${MESSAGE}\n\
+                *Report:* <${REPORT_URL}|View HTML Report>\n\
+                *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>"
+                      else
+                        SLACK_MESSAGE=":white_check_mark: All E2E tests passed\n\
+                *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+                *Triggered by:* ${CIRCLE_USERNAME}\n\
+                *Branch:* ${CIRCLE_BRANCH}\n\
+                *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
+                *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+                *Report:* <${REPORT_URL}|View HTML Report>\n\n\
+                *Test Summary:*\n\
+                *Total Suites:* ${TOTAL_SUITES}\n\
+                *Passes:* ${TOTAL_PASSES}\n\
+                *Pending:* ${TOTAL_PENDING}\n\
+                *Failures:* ${TOTAL_FAILURES}\n\
+                *Start Time:* ${START_TIME_FORMATTED}\n\
+                *End Time:* ${END_TIME_FORMATTED}\n\
+                *Duration:* ${DURATION_MIN} minutes"
+                fi
+                curl -X POST -H 'Content-type: application/json' \
+                        --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
+              
+  
   publish-npm-package:
     working_directory: ~/etherspot-modular-sdk
     docker:
