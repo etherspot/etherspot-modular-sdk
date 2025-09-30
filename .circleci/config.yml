@@ -112,12 +112,14 @@ jobs:
               name: Move test report
               command: |
                 mkdir -p /tmp/test-report
-                cp -r reports/test-report.html /tmp/test-report/
+                cp /home/circleci/e2e-sdk-modular/reports/test-report.html /tmp/test-report/
                 chmod 777 -R /tmp/test-report
-              when: always 
+              when: always
+              
           - store_artifacts:
               path: /tmp/test-report
               when: always
+              
           - run:
               name: Parse and send test results to Slack
               when: always
