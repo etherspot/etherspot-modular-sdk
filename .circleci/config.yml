@@ -108,6 +108,14 @@ jobs:
                 rm temp.json
                 npm i
                 << parameters.test_command >>
+
+          - run:
+              name: Debug aggregated report
+              command: |
+                echo "Checking aggregated-report.json..."
+                cat /home/circleci/e2e-sdk-modular/reports/aggregated-report.json | head -n 50
+                jq '.stats' reports/aggregated-report.json || echo "No stats found!"     
+                
           - run:
               name: Move test report
               command: |
