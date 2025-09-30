@@ -96,7 +96,13 @@ jobs:
                 sed -i.bak "s/bundler_api_key/$BUNDLER_API_KEY/g" .env
                 sed -i.bak "s/data_api_key/$DATA_API_KEY/g" .env
                 sed -i.bak "s/api_key_arka/$API_KEY_ARKA/g" .env
-                #sed -i.bak "s/api_key_sessionkey/$API_KEY_SESSIONKEY/g" .env
+                sed -i.bak "s/api_key_sessionkey/$API_KEY_SESSIONKEY/g" .env
+                sed -i.bak "s/primary_private_key/$PRIMARY_PRIVATE_KEY/g" .env
+                sed -i.bak "s/secondary_private_key/$SECONDARY_PRIVATE_KEY/g" .env
+                sed -i.bak "s/primary_wallet_address/$PRIMARY_WALLET_ADDRESS/g" .env
+                sed -i.bak "s/secondary_wallet_address/$SECONDARY_WALLET_ADDRESS/g" .env
+                sed -i.bak "s/paymaster_address/$PAYMASTER_ADDRESS/g" .env
+                sed -i.bak "s/sponsor_address/$SPONSOR_ADDRESS/g" .env
                 mv package.json temp.json
                 jq -r '.dependencies."@etherspot/modular-sdk" |= "file:../etherspot-modular-sdk"' temp.json > package.json
                 rm temp.json
