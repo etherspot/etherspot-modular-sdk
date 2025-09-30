@@ -110,25 +110,18 @@ jobs:
                 npm i
                 << parameters.test_command >>
 
-          - run:
-              name: Debug aggregated report
-              when: always
-              command: |
-                echo "Checking aggregated-report.json..."
-                cat /home/circleci/e2e-sdk-modular/reports/aggregated-report.json | head -n 50
-                jq '.stats' reports/aggregated-report.json || echo "No stats found!"     
+          # - run:
+          #     name: Debug aggregated report
+          #     when: always
+          #     command: |
+          #       echo "Checking aggregated-report.json..."
+          #       cat /home/circleci/e2e-sdk-modular/reports/aggregated-report.json | head -n 50
+          #       jq '.stats' reports/aggregated-report.json || echo "No stats found!"     
                 
-          - run:
-              name: Move test report
-              command: |
-                mkdir -p /tmp/test-report
-                cp /home/circleci/e2e-sdk-modular/reports/test-report.html /tmp/test-report/
-                chmod 777 -R /tmp/test-report
-              when: always
-              
           - store_artifacts:
-              path: /tmp/test-report
-              when: always
+              path: /home/circleci/e2e-sdk-modular/reports
+              destination: test-report
+              
               
           - run:
               name: Send test results to Slack
