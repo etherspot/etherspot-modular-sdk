@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   run_e2e_tests:
     type: boolean
-    default: false
+    default: true
   test_command:
     type: string
     default: "npm run test-all-chains"
