@@ -162,6 +162,7 @@ workflows:
             branches:
               only:
                 - master
+                - PRO-3351-E2e
 
       - e2e-tests:
           name: testnet-e2e-tests
@@ -170,6 +171,7 @@ workflows:
             branches:
               only:
                 - master
+                - PRO-3351-E2e
 
       - publish-npm-package:
           context: general-vars
@@ -188,3 +190,4 @@ workflows:
             branches:
               only:
                 - master
+
