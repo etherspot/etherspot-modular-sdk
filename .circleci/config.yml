@@ -222,7 +222,6 @@ jobs:
             ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" "$PACKAGE_VERSION"
 
 workflows:
-
   install-and-publish:
     jobs:
       - install:
@@ -231,24 +230,29 @@ workflows:
             branches:
               only:
                 - master
-                - PRO-3351-E2e
+
       - e2e-tests:
           name: testnet-e2e-tests
           context: general-vars
+          test_command: "npm run test-all-chains"
           filters:
             branches:
               only:
                 - master
-                - PRO-3351-E2e
 
       - publish-npm-package:
           context: general-vars
+          requires:
+            - testnet-e2e-tests
           filters:
             branches:
               only:
                 - master
+
       - publish-github-release:
           context: general-vars
+          requires:
+            - publish-npm-package
           filters:
             branches:
               only:
