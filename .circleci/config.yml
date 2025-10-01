@@ -36,7 +36,6 @@ jobs:
           name: Dry run build
           command: bun run build
   e2e-tests:
-    parameters:
       test_command:
         type: string
         default: "npm run test-testnet-viem-combined"
