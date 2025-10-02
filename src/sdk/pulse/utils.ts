@@ -33,6 +33,24 @@ export const HookMultiplexer = [
     outputs: [],
     stateMutability: 'nonpayable',
   },
+  {
+    type: 'function',
+    name: 'removeHook',
+    inputs: [
+      {
+        name: 'hook',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'hookType',
+        type: 'bytes1',
+        internalType: 'enum HookType',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
 ] as const;
 
 export function getHookMultiPlexerInitData(

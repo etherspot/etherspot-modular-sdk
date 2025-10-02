@@ -229,6 +229,10 @@ export class ModularSdk {
       partialtx.factory = this.etherspotWallet.factoryAddress;
     }
 
+    const userOpHash = await this.getUserOpHash(partialtx);
+
+    console.log(`userOphash for unsignedTxn is: ${userOpHash}`);
+
     if (!paymasterDetails?.url) {
       const bundlerGasEstimate = await this.bundler.getVerificationGasInfo(partialtx);
 

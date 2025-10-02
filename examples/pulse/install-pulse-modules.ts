@@ -9,8 +9,8 @@ import { accountAbi } from '../../src/sdk/common/abis';
 dotenv.config();
 
 const bundlerApiKey = 'etherspot_public_key';
-const credibleAccountModule = "0xf47600D8dFef04269206255E53c8926519BA09a9";
-const resourceLockValidator = "0x";
+const credibleAccountModule = "0x566f9d697FF95D13643A35B3F11BB4812B2aaF15";
+const resourceLockValidator = "0xe8bC0032846DEFDA434B08514034CDccD8db5318";
 const hookMultiplexer = "0x2dbad2872b6aabd4dd3cd1eef7a46a241baa6cae";
 
 // tsx examples/paymaster/paymaster.ts

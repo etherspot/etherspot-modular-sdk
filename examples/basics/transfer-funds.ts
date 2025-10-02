@@ -1,14 +1,14 @@
 import { printOp } from '../../src/sdk/common/OperationUtils';
 import * as dotenv from 'dotenv';
 import { sleep } from '../../src/sdk/common';
-import { parseEther } from 'viem';
+import { Hex, parseEther } from 'viem';
 import { generateModularSDKInstance } from '../helpers/sdk-helper';
 
 dotenv.config();
 
-const recipient = '0x80a1874E1046B1cc5deFdf4D3153838B72fF94Ac'; // recipient wallet address
+const recipient = '0x56e0d1120B54368017b591dAD42770D2843f2184'; // recipient wallet address
 const value = '0.0000001'; // transfer value
-const bundlerApiKey = 'etherspot_public_key';
+const bundlerApiKey = process.env.BUNDLER_API_KEY as string;
 
 // tsx examples/basics/transfer-funds.ts
 async function main() {
