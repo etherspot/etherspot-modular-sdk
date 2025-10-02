@@ -17,8 +17,8 @@ async function main() {
   const modularSdk = generateModularSDKInstance(process.env.WALLET_PRIVATE_KEY as string, chainId, bundlerApiKey);
 
   const networkConfig: NetworkConfig = Networks[chainId];
-  const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0x08B42e03c1beC06caa3811F503EBF2D58CaccE94' as Hex;
-  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0xc34D2E2D9Fa0aDbCd801F13563A1423858751A12' as Hex;
+  const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0xe8bC0032846DEFDA434B08514034CDccD8db5318' as Hex;
+  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0x566f9d697FF95D13643A35B3F11BB4812B2aaF15' as Hex;
 
   // Get counterfactual of ModularEtherspotWallet...
   const address: Hex = (await modularSdk.getCounterFactualAddress()) as Hex;

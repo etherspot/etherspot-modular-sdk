@@ -26,7 +26,25 @@ export const HookMultiplexer = [
       },
       {
         name: 'hookType',
-        type: 'bytes1',
+        type: 'uint8',
+        internalType: 'enum HookType',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'removeHook',
+    inputs: [
+      {
+        name: 'hook',
+        type: 'address',
+        internalType: 'address',
+      },
+      {
+        name: 'hookType',
+        type: 'uint8',
         internalType: 'enum HookType',
       },
     ],

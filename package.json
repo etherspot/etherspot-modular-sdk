@@ -37,6 +37,7 @@
     "enable-sessionkey-module": "./node_modules/.bin/tsx ./examples/sessionkeys/enable-sessionkey-module",
     "rotate-sessionkey-module": "./node_modules/.bin/tsx ./examples/sessionkeys/rotate-sessionkey-module",
     "disable-sessionkey-module": "./node_modules/.bin/tsx ./examples/sessionkeys/disable-sessionkey-module",
+    "pulse-install-hmp-already-installed": "./node_modules/.bin/tsx ./examples/pulse/install-pulse-modules-with-hmp-already-installed",
     "format": "biome format . --write",
     "lint": "biome check .",
     "lint-fix": "bun run lint --write",

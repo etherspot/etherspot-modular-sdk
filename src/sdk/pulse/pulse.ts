@@ -175,13 +175,53 @@ export class Pulse {
     const addHookCalldata = encodeFunctionData({
       abi: HookMultiplexer,
       functionName: 'addHook',
-      args: [hookAddress as Hex, hookType as Hex],
+      args: [hookAddress as Hex, parseInt(hookType, 16)],
     });
 
     // Add the call to the batch (calling addHook on the Hook Multiplexer)
     await this.modularSdk.addUserOpsToBatch({
       to: HOOK_MULTIPLEXER_ADDRESS,
       data: addHookCalldata,
+    });
+
+    // Estimate and send the UserOp
+    const op = await this.modularSdk.estimate();
+    const uoHash = await this.modularSdk.send(op);
+
+    return uoHash;
+  }
+
+  async removeHook(hookAddress: string, hookType: HookType, hookMultiplexerAddress?: string): Promise<string> {
+    // Get network config
+    const chainId = this.modularSdk['chainId'];
+    const networkConfig = Networks[chainId];
+    if (!networkConfig) {
+      throw new ErrorHandler('Network configuration not found for chain ID: ' + chainId);
+    }
+
+    // Use provided address or fall back to network default
+    const HOOK_MULTIPLEXER_ADDRESS = (hookMultiplexerAddress || networkConfig.contracts.hookMultiPlexer) as Hex;
+
+    if (!HOOK_MULTIPLEXER_ADDRESS) {
+      throw new ErrorHandler('Hook Multiplexer address not found in network configuration');
+    }
+
+    const address: Hex = (await this.modularSdk.getCounterFactualAddress()) as Hex;
+
+    // Clear existing UserOps from batch
+    await this.modularSdk.clearUserOpsFromBatch();
+
+    // Encode the removeHook function call
+    const removeHookCalldata = encodeFunctionData({
+      abi: HookMultiplexer,
+      functionName: 'removeHook',
+      args: [hookAddress as Hex, parseInt(hookType, 16)],
+    });
+
+    // Add the call to the batch (calling removeHook on the Hook Multiplexer)
+    await this.modularSdk.addUserOpsToBatch({
+      to: HOOK_MULTIPLEXER_ADDRESS,
+      data: removeHookCalldata,
     });
 
     // Estimate and send the UserOp
