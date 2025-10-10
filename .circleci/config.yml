@@ -161,7 +161,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - modular
 
       - e2e-tests:
           name: testnet-e2e-tests
@@ -169,22 +169,5 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - modular
 
-      - publish-npm-package:
-          context: general-vars
-          requires:
-            - testnet-e2e-tests
-          filters:
-            branches:
-              only:
-                - master
-
-      - publish-github-release:
-          context: general-vars
-          requires:
-            - publish-npm-package
-          filters:
-            branches:
-              only:
-                - master
