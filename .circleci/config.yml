@@ -71,6 +71,7 @@ jobs:
             git clone https://github.com/etherspot/e2e-sdk-modular.git
             cd e2e-sdk-modular
             git checkout master
+            touch .env
             sed -i.bak "s/private_key/$PRIVATE_KEY/g" .env
             sed -i.bak "s/project_key/$PROJECT_KEY/g" .env
             sed -i.bak "s/project_key_testnet/$PROJECT_KEY_TESTNET/g" .env
