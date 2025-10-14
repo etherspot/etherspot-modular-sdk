@@ -97,63 +97,69 @@ jobs:
           path: /home/circleci/e2e-sdk-modular/reports
           destination: test-report
       - run:
-          name: Parse and send E2E test results to Slack
-          when: always
-          command: |
-            MOCHAWESOME_JSON_FILE=/home/circleci/e2e-sdk-modular/reports/aggregated-report.json
-            FAILED_TESTS_FILE=failed-tests.txt
-            # same parsing + slack notification script as before...
+              name: Parse and send test results to Slack
+              when: always
+              command: |
+                wget https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.json
 
-  publish-npm-package:
-    working_directory: ~/etherspot-modular-sdk
-    docker:
-      - image: cimg/node:20.11.1
-        auth:
-          username: $DOCKERHUB_USER
-          password: $DOCKERHUB_PASSWORD
-    steps:
-      - checkout
-      - run:
-          name: Install Bun
-          command: |
-            curl -fsSL https://bun.sh/install | bash
-            echo 'export BUN_INSTALL="$HOME/.bun"' >> $BASH_ENV
-            echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> $BASH_ENV
-            source $BASH_ENV
-      - restore_cache:
-          key: dependency-cache-{{ checksum "bun.lockb" }}
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$ETHERSPOT_NPM_TOKEN" > ~/etherspot-modular-sdk/.npmrc
-      - run:
-          name: Install dependencies
-          command: bun install
-      - run:
-          name: Build Etherpot Prime SDK
-          command: bun run build
-      - run:
-          name: Publish package to npm
-          command: |
-            cd ~/etherspot-modular-sdk
-            bun publish --access public
-      - run:
-          name: Announce Publish
-          command: |
-            chmod +x .circleci/announcePublish.sh
-            .circleci/announcePublish.sh "Etherspot Modular SDK" "$(node -e "console.log(require('./package.json').version)")"
+                MOCHAWESOME_JSON_FILE=./mochawesome.json
+                FAILED_TESTS_FILE=failed-tests.txt
+                TOTAL_SUITES=$(jq '.stats.suites' $MOCHAWESOME_JSON_FILE)
+                TOTAL_PASSES=$(jq '.stats.passes' $MOCHAWESOME_JSON_FILE)
+                TOTAL_PENDING=$(jq '.stats.pending' $MOCHAWESOME_JSON_FILE)
+                TOTAL_FAILURES=$(jq '.stats.failures' $MOCHAWESOME_JSON_FILE)
+                START_TIME=$(jq -r '.stats.start' $MOCHAWESOME_JSON_FILE)
+                END_TIME=$(jq -r '.stats.end' $MOCHAWESOME_JSON_FILE)
+                DURATION_MS=$(jq -r '.stats.duration' $MOCHAWESOME_JSON_FILE)
 
-  publish-github-release:
-    docker:
-      - image: ardd97/ghr
-    steps:
-      - checkout
-      - run:
-          name: "Publish Release on GitHub"
-          command: |
-            PACKAGE_VERSION="$(jq .version package.json -r)"
-            echo $PACKAGE_VERSION
-            ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" "$PACKAGE_VERSION"
+                START_TIME_FORMATTED=$(date -d "$START_TIME" "+%Y-%m-%d %H:%M:%S")
+                END_TIME_FORMATTED=$(date -d "$END_TIME" "+%Y-%m-%d %H:%M:%S")
+                DURATION_MIN=$(awk "BEGIN {printf \"%.2f\",${DURATION_MS}/60000}")
 
+
+                jq -r '.results[] | .suites[] | select(.failures > 0) | {suite: .title, tests: [.tests[] | select(.fail) | .title]} | select(.tests | length > 0) |
+                "*Suite:* \(.suite)\n*Failing Tests:* \n\(.tests | map("- " + .) | join("\n"))\n"' $MOCHAWESOME_JSON_FILE > $FAILED_TESTS_FILE
+
+                if [ -s $FAILED_TESTS_FILE ]; then
+                  MESSAGE=$(cat $FAILED_TESTS_FILE)
+                  SLACK_MESSAGE=":x: *E2E Tests Failed :x: *\n\
+                *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+                *Triggered by:* ${CIRCLE_USERNAME}\n\
+                *Branch:* ${CIRCLE_BRANCH}\n\
+                *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\n\
+                *Test Summary:*\n\
+                *Total Suites:* ${TOTAL_SUITES}\n\
+                *Passes:* ${TOTAL_PASSES}\n\
+                *Pending:* ${TOTAL_PENDING}\n\
+                *Failures:* ${TOTAL_FAILURES}\n\
+                *Start Time:* ${START_TIME_FORMATTED}\n\
+                *End Time:* ${END_TIME_FORMATTED}\n\
+                *Duration:* ${DURATION_MIN} minutes\n\n\
+                *Failed Tests:*\n${MESSAGE}\n\
+                *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html|View HTML Report>\n\
+                *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+                cc: ${TAG_RESPONSIBLE_PEOPLE}"
+                else
+                  SLACK_MESSAGE=":white_check_mark: All E2E tests passed\n\
+                *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
+                *Triggered by:* ${CIRCLE_USERNAME}\n\
+                *Branch:* ${CIRCLE_BRANCH}\n\
+                *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
+                *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
+                *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html|View HTML Report>\n\
+                \n*Test Summary:*\n\
+                *Total Suites:* ${TOTAL_SUITES}\n\
+                *Passes:* ${TOTAL_PASSES}\n\
+                *Pending:* ${TOTAL_PENDING}\n\
+                *Failures:* ${TOTAL_FAILURES}\n\
+                *Start Time:* ${START_TIME_FORMATTED}\n\
+                *End Time:* ${END_TIME_FORMATTED}\n\
+                *Duration:* ${DURATION_MIN} minutes"
+                fi
+
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"'"$SLACK_MESSAGE"'"}' $E2E_SLACK_WEBHOOK_URL
+
+ 
 workflows:
   install-and-publish:
     jobs:
@@ -162,7 +168,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - e2e-modular
 
       - e2e-tests:
           name: testnet-e2e-tests
@@ -170,22 +176,4 @@ workflows:
           filters:
             branches:
               only:
-                - master
-
-      - publish-npm-package:
-          context: general-vars
-          requires:
-            - testnet-e2e-tests
-          filters:
-            branches:
-              only:
-                - master
-
-      - publish-github-release:
-          context: general-vars
-          requires:
-            - publish-npm-package
-          filters:
-            branches:
-              only:
-                - master
+                - e2e-modular
