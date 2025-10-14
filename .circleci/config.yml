@@ -100,7 +100,8 @@ jobs:
               name: Parse and send test results to Slack
               when: always
               command: |
-                wget https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.json
+                MOCHAWESOME_JSON_FILE=/home/circleci/e2e-sdk-modular/reports/aggregated-report.json
+                FAILED_TESTS_FILE=failed-tests.txt
 
                 MOCHAWESOME_JSON_FILE=./mochawesome.json
                 FAILED_TESTS_FILE=failed-tests.txt
