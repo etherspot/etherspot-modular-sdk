@@ -141,7 +141,7 @@ jobs:
                 *Failed Tests:*\n${MESSAGE}\n\
                 *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html|View HTML Report>\n\
                 *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
-                cc: ${TAG_RESPONSIBLE_PEOPLE}"
+                cc: ${TAG_QA_PEOPLE}"
                 else
                   SLACK_MESSAGE=":white_check_mark: All E2E tests passed\n\
                 *Project:* ${CIRCLE_PROJECT_REPONAME}\n\
