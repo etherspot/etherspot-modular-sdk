@@ -103,8 +103,10 @@ jobs:
                 MOCHAWESOME_JSON_FILE=/home/circleci/e2e-sdk-modular/reports/aggregated-report.json
                 FAILED_TESTS_FILE=failed-tests.txt
 
-                MOCHAWESOME_JSON_FILE=./mochawesome.json
-                FAILED_TESTS_FILE=failed-tests.txt
+                if [ ! -f "$MOCHAWESOME_JSON_FILE" ]; then
+                  echo "❌ Aggregated mochawesome report not found at $MOCHAWESOME_JSON_FILE"
+                  exit 0
+                fi
                 TOTAL_SUITES=$(jq '.stats.suites' $MOCHAWESOME_JSON_FILE)
                 TOTAL_PASSES=$(jq '.stats.passes' $MOCHAWESOME_JSON_FILE)
                 TOTAL_PENDING=$(jq '.stats.pending' $MOCHAWESOME_JSON_FILE)
