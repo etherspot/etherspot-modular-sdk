@@ -142,7 +142,7 @@ jobs:
               *End Time:* ${END_TIME_FORMATTED}\n\
               *Duration:* ${DURATION_MIN} minutes\n\n\
               *Failed Tests:*\n${MESSAGE}\n\
-              *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html|View HTML Report>\n\
+              *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/test-report/test-report.html|View HTML Report>\n\
               *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>"
             else
               SLACK_MESSAGE=":white_check_mark: *All E2E tests passed!*\n\
@@ -151,7 +151,7 @@ jobs:
               *Branch:* ${CIRCLE_BRANCH}\n\
               *Commit:* <https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/commit/${CIRCLE_SHA1}|${CIRCLE_SHA1}>\n\
               *Job:* <https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}|View Job>\n\
-              *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/tmp/mochawesome-report/mochawesome.html|View HTML Report>\n\n\
+              *Report:* <https://output.circle-artifacts.com/output/job/${CIRCLE_WORKFLOW_JOB_ID}/artifacts/${CIRCLE_NODE_INDEX}/test-report/test-report.html|View HTML Report>\n\n\
               *Test Summary:*\n\
               *Total Suites:* ${TOTAL_SUITES}\n\
               *Passes:* ${TOTAL_PASSES}\n\
