@@ -11,14 +11,14 @@ const bundlerApiKey = process.env.API_KEY || 'etherspot_public_key';
 
 // tsx examples/pulse/install-latest-pulse-modules.ts
 async function main() {
-  const chainId: number = NETWORK_NAME_TO_CHAIN_ID[NetworkNames.Sepolia];
+  const chainId: number = NETWORK_NAME_TO_CHAIN_ID[NetworkNames.Mainnet];
 
   // Init SDK
   const modularSdk = generateModularSDKInstance(process.env.WALLET_PRIVATE_KEY as string, chainId, bundlerApiKey);
 
   const networkConfig: NetworkConfig = Networks[chainId];
-  const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0xe8bC0032846DEFDA434B08514034CDccD8db5318' as Hex;
-  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0x566f9d697FF95D13643A35B3F11BB4812B2aaF15' as Hex;
+  const RESOURCE_LOCK_VALIDATOR_ADDRESS = '0xF2f12F197700BF5740e94e18bde637392421043c' as Hex;
+  const CREDIBLE_ACCOUNT_MODULE_ADDRESS = '0x6C32CC106de33BC97acdcA72897d26eb30edADA4' as Hex;
 
   // Get counterfactual of ModularEtherspotWallet...
   const address: Hex = (await modularSdk.getCounterFactualAddress()) as Hex;
@@ -40,6 +40,7 @@ async function main() {
       credibleAccountModuleAddress: CREDIBLE_ACCOUNT_MODULE_ADDRESS,
       resourceLockValidatorAddress: RESOURCE_LOCK_VALIDATOR_ADDRESS,
       uninstallOldHookMultiplexer: false,
+      sequential: true, // Install modules one at a time (avoids batch gas limit issues)
     });
 
     console.log(`PulseSetup UserOpHash: ${uoHash}`);
@@ -49,7 +50,7 @@ async function main() {
     let userOpsReceipt = null;
     const timeout = Date.now() + 300000; // 5 minute timeout
     while (userOpsReceipt == null && Date.now() < timeout) {
-      await sleep(2);
+      await sleep(2000); // Wait 2 seconds between checks
       userOpsReceipt = await modularSdk.getUserOpReceipt(uoHash);
     }
 

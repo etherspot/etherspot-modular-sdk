@@ -23,10 +23,10 @@ export class Pulse {
    * - Resource Lock Validator
    *
    * @param config Configuration options for the installation
-   * @returns Promise<string> UserOperation hash
+   * @returns Promise<string> UserOperation hash (or final hash if sequential)
    */
   async installPulseModules(config: PulseConfig): Promise<string> {
-    const { credibleAccountModuleAddress, resourceLockValidatorAddress, uninstallOldHookMultiplexer = false } = config;
+    const { credibleAccountModuleAddress, resourceLockValidatorAddress, uninstallOldHookMultiplexer = false, callGasLimit, sequential = false } = config;
 
     // Get network config
     const chainId = this.modularSdk['chainId'];
@@ -48,7 +48,20 @@ export class Pulse {
     // Get wallet address
     const address: Hex = (await this.modularSdk.getCounterFactualAddress()) as Hex;
 
-    // Clear existing UserOps from batch
+    // If sequential installation is requested, install modules one at a time
+    if (sequential) {
+      return await this.installPulseModulesSequentially(
+        address,
+        HOOK_MULTIPLEXER_ADDRESS_V2,
+        HOOK_MULTIPLEXER_ADDRESS,
+        CREDIBLE_ACCOUNT_MODULE_ADDRESS,
+        RESOURCE_LOCK_VALIDATOR_ADDRESS,
+        uninstallOldHookMultiplexer,
+        callGasLimit
+      );
+    }
+
+    // Batch installation (all modules in single UserOp)
     await this.modularSdk.clearUserOpsFromBatch();
 
     // Uninstall old hook multiplexer if requested and installed
@@ -66,10 +79,66 @@ export class Pulse {
     await this.installResourceLockValidator(address, RESOURCE_LOCK_VALIDATOR_ADDRESS);
 
     // Estimate and send the UserOp
-    const op = await this.modularSdk.estimate();
+    const op = await this.modularSdk.estimate({ callGasLimit });
     const uoHash = await this.modularSdk.send(op);
 
     return uoHash;
+  }
+
+  /**
+   * Installs Pulse modules sequentially (one UserOp per module)
+   * This is slower and costs more gas, but avoids potential OOG issues with batching
+   * @private
+   */
+  private async installPulseModulesSequentially(
+    address: Hex,
+    hookMultiplexerAddressV2: Hex,
+    hookMultiplexerAddress: Hex,
+    credibleAccountModuleAddress: Hex,
+    resourceLockValidatorAddress: Hex,
+    uninstallOldHookMultiplexer: boolean,
+    callGasLimit?: any
+  ): Promise<string> {
+    let lastHash = '';
+
+    // Check what's already installed
+    const isHMPInstalled = await this.modularSdk.isModuleInstalled(MODULE_TYPE.HOOK, hookMultiplexerAddressV2);
+    const isCAVInstalled = await this.modularSdk.isModuleInstalled(MODULE_TYPE.VALIDATOR, credibleAccountModuleAddress);
+    const isRLVInstalled = await this.modularSdk.isModuleInstalled(MODULE_TYPE.VALIDATOR, resourceLockValidatorAddress);
+
+    // Step 1: Uninstall old hook multiplexer if requested
+    if (uninstallOldHookMultiplexer && hookMultiplexerAddress) {
+      await this.modularSdk.clearUserOpsFromBatch();
+      await this.uninstallOldHookMultiplexer(address, hookMultiplexerAddress);
+      const op = await this.modularSdk.estimate({ callGasLimit });
+      lastHash = await this.modularSdk.send(op);
+    }
+
+    // Step 2: Install Hook Multiplexer with Credible Account Module as subhook
+    if (!isHMPInstalled) {
+      await this.modularSdk.clearUserOpsFromBatch();
+      await this.installHookMultiplexer(address, hookMultiplexerAddressV2, credibleAccountModuleAddress);
+      let op = await this.modularSdk.estimate({ callGasLimit });
+      lastHash = await this.modularSdk.send(op);
+    }
+
+    // Step 3: Install Credible Account Module as Validator
+    if (!isCAVInstalled) {
+      await this.modularSdk.clearUserOpsFromBatch();
+      await this.installCredibleAccountValidator(address, credibleAccountModuleAddress);
+      let op = await this.modularSdk.estimate({ callGasLimit });
+      lastHash = await this.modularSdk.send(op);
+    }
+
+    // Step 4: Install Resource Lock Validator
+    if (!isRLVInstalled) {
+      await this.modularSdk.clearUserOpsFromBatch();
+      await this.installResourceLockValidator(address, resourceLockValidatorAddress);
+      let op = await this.modularSdk.estimate({ callGasLimit });
+      lastHash = await this.modularSdk.send(op);
+    }
+
+    return lastHash;
   }
 
   /**
@@ -130,7 +199,10 @@ export class Pulse {
   }
 
   private async installCredibleAccountValidator(address: Hex, credibleAccountModuleAddress: Hex): Promise<void> {
-    const cavInitData = encodeAbiParameters([{ type: 'uint256' }], [BigInt(MODULE_TYPE.VALIDATOR)]);
+    const cavInitData = encodeAbiParameters(
+      [{ type: 'uint256' }, { type: 'address' }],
+      [BigInt(MODULE_TYPE.VALIDATOR), address]
+    );
 
     const cavInstallCalldata = encodeFunctionData({
       abi: parseAbi(accountAbi),

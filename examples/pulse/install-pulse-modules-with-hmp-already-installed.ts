@@ -24,7 +24,7 @@ interface InstallationResult {
 }
 
 async function main(): Promise<InstallationResult> {
-  const chainId: number = NETWORK_NAME_TO_CHAIN_ID[NetworkNames.Arbitrum];
+  const chainId: number = NETWORK_NAME_TO_CHAIN_ID[NetworkNames.Mainnet];
 
   const modularSdk = generateModularSDKInstance(process.env.WALLET_PRIVATE_KEY as string, chainId, bundlerApiKey);
 
@@ -43,6 +43,10 @@ async function main(): Promise<InstallationResult> {
     const HOOK_MULTIPLEXER_ADDRESS_V2 = networkConfig.contracts.hookMultiPlexerV2 as Hex;
     const address: Hex = (await modularSdk.getCounterFactualAddress()) as Hex;
 
+    console.log('[Debug] HookMultiplexer V2 address:', HOOK_MULTIPLEXER_ADDRESS_V2);
+    console.log('[Debug] Credible Account Module address:', CREDIBLE_ACCOUNT_MODULE_ADDRESS);
+    console.log('[Debug] Resource Lock Validator address:', RESOURCE_LOCK_VALIDATOR_ADDRESS);
+
     await modularSdk.clearUserOpsFromBatch();
 
     const eoaAddress = modularSdk.getEOAAddress();
@@ -51,16 +55,20 @@ async function main(): Promise<InstallationResult> {
       BigInt(MODULE_TYPE.VALIDATOR),
       address as Hex,
     ]);
-    const deInitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, OLD_CAM, deInitDataGenerated);
-    const removeCredibleAccountModuleValidator = encodeFunctionData({
-      functionName: 'uninstallModule',
-      abi: parseAbi(accountAbi),
-      args: [MODULE_TYPE.VALIDATOR, OLD_CAM, deInitData],
-    });
-    await modularSdk.addUserOpsToBatch({
-      to: address,
-      data: removeCredibleAccountModuleValidator,
-    });
+    // const deInitData = await modularSdk.generateModuleDeInitData(MODULE_TYPE.VALIDATOR, OLD_CAM, deInitDataGenerated);
+    // const removeCredibleAccountModuleValidator = encodeFunctionData({
+    //   functionName: 'uninstallModule',
+    //   abi: parseAbi(accountAbi),
+    //   args: [MODULE_TYPE.VALIDATOR, OLD_CAM, deInitData],
+    // });
+    // await modularSdk.addUserOpsToBatch({
+    //   to: address,
+    //   data: removeCredibleAccountModuleValidator,
+    // });
+
+    console.log('[Debug] Adding Credible Account Module as hook to HookMultiplexer...');
+    console.log('[Debug] HookType.GLOBAL:', HookType.GLOBAL);
+    console.log('[Debug] HookType.GLOBAL parsed as int:', parseInt(HookType.GLOBAL, 16));
 
     const addHookCalldata = encodeFunctionData({
       abi: HookMultiplexer,
@@ -68,30 +76,53 @@ async function main(): Promise<InstallationResult> {
       args: [CREDIBLE_ACCOUNT_MODULE_ADDRESS as Hex, parseInt(HookType.GLOBAL, 16)],
     });
 
+    console.log('[Debug] addHook calldata:', addHookCalldata);
+
     await modularSdk.addUserOpsToBatch({
       to: HOOK_MULTIPLEXER_ADDRESS_V2,
       data: addHookCalldata,
     });
+    console.log('[Debug] Added addHook to batch');
 
+    console.log('[Debug] Preparing Credible Account Validator installation...');
     const cavInitData = encodeAbiParameters(parseAbiParameters('uint256, address'), [
       BigInt(MODULE_TYPE.VALIDATOR),
       address as Hex,
     ]);
+    console.log('[Debug] Credible Account Validator initData:', cavInitData);
     const cavInstallCalldata = encodeFunctionData({
       abi: parseAbi(accountAbi),
       functionName: 'installModule',
       args: [BigInt(MODULE_TYPE.VALIDATOR), CREDIBLE_ACCOUNT_MODULE_ADDRESS, cavInitData],
     });
+    console.log(
+      '[Debug] Credible Account Validator installModule calldata:',
+      cavInstallCalldata.substring(0, 66) + '...',
+    );
     await modularSdk.addUserOpsToBatch({ to: address, data: cavInstallCalldata });
+    console.log('[Debug] Added Credible Account Validator installation to batch');
 
-    const rlvInitData = encodeAbiParameters([{ type: 'address' }], [eoaAddress]);
-    const rlvInstallCalldata = encodeFunctionData({
-      abi: parseAbi(accountAbi),
-      functionName: 'installModule',
-      args: [BigInt(MODULE_TYPE.VALIDATOR), RESOURCE_LOCK_VALIDATOR_ADDRESS, rlvInitData],
-    });
-    await modularSdk.addUserOpsToBatch({ to: address, data: rlvInstallCalldata });
+    // console.log('[Debug] Preparing Resource Lock Validator installation...');
+    // const rlvInitData = encodeAbiParameters([{ type: 'address' }], [eoaAddress]);
+    // console.log('[Debug] Resource Lock Validator initData:', rlvInitData);
 
+    // const rlvInstallCalldata = encodeFunctionData({
+    //   abi: parseAbi(accountAbi),
+    //   functionName: 'installModule',
+    //   args: [BigInt(MODULE_TYPE.VALIDATOR), RESOURCE_LOCK_VALIDATOR_ADDRESS, rlvInitData],
+    // });
+    // console.log('[Debug] Resource Lock Validator installModule calldata:', rlvInstallCalldata.substring(0, 66) + '...');
+    // await modularSdk.addUserOpsToBatch({ to: address, data: rlvInstallCalldata });
+    // console.log('[Debug] Added Resource Lock Validator installation to batch');
+
+    // Log all batch operations before estimation
+    const batch = (modularSdk as any).userOpsBatch;
+    console.log('[Debug] Total operations in batch:', batch.to.length);
+    for (let i = 0; i < batch.to.length; i++) {
+      console.log(`[Debug] Batch[${i}] - to: ${batch.to[i]}, data: ${batch.data[i].substring(0, 66)}...`);
+    }
+
+    console.log('[Debug] Estimating UserOperation...');
     const op = await modularSdk.estimate();
     console.log('UserOperation estimated successfully');
 
@@ -115,12 +146,17 @@ async function main(): Promise<InstallationResult> {
         success: true,
         userOpsReceipt: userOpsReceipt,
         userOpHash: uoHash,
-        installationStatus
+        installationStatus,
       };
     } else {
       throw new Error('Transaction timeout - please check transaction status manually');
     }
-  } catch (error) {
+  } catch (error: any) {
+    console.error('[Debug] Full error:', error);
+    console.error('[Debug] Error message:', error?.message);
+    console.error('[Debug] Error stack:', error?.stack);
+    if (error?.rawError) console.error('[Debug] Raw error:', error.rawError);
+    if (error?.code) console.error('[Debug] Error code:', error.code);
     throw new Error(`Pulse ecosystem installation failed: ${error}`);
   }
 }
