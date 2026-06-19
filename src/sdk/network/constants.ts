@@ -40,11 +40,12 @@ export enum NetworkNames {
   CeloTestnet = 'celoTestnet',
   Celo = 'celo',
   SxNetworkTestnet = 'sxNetworkTestnet',
+  ArcTestnet = 'arcTestnet',
 }
 
 export const SupportedNetworks = [
   1, 10, 14, 30, 31, 50, 51, 56, 97, 100, 114, 122, 123, 137, 2357, 5000, 5003, 8453, 10200, 42161, 42220, 43113, 43114,
-  44787, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 11155111, 11155420, 28122024, 79479957, 888888888,
+  44787, 59140, 59144, 80002, 84532, 421614, 534351, 534352, 5042002, 11155111, 11155420, 28122024, 79479957, 888888888,
 ];
 
 export const NETWORK_NAME_TO_CHAIN_ID: {
@@ -86,6 +87,7 @@ export const NETWORK_NAME_TO_CHAIN_ID: {
   [NetworkNames.CeloTestnet]: 44787,
   [NetworkNames.Celo]: 42220,
   [NetworkNames.SxNetworkTestnet]: 79479957,
+  [NetworkNames.ArcTestnet]: 5042002,
 };
 
 export const Networks: {
@@ -598,6 +600,51 @@ export const Networks: {
           http: ['https://rpc.sx-rollup-testnet.t.raas.gelato.cloud/'],
         },
       },
+    }),
+    bundler: 'https://testnet-rpc.etherspot.io/v2/79479957',
+    contracts: {
+      entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+      walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
+      bootstrap: '0xCF2808eA7d131d96E5C73Eb0eCD8Dc84D33905C7',
+      multipleOwnerECDSAValidator: '0x0eA25BF9F313344d422B513e1af679484338518E',
+      erc20SessionKeyValidator: '',
+      hookMultiPlexer: '0xDcA918dd23456d321282DF9507F6C09A50522136',
+      hookMultiPlexerV2: '0xe629A99Fe2fAD23B1dF6Aa680BA6995cfDA885a3',
+    },
+  },
+  [5042002]: {
+    chainId: 5042002,
+    chain: defineChain({
+      id: 5042002,
+      name: 'Arc Testnet',
+      nativeCurrency: {
+        decimals: 18,
+        name: 'USDC',
+        symbol: 'USDC',
+      },
+      rpcUrls: {
+        default: {
+          http: [
+            'https://rpc.testnet.arc.network',
+            'https://rpc.quicknode.testnet.arc.network',
+            'https://rpc.blockdaemon.testnet.arc.network',
+          ],
+        },
+      },
+      blockExplorers: {
+        default: {
+          name: 'ArcScan',
+          url: 'https://testnet.arcscan.app',
+          apiUrl: 'https://testnet.arcscan.app/api',
+        },
+      },
+      contracts: {
+        multicall3: {
+          address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+          blockCreated: 0,
+        },
+      },
+      testnet: true,
     }),
     bundler: 'https://testnet-rpc.etherspot.io/v2/79479957',
     contracts: {
