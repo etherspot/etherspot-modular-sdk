@@ -65,6 +65,12 @@ export const getViemAddress = (address: string): Address => {
  * @throws if the chainId is not found
  */
 export const getChain = (chainId: number) : Chain => {
+  const configuredChain = Networks[chainId]?.chain;
+
+  if (configuredChain) {
+    return configuredChain;
+  }
+
   return extractChain({
     chains: Object.values(chains) as Chain[],
     id: chainId,

@@ -1,5 +1,9 @@
 # Changelog
 
+## [6.1.2] - 2026-06-21
+### Added
+- Support for Arc testnet
+
 ## [6.1.1] - 2025-07-22
 ### Added
 - New `Pulse` class with `installPulseModules()` and `addHook()` methods
