@@ -646,7 +646,7 @@ export const Networks: {
       },
       testnet: true,
     }),
-    bundler: 'https://testnet-rpc.etherspot.io/v2/79479957',
+    bundler: 'https://testnet-rpc.etherspot.io/v2/5042002',
     contracts: {
       entryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
       walletFactory: '0x38CC0EDdD3a944CA17981e0A19470d2298B8d43a',
