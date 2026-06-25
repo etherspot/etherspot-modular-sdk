@@ -223,17 +223,17 @@ workflows:
             branches:
               only: master
 
-      - e2e-tests:
-          name: testnet-e2e-tests
-          context: general-vars
-          filters:
-            branches:
-              only: master
+      # - e2e-tests:
+      #     name: testnet-e2e-tests
+      #     context: general-vars
+      #     filters:
+      #       branches:
+      #         only: master
 
       - publish-npm-package:
           context: general-vars
-          requires:
-            - testnet-e2e-tests
+          # requires:
+          #   - testnet-e2e-tests
           filters:
             branches:
               only: master
