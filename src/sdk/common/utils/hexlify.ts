@@ -91,6 +91,10 @@ export function hexlifyValue(value: BytesLike | Hexable | number | bigint, optio
     }
 
     if (typeof (value) === "bigint") {
+        if (value < 0n) {
+            throw new Error(`Invalid Hexlify value - negative bigint value: ${value}`);
+        }
+
         value = value.toString(16);
         if (value.length % 2) { return ("0x0" + value); }
         return "0x" + value;
